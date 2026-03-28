@@ -26,7 +26,7 @@ const Home = ({ navigation }) => {
         <ProfileButton 
           icon="stethoscope" 
           tittle="Sou Dentista" 
-          onPress={() => alert('Indo para a área do Dentista')} 
+          onPress={() => navigation.navigate('DentistMenu')}
         />
         <ProfileButton 
           icon="child" 
