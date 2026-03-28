@@ -36,22 +36,14 @@ const Home = ({ navigation }) => {
         <ProfileButton 
           icon="hand-holding-heart" 
           tittle="Sou Cuidador" 
-          onPress={() => alert('Indo para a área do Cuidador')} 
+          onPress={() => navigation.navigate('CaregiverMenu')} 
         />
       </View>
-
-      {/* Pontinhos de Paginação no Rodapé */}
-      <View style={styles.containerPagination}>
-        <View style={[styles.point, styles.activePoint]} />
-        <View style={styles.point} />
-        <View style={styles.point} />
-      </View>
-
     </SafeAreaView>
   );
 }
 
-// Aqui é o StyleSheet, mas repare como o JSX lá em cima ficou super limpo!
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

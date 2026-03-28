@@ -19,8 +19,6 @@ const ChildMenuScreen = ({ navigation }) => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="chevron-back" size={28} color="#2C3E50" />
         </TouchableOpacity>
-        
-       
       </View>
 
      

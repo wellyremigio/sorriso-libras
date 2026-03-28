@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from '../screens/Home';
 import ChildMenuScreen from '../screens/menuProfile/ChildMenuScreen';
 import DentistMenuScreen from '../screens/menuProfile/DentistMenuScreen';
+import CaregiverMenuScreen from '../screens/menuProfile/CaregiverMenuScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +28,14 @@ const AppRoutes = () => {
                 options={{ 
                     headerShown: false, 
                     animation: 'slide_from_right' 
+                }}
+            />
+            <Stack.Screen
+                name="CaregiverMenu"
+                component={CaregiverMenuScreen}
+                options={{
+                    headerShown: false,
+                    animation: 'slide_from_right'
                 }}
             />
         </Stack.Navigator>
