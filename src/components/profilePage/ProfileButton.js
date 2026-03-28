@@ -1,22 +1,22 @@
 import { TouchableOpacity, Text, View, StyleSheet } from 'react-native';
 import { FontAwesome5, Ionicons } from '@expo/vector-icons'; 
 
-const ProfileButton = ({ icone, titulo, onPress }) => {
+const ProfileButton = ({ icon, tittle, onPress }) => {
   return (
-    <TouchableOpacity style={styles.botao} onPress={onPress}>
-      <View style={styles.iconeContainer}>
-        {/* <FontAwesome5 name={icone} size={28} color="#7F8C8D" /> */}
+    <TouchableOpacity style={styles.button} onPress={onPress}>
+      <View style={styles.containerIcon}>
+        <FontAwesome5 name={icon} size={28} color="#7F8C8D" />
       </View>
       
-      <Text style={styles.textoBotao}>{titulo}</Text>
+      <Text style={styles.buttonText}>{tittle}</Text>
       
-      {/* <Ionicons name="chevron-forward" size={24} color="#BDC3C7" /> */}
+      <Ionicons name="chevron-forward" size={24} color="#BDC3C7" />
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  botao: {
+  button: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFF',
@@ -27,12 +27,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 15,
   },
-  iconeContainer: {
+  containerIcon: {
     width: 40,
     alignItems: 'center',
     marginRight: 15,
   },
-  textoBotao: {
+  buttonText: {
     flex: 1, 
     fontSize: 18,
     fontWeight: 'bold',

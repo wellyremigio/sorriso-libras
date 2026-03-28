@@ -1,4 +1,5 @@
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome5 } from '@expo/vector-icons';
 import ProfileButton from '../components/profilePage/ProfileButton';
 
@@ -7,43 +8,43 @@ const Home = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       
       {/* Área da LOGO */}
-      <View style={styles.logoContainer}>
-        <Text style={styles.logoTexto}>LOGO</Text>
+      <View style={styles.containerLogo}>
+        <Text style={styles.textLogo}>LOGO</Text>
       </View>
 
       {/* Mascote (Substituímos por um ícone gigante provisório até ter a imagem) */}
-      <View style={styles.mascoteContainer}>
+      <View style={styles.containerMascot}>
         {/* <FontAwesome5 name="tooth" size={100} color="#3498DB" /> */}
         <Text style={{ marginTop: 10, color: '#7F8C8D' }}>[Mascote em Libras]</Text>
       </View>
 
       {/* Pergunta */}
-      <Text style={styles.titulo}>Quem está usando o app?</Text>
+      <Text style={styles.tittle}>Quem está usando o app?</Text>
 
       {/* Botões usando o componente reutilizável */}
-      <View style={styles.botoesContainer}>
+      <View style={styles.containerButton}>
         <ProfileButton 
-          icone="stethoscope" 
-          titulo="Sou Dentista" 
+          icon="stethoscope" 
+          tittle="Sou Dentista" 
           onPress={() => alert('Indo para a área do Dentista')} 
         />
         <ProfileButton 
-          icone="child" 
-          titulo="Sou Criança" 
+          icon="child" 
+          tittle="Sou Criança" 
           onPress={() => alert('Indo para a área da Criança')} 
         />
         <ProfileButton 
-          icone="hand-holding-heart" 
-          titulo="Sou Cuidador" 
+          icon="hand-holding-heart" 
+          tittle="Sou Cuidador" 
           onPress={() => alert('Indo para a área do Cuidador')} 
         />
       </View>
 
       {/* Pontinhos de Paginação no Rodapé */}
-      <View style={styles.paginacaoContainer}>
-        <View style={[styles.ponto, styles.pontoAtivo]} />
-        <View style={styles.ponto} />
-        <View style={styles.ponto} />
+      <View style={styles.containerPagination}>
+        <View style={[styles.point, styles.activePoint]} />
+        <View style={styles.point} />
+        <View style={styles.point} />
       </View>
 
     </SafeAreaView>
@@ -56,9 +57,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FAFAFA',
     paddingHorizontal: 20,
-    justifyContent: 'space-between', // Distribui os elementos na tela
+    justifyContent: 'space-between',
   },
-  logoContainer: {
+  containerLogo: {
     marginTop: 50,
     backgroundColor: '#E0E0E0',
     paddingVertical: 15,
@@ -66,38 +67,38 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: 40,
   },
-  logoTexto: {
+  textLogo: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#7F8C8D',
   },
-  mascoteContainer: {
+  containerMascot: {
     alignItems: 'center',
     marginTop: 20,
   },
-  titulo: {
+  tittle: {
     fontSize: 22,
     fontWeight: 'bold',
     color: '#2C3E50',
     textAlign: 'center',
     marginBottom: 20,
   },
-  botoesContainer: {
+  containerButton: {
     width: '100%',
   },
-  paginacaoContainer: {
+  containerPagination: {
     flexDirection: 'row',
     justifyContent: 'center',
     marginBottom: 30,
   },
-  ponto: {
+  point: {
     width: 10,
     height: 10,
     borderRadius: 5,
     backgroundColor: '#D5D8DC',
     marginHorizontal: 5,
   },
-  pontoAtivo: {
+  activePoint: {
     backgroundColor: '#7F8C8D',
   },
 });
