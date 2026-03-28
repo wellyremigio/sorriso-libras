@@ -31,7 +31,7 @@ const Home = ({ navigation }) => {
         <ProfileButton 
           icon="child" 
           tittle="Sou Criança" 
-          onPress={() => alert('Indo para a área da Criança')} 
+          onPress={() => navigation.navigate('ChildMenu')} 
         />
         <ProfileButton 
           icon="hand-holding-heart" 
