@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 const ChildMenuScreen = ({ navigation }) => {
-  
+
   const menuItems = [
     { id: '1', title: 'Como Escovar os Dentes' },
     { id: '2', title: 'Como Usar o Fio Dental' },
@@ -21,17 +21,17 @@ const ChildMenuScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-     
+
       <View style={styles.titleContainer}>
         <Text style={styles.mainTitle}>Aprenda a Cuidar dos Seus Dentes!</Text>
       </View>
 
       <ScrollView style={styles.listContainer}>
         {menuItems.map((item) => (
-          <TouchableOpacity 
-            key={item.id} 
+          <TouchableOpacity
+            key={item.id}
             style={styles.menuItem}
-            onPress={() => alert(`Abrindo: ${item.title}`)}
+            onPress={() => navigation.navigate('Lesson')}
           >
             <Text style={styles.itemText}>{item.title}</Text>
             <Ionicons name="chevron-forward" size={24} color="#7F8C8D" />
