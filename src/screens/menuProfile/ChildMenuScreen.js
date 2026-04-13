@@ -1,7 +1,6 @@
-import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 
 const ChildMenuScreen = ({ navigation }) => {
 
@@ -19,8 +18,11 @@ const ChildMenuScreen = ({ navigation }) => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="chevron-back" size={28} color="#2C3E50" />
         </TouchableOpacity>
-      </View>
 
+        <TouchableOpacity onPress={() => navigation.navigate('WeeklyGoals')} style={styles.rewardButton}>
+          <FontAwesome5 name="star" size={24} color="F1C40F"/>
+        </TouchableOpacity>
+      </View>
 
       <View style={styles.titleContainer}>
         <Text style={styles.mainTitle}>Aprenda a Cuidar dos Seus Dentes!</Text>
@@ -58,6 +60,18 @@ const styles = StyleSheet.create({
   },
   backButton: {
     padding: 5,
+  },
+  rewardButton:{
+    padding: 5,
+    // Adicionamos um leve fundo circular para dar destaque ao ícone
+    backgroundColor: '#FEF9E7',
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#F1C40F',
   },
   headerIcons: {
     flexDirection: 'row',

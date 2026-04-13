@@ -4,6 +4,7 @@ import ChildMenuScreen from '../screens/menuProfile/ChildMenuScreen';
 import DentistMenuScreen from '../screens/menuProfile/DentistMenuScreen';
 import CaregiverMenuScreen from '../screens/menuProfile/CaregiverMenuScreen';
 import LessonScreen from '../screens/lessons/LessonScreean';
+import WeeklyGoalsScreen from '../screens/goals/WeeklyGoalsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,6 +43,14 @@ const AppRoutes = () => {
             <Stack.Screen
                 name="Lesson"
                 component={LessonScreen}
+                options={{
+                    headerShown: false,
+                    animation: 'slide_from_right'
+                }}
+            />
+            <Stack.Screen
+                name="WeeklyGoals"
+                component={WeeklyGoalsScreen}
                 options={{
                     headerShown: false,
                     animation: 'slide_from_right'
