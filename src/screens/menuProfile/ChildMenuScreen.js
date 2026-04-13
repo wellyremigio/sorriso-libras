@@ -6,11 +6,11 @@ import { Ionicons } from '@expo/vector-icons';
 const ChildMenuScreen = ({ navigation }) => {
 
   const menuItems = [
-    { id: '1', title: 'Como Escovar os Dentes' },
-    { id: '2', title: 'Como Usar o Fio Dental' },
-    { id: '3', title: 'Superar o Medo do Dentista' },
-    { id: '4', title: 'Alimentos Saudáveis' },
-    { id: '5', title: 'Alimentos que Fazem Mal' },
+    { id: '1', title: 'COMO SUPERAR O MEDO DE IR AO DENTISTA?' },
+    { id: '2', title: 'COMO ESCOVAR OS DENTES DE FORMA CORRETA?' },
+    { id: '3', title: 'COMO USAR FIO DENTAL CORRETAMENTE?' },
+    { id: '4', title: 'ALIMENTOS SAUDÁVEIS PARA OS DENTES' },
+    { id: '5', title: 'ALIMENTOS QUE FAZEM MAL PARA OS DENTES' },
   ];
 
   return (

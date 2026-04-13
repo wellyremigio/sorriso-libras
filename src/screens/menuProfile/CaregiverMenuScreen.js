@@ -5,10 +5,11 @@ import { Ionicons } from '@expo/vector-icons';
 const CaregiverMenuScreen = ({ navigation }) => {
   
   const menuItems = [
-    { id: '1', title: 'Por que Levar ao Dentista' },
-    { id: '2', title: 'Supervisão da Escovação' },
-    { id: '3', title: 'Dentição e Alimentação' },
-    { id: '4', title: 'Importância da Consulta' },
+    { id: '1', title: 'Importância da supervisão da escovação e fio dental' },
+    { id: '2', title: 'Importância da dentição decídua e da dentição mista' },
+    { id: '3', title: 'Relação entre saúde bucal e saúde geral sistêmica' },
+    { id: '4', title: 'Alimentação e controle da cárie dentária' },
+    { id: '5', title: 'Importância da ida periódica ao dentista na infância'},
   ];
 
   return (

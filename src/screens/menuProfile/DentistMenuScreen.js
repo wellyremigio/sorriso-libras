@@ -5,11 +5,11 @@ import { Ionicons } from '@expo/vector-icons';
 const DentistMenuScreen = ({ navigation }) => {
   
   const menuItems = [
-    { id: '1', title: 'Aplicação de Flúor' },
-    { id: '2', title: 'Escovação Supervisionada' },
-    { id: '3', title: 'Uso do Fio Dental' },
-    { id: '4', title: 'Atendimento Infantil' },
-    { id: '5', title: 'Criança Surda' },
+    { id: '1', title: 'APLICAÇÃO TÓPICA DE FLÚOR EM CRIANÇAS' },
+    { id: '2', title: 'ESCOVAÇÃO SUPERVISIONADA' },
+    { id: '3', title: 'USO DE FIO DENTAL NA INFÂNCIA' },
+    { id: '4', title: 'ABORDAGEM COMPORTAMENTAL DA CRIANÇA' },
+    { id: '5', title: 'ATENDIMENTO ODONTOLÓGICO PARA CRIANÇAS SURDAS' },
   ];
 
   return (

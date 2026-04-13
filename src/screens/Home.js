@@ -25,17 +25,17 @@ const Home = ({ navigation }) => {
       <View style={styles.containerButton}>
         <ProfileButton 
           icon="stethoscope" 
-          tittle="Sou Dentista" 
+          tittle="SOU DENTISTA" 
           onPress={() => navigation.navigate('DentistMenu')}
         />
         <ProfileButton 
           icon="child" 
-          tittle="Sou Criança" 
+          tittle="  SOU CRIANÇA" 
           onPress={() => navigation.navigate('ChildMenu')} 
         />
         <ProfileButton 
           icon="hand-holding-heart" 
-          tittle="Sou Cuidador" 
+          tittle="SOU CUIDADOR" 
           onPress={() => navigation.navigate('CaregiverMenu')} 
         />
       </View>
