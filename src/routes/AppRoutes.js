@@ -6,6 +6,7 @@ import CaregiverMenuScreen from '../screens/menuProfile/CaregiverMenuScreen';
 import ChildLessonScreen from '../screens/lessons/ChildLessonScreean';
 import WeeklyGoalsScreen from '../screens/goals/WeeklyGoalsScreen';
 import AdultLessonScreen from '../screens/lessons/AdultLessonScreen';
+import StickerGalleryScreen from '../screens/goals/StickerGalleryScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -60,6 +61,14 @@ const AppRoutes = () => {
             <Stack.Screen
                 name="AdultLesson"
                 component={AdultLessonScreen}
+                options={{
+                    headerShown: false,
+                    animation: 'slide_from_right'
+                }}
+            />
+            <Stack.Screen
+                name="StickerGallery"
+                component={StickerGalleryScreen}
                 options={{
                     headerShown: false,
                     animation: 'slide_from_right'

@@ -1,7 +1,8 @@
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import FloatingBalloons from '../../components/animation/FloatingBalloons';
 
 const WeeklyGoalsScreen = ({ navigation }) => {
@@ -15,6 +16,19 @@ const WeeklyGoalsScreen = ({ navigation }) => {
 
     const [completedBrush, setCompleteBrush] = useState({});
     const [isCelebrating, setIsCelebrating] = useState(false);
+
+    useFocusEffect(
+        useCallback(() => {
+            setCompleteBrush((prevState) => {
+                const currentTotal = Object.values(prevState).filter(Boolean).length;
+                // Se ao entrar na tela a meta já estava 100% preenchida, zera tudo para a nova semana!
+                if (currentTotal >= totalGoal) {
+                    return {};
+                }
+                return prevState; // Caso contrário, mantém como estava
+            });
+        }, [])
+    );
 
     const toggleCheck = (day, shiftId) => {
         const key = `${day}-${shiftId}`;
@@ -56,19 +70,23 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
                     <Ionicons name="chevron-back" size={28} color="#2C3E50" />
                 </TouchableOpacity>
-                <View style={styles.logoContainer}>
-                    <Text style={styles.logoText}>LOGO</Text>
+                {/* Agrupamos os botões da direita para mantê-los alinhados */}
+                <View style={styles.rightIconsGroup}>
+                    <TouchableOpacity onPress={() => navigation.navigate('StickerGallery')} style={styles.iconButton}>
+                        <FontAwesome5 name="book-open" size={22} color="#7F8C8D" />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
+                        <Ionicons name="home" size={26} color="#7F8C8D" />
+                    </TouchableOpacity>
                 </View>
-                <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
-                    <Ionicons name="home" size={26} color="#7F8C8D" />
-                </TouchableOpacity>
             </View>
 
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 <View style={styles.topSection}>
                     <Text style={styles.mainTitle}>Minhas Metas da Semana</Text>
                     <View style={styles.mascotPlaceholder}>
-                        <Text style={styles.mascotText}>[Área para o Mascote Incentivador]</Text>
+                        <Text style={styles.mascotText}> #todo Área para o Mascote Incentivador</Text>
                     </View>
                 </View>
 
@@ -164,6 +182,11 @@ const styles = StyleSheet.create({
     },
     iconButton: {
         padding: 5,
+    },
+    rightIconsGroup: { 
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        gap: 15 // Esse gap dá um espacinho entre o livro e a casinha
     },
     logoContainer: {
         backgroundColor: '#E0E0E0',
