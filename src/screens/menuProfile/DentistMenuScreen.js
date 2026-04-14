@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 const DentistMenuScreen = ({ navigation }) => {
-  
+
   const menuItems = [
     { id: '1', title: 'APLICAÇÃO TÓPICA DE FLÚOR EM CRIANÇAS' },
     { id: '2', title: 'ESCOVAÇÃO SUPERVISIONADA' },
@@ -14,7 +14,7 @@ const DentistMenuScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-    
+
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="chevron-back" size={28} color="#2C3E50" />
@@ -23,13 +23,13 @@ const DentistMenuScreen = ({ navigation }) => {
 
       <ScrollView style={styles.listContainer}>
         {menuItems.map((item) => (
-          <TouchableOpacity 
-            key={item.id} 
+          <TouchableOpacity
+            key={item.id}
             style={styles.menuItem}
             onPress={() => alert(`Abrindo: ${item.title}`)}
           >
             <Text style={styles.itemText}>{item.title}</Text>
-            <Ionicons name="chevron-forward" size={24} color="#7F8C8D" />
+            <Ionicons name="chevron-forward" size={24} color="#FFF" />
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -66,24 +66,32 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
-    borderTopWidth: 1,
-    borderTopColor: '#BDC3C7',
+    paddingHorizontal: 10, // Adiciona espaço nas laterais para os botões não colarem na tela
+    paddingTop: 10, // Um r
   },
   menuItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 20,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#BDC3C7',
-    backgroundColor: '#FFF',
+    paddingHorizontal: 10,
+    backgroundColor: '#63bcf7', // Fundo Azul
+    borderRadius: 15, // Bordas bem arredondadas
+    marginBottom: 15, // Espaço entre um botão e outro
+    // Sombrinha leve para dar a sensação de botão clicável (efeito 3D)
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   itemText: {
-    fontSize: 18,
-    color: '#34495E',
-    fontWeight: '500',
-  }
+    flex: 1, // Ajuda a não encavalar o texto com a seta
+    fontSize: 16,
+    color: '#FFF', // Texto Branco
+    fontWeight: 'bold', // Negrito fica melhor em fundos coloridos
+    marginRight: 10,
+  },
 });
 
 export default DentistMenuScreen;

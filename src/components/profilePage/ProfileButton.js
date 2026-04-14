@@ -5,7 +5,7 @@ const ProfileButton = ({ icon, tittle, onPress }) => {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
       <View style={styles.containerIcon}>
-        <FontAwesome5 name={icon} size={28} color="#7F8C8D" />
+        <FontAwesome5 name={icon} size={28} color="#ffffff" />
       </View>
       
       <Text style={styles.buttonText}>{tittle}</Text>
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFF',
+    backgroundColor: '#63bcf7',
     borderWidth: 2,
     borderColor: '#E0E0E0',
     borderRadius: 15,

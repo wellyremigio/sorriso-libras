@@ -3,36 +3,46 @@ import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FloatingBalloons from '../../components/animation/FloatingBalloons';
+import { BlurView } from 'expo-blur';
+
 
 const LessonScreen = ({ navigation, route }) => {
-  // 1. Recebendo os dados enviados pela tela anterior via route.params
   const { menuItems = [], initialIndex = 0 } = route.params || {};
 
-  // 2. Estados da tela
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [isCelebrating, setIsCelebrating] = useState(false);
+  const [showStickerPopup, setShowStickerPopup] = useState(false);
+  const [showFinishPopup, setShowFinishPopup] = useState(false);
 
-  // 3. Calculando o título atual e o progresso
   const totalSteps = menuItems.length > 0 ? menuItems.length : 1;
   const currentItem = menuItems[currentIndex] || { title: 'Carregando...' };
-  const [showStickerPopup, setShowStickerPopup] = useState(false);
 
   const handleNextStep = () => {
+    // 1. Mostra o pop-up do adesivo
     setShowStickerPopup(true);
+
+    // 2. Espera 1.5 segundos (1500 milissegundos)
     setTimeout(() => {
+      // 3. Esconde o adesivo
       setShowStickerPopup(false);
+      // 4. Inicia a festa dos balões
       setIsCelebrating(true);
     }, 1500);
   };
 
   const onAnimationComplete = () => {
-    setIsCelebrating(false); // Reseta a animação
+    setIsCelebrating(false);
 
     if (currentIndex < totalSteps - 1) {
-      setCurrentIndex(currentIndex + 1); // Pula pro próximo vídeo
+      setCurrentIndex(currentIndex + 1);
     } else {
-      navigation.goBack();
+      setShowFinishPopup(true);
     }
+  };
+
+  const handleFinishModule = () => {
+    setShowFinishPopup(false);
+    navigation.goBack();
   };
 
   return (
@@ -43,16 +53,11 @@ const LessonScreen = ({ navigation, route }) => {
           <Ionicons name="arrow-back" size={28} color="#7F8C8D" />
         </TouchableOpacity>
 
-        {/* <View style={styles.logoContainer}>
-          <Text style={styles.logoText}>LOGO</Text>
-        </View> */}
-
         <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
           <Ionicons name="home" size={26} color="#7F8C8D" />
         </TouchableOpacity>
       </View>
 
-      {/* Título Dinâmico recebido do Menu */}
       <View style={styles.titleContainer}>
         <Text style={styles.titleText}>{currentItem.title}</Text>
       </View>
@@ -67,7 +72,6 @@ const LessonScreen = ({ navigation, route }) => {
         </View>
       </View>
 
-      {/* Indicador de Passo Dinâmico */}
       <View style={styles.stepIndicatorContainer}>
         <Text style={styles.stepText}>Vídeo {currentIndex + 1}</Text>
         <Text style={styles.stepSubtitle} numberOfLines={1}>Aula Atual</Text>
@@ -80,9 +84,14 @@ const LessonScreen = ({ navigation, route }) => {
         </Text>
       </View>
 
-      <TouchableOpacity style={styles.nextButton} onPress={handleNextStep}>
+      {/* Botão Próximo - Desativado temporariamente enquanto a animação rola para evitar cliques duplos */}
+      <TouchableOpacity
+        style={styles.nextButton}
+        onPress={handleNextStep}
+        disabled={showStickerPopup || isCelebrating}
+      >
         <Text style={styles.nextButtonText}>
-          {currentIndex === totalSteps - 1 ? 'Finalizar' : 'Próximo Vídeo'}
+          {currentIndex === totalSteps - 1 ? 'FINALIZAR' : 'PRÓXIMO VÍDEO'}
         </Text>
       </TouchableOpacity>
 
@@ -98,19 +107,34 @@ const LessonScreen = ({ navigation, route }) => {
         ))}
       </View>
 
-      {/* A nossa festa de balões conectada ao botão Próximo */}
       <FloatingBalloons
         visible={isCelebrating}
         onComplete={onAnimationComplete}
       />
 
+      {/* Pop-up de Adesivo Flutuante */}
       {showStickerPopup && (
-        <View style={styles.stickerPopupOverlay}>
+        <BlurView intensity={40} tint="dark" style={styles.overlay}>
           <View style={styles.stickerPopupBox}>
-            <Text style={styles.stickerPopupTitle}>Você ganhou um adesivo!</Text>
+            <Text style={styles.stickerPopupTitle}>QUE LEGAL, VOCÊ GANHOU UM ADESIVO!</Text>
             <FontAwesome5 name="star" size={80} color="#F1C40F" solid />
           </View>
-        </View>
+        </BlurView>
+      )}
+
+      {/* Pop-up de Finalização do Módulo */}
+      {showFinishPopup && (
+        <BlurView intensity={70} tint="dark" style={styles.overlay}>
+          <View style={styles.finishPopupBox}>
+            <FontAwesome5 name="trophy" size={80} color="#F39C12" solid />
+            <Text style={styles.finishTitle}>Parabéns!</Text>
+            <Text style={styles.finishText}>Você completou todas as lições. Continue cuidando bem do seu sorriso!</Text>
+
+            <TouchableOpacity style={styles.finishButton} onPress={handleFinishModule}>
+              <Text style={styles.finishButtonText}>VOLTAR AO MENU</Text>
+            </TouchableOpacity>
+          </View>
+        </BlurView>
       )}
 
     </SafeAreaView>
@@ -120,7 +144,7 @@ const LessonScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F7FA'
+    backgroundColor: '#FFFBEF'
   },
 
   header: {
@@ -272,6 +296,73 @@ const styles = StyleSheet.create({
 
   activeDot: {
     backgroundColor: '#7F8C8D'
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject, // Força a camada a cobrir a tela do topo ao rodapé
+    justifyContent: 'center', // Centraliza verticalmente
+    alignItems: 'center', // Centraliza horizontalmente
+    zIndex: 1000,
+  },
+
+  // O adesivo já estava bom, apenas ajustei o nome para casar com o CSS
+  stickerPopupBox: {
+    backgroundColor: '#FFF',
+    padding: 30,
+    borderRadius: 20,
+    alignItems: 'center',
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+  },
+  stickerPopupTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#2C3E50',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+
+  // Pop-up de Finalização
+  finishPopupBox: {
+    backgroundColor: '#FFF',
+    padding: 30, // Aumentei um pouco o padding para o conteúdo respirar melhor
+    borderRadius: 20,
+    alignItems: 'center',
+    width: '85%',
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+  },
+  finishTitle: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    color: '#2C3E50',
+    marginTop: 15,
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  finishText: {
+    fontSize: 16,
+    color: '#7F8C8D',
+    textAlign: 'center',
+    marginBottom: 25,
+  },
+  finishButton: {
+    backgroundColor: '#2ECC71',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    width: '100%',
+    alignItems: 'center',
+  },
+  finishButtonText: {
+    color: '#FFF',
+    fontSize: 18,
+    fontWeight: 'bold',
   }
 });
 

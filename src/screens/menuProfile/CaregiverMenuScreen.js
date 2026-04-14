@@ -3,13 +3,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 const CaregiverMenuScreen = ({ navigation }) => {
-  
+
   const menuItems = [
-    { id: '1', title: 'Importância da supervisão da escovação e fio dental' },
-    { id: '2', title: 'Importância da dentição decídua e da dentição mista' },
-    { id: '3', title: 'Relação entre saúde bucal e saúde geral sistêmica' },
-    { id: '4', title: 'Alimentação e controle da cárie dentária' },
-    { id: '5', title: 'Importância da ida periódica ao dentista na infância'},
+    { id: '1', title: 'IMPORTÂNCIA DA SUPERVISÃO DA ESCOVAÇÃO E FIO DENTAL' },
+    { id: '2', title: 'IMPORTÂNCIA DA DENTIÇÃO DECÍDUA E DA DENTIÇÃO MISTA' },
+    { id: '3', title: 'RELAÇÃO ENTRE SAÚDE BUCAL E SAÚDE GERAL SISTÊMICA' },
+    { id: '4', title: 'ALIMENTAÇÃO E CONTROLE DA CÁRIE DENTÁRIA' },
+    { id: '5', title: 'IMPORTÂNCIA DA IDA PERIÓDICA AO DENTISTA NA INFÂNCIA' },
   ];
 
   return (
@@ -19,7 +19,7 @@ const CaregiverMenuScreen = ({ navigation }) => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="chevron-back" size={28} color="#2C3E50" />
         </TouchableOpacity>
-        
+
       </View>
 
       <View style={styles.titleContainer}>
@@ -28,16 +28,16 @@ const CaregiverMenuScreen = ({ navigation }) => {
 
       <ScrollView style={styles.listContainer}>
         {menuItems.map((item) => (
-          <TouchableOpacity 
-            key={item.id} 
+          <TouchableOpacity
+            key={item.id}
             style={styles.menuItem}
             onPress={() => alert(`Abrindo: ${item.title}`)}
           >
             <View style={styles.itemLeftContent}>
               <Text style={styles.itemText}>{item.title}</Text>
             </View>
-            
-            <Ionicons name="chevron-forward" size={24} color="#7F8C8D" />
+
+            <Ionicons name="chevron-forward" size={24} color="#FFF" />
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -49,7 +49,7 @@ const CaregiverMenuScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FAFAFA',
+    backgroundColor: '#FFFBEF',
   },
   header: {
     flexDirection: 'row',
@@ -94,20 +94,33 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
+    paddingHorizontal: 10,
+    paddingTop: 10,
   },
   menuItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 20,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#BDC3C7',
-    backgroundColor: '#FFF',
+    paddingHorizontal: 10,
+    backgroundColor: '#63bcf7', // Fundo Azul
+    borderRadius: 15, // Bordas bem arredondadas
+    marginBottom: 15, // Espaço entre um botão e outro
+    // Sombrinha leve para dar a sensação de botão clicável (efeito 3D)
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   itemLeftContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flex: 1, // Impede que o texto expulse a seta do botão
+    marginRight: 10, // Garante que o texto longo não grude na seta
+  },
+  itemText: {
+    fontSize: 16, // Tamanho reduzido levemente para encaixar melhor os textos de duas linhas
+    color: '#FFF',
+    fontWeight: 'bold',
   },
   itemIconPlaceholder: {
     width: 24,
@@ -116,11 +129,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginRight: 15,
   },
-  itemText: {
-    fontSize: 18,
-    color: '#34495E',
-    fontWeight: '500',
-  }
 });
 
 export default CaregiverMenuScreen;
