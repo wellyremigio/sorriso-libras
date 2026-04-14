@@ -27,11 +27,15 @@ const CaregiverMenuScreen = ({ navigation }) => {
       </View>
 
       <ScrollView style={styles.listContainer}>
-        {menuItems.map((item) => (
+        {menuItems.map((item, index) => (
           <TouchableOpacity
             key={item.id}
             style={styles.menuItem}
-            onPress={() => alert(`Abrindo: ${item.title}`)}
+            onPress={() => navigation.navigate('AdultLesson', {
+              menuItems: menuItems,
+              initialIndex: index,
+              profileType: 'caregiver',
+            })}
           >
             <View style={styles.itemLeftContent}>
               <Text style={styles.itemText}>{item.title}</Text>
@@ -83,8 +87,6 @@ const styles = StyleSheet.create({
   titleContainer: {
     paddingHorizontal: 20,
     paddingBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#BDC3C7',
   },
   mainTitle: {
     fontSize: 20,

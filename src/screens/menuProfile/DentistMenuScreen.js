@@ -21,12 +21,20 @@ const DentistMenuScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
+      <View style={styles.titleContainer}>
+        <Text style={styles.mainTitle}>CONHECENDO O CONSULTÓRIO</Text>
+      </View>
+
       <ScrollView style={styles.listContainer}>
-        {menuItems.map((item) => (
+        {menuItems.map((item, index) => (
           <TouchableOpacity
             key={item.id}
             style={styles.menuItem}
-            onPress={() => alert(`Abrindo: ${item.title}`)}
+            onPress={() => navigation.navigate('AdultLesson', {
+              menuItems: menuItems,
+              initialIndex: index,
+              profileType: 'dentist'
+            })}
           >
             <Text style={styles.itemText}>{item.title}</Text>
             <Ionicons name="chevron-forward" size={24} color="#FFF" />
@@ -41,7 +49,7 @@ const DentistMenuScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FAFAFA',
+    backgroundColor: '#FFFBEF',
   },
   header: {
     flexDirection: 'row',
@@ -57,6 +65,16 @@ const styles = StyleSheet.create({
   headerIcons: {
     flexDirection: 'row',
     gap: 5,
+  },
+  titleContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  mainTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#2C3E50',
+    textAlign: 'center',
   },
   squareIcon: {
     width: 20,

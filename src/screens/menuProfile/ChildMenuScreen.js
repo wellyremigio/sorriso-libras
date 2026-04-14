@@ -33,7 +33,7 @@ const ChildMenuScreen = ({ navigation }) => {
           <TouchableOpacity
             key={item.id}
             style={styles.menuItem}
-            onPress={() => navigation.navigate('Lesson', {
+            onPress={() => navigation.navigate('ChildLesson', {
               menuItems: menuItems,
               initialIndex: index,
             })}

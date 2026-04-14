@@ -5,8 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import FloatingBalloons from '../../components/animation/FloatingBalloons';
 import { BlurView } from 'expo-blur';
 
-
-const LessonScreen = ({ navigation, route }) => {
+const ChildLessonScreen = ({ navigation, route }) => {
   const { menuItems = [], initialIndex = 0 } = route.params || {};
 
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
@@ -18,14 +17,9 @@ const LessonScreen = ({ navigation, route }) => {
   const currentItem = menuItems[currentIndex] || { title: 'Carregando...' };
 
   const handleNextStep = () => {
-    // 1. Mostra o pop-up do adesivo
     setShowStickerPopup(true);
-
-    // 2. Espera 1.5 segundos (1500 milissegundos)
     setTimeout(() => {
-      // 3. Esconde o adesivo
       setShowStickerPopup(false);
-      // 4. Inicia a festa dos balões
       setIsCelebrating(true);
     }, 1500);
   };
@@ -366,4 +360,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default LessonScreen;
+export default ChildLessonScreen;
