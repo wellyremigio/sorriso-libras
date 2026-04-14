@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { useState } from 'react';
+import FloatingBalloons from '../../components/animation/FloatingBalloons';
 
 const WeeklyGoalsScreen = ({ navigation }) => {
     // Simulando dados do calendário
@@ -13,6 +14,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
     ];
 
     const [completedBush, setCompleteBrush] = useState({});
+    const [isCelebrating, setIsCelebrating ] = useState(false);
 
     const toggleCheck = (day, shiftId) => {
         const key = `${day}-${shiftId}`;
@@ -25,7 +27,26 @@ const WeeklyGoalsScreen = ({ navigation }) => {
     const totalCompleted = Object.values(completedBush).filter(Boolean).length;
     const totalGoal = 21;
 
-    const earnedStickersCount 
+    const earnedStickersCount = daysOfWeek.reduce((acc, day) => {
+        const isMorningDone = completedBush[`${day}-morning`];
+        const isAfternoonDone = completedBush[`${day}-afternoon`];
+        const isNightDone = completedBush[`${day}-night`];
+
+        if (isMorningDone && isAfternoonDone && isNightDone) {
+            return acc + 1;
+        }
+        return acc;
+    }, 0);
+
+    const stickerRewards = [
+        { icon: 'star', color: '#F1C40F' },
+        { icon: 'smile', color: '#3498DB' },
+        { icon: 'heart', color: '#E74C3C' },
+        { icon: 'award', color: '#9B59B6' },
+        { icon: 'medal', color: '#E67E22' },
+        { icon: 'crown', color: '#1ABC9C' },
+        { icon: 'trophy', color: '#F39C12' }
+    ];
 
     return (
         <SafeAreaView style={styles.container}>
@@ -49,7 +70,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                 <View style={styles.topSection}>
                     <Text style={styles.mainTitle}>Minhas Metas da Semana</Text>
                     <View style={styles.mascotPlaceholder}>
-                        <Text style={styles.mascotText}>[Área para o Mascote Incentivador]</Text>
+                        <Text style={styles.mascotText}>#Todo Área para o Mascote</Text>
                     </View>
                 </View>
 
@@ -84,8 +105,8 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                                         <TouchableOpacity
                                             style={[styles.checkbox, isChecked && styles.checkboxActive]}
                                             onPress={() => toggleCheck(day, shift.id)}
-                                            // activeOpacity={0.7}   
-                                        > 
+                                        // activeOpacity={0.7}   
+                                        >
                                             {isChecked && <Ionicons name="checkmark" size={16} color="#FFF" />}
                                         </TouchableOpacity>
                                     </View>
@@ -107,21 +128,35 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                 <View style={styles.rewardsSection}>
                     <Text style={styles.rewardsTitle}>Meus Adesivos Diários</Text>
                     <View style={styles.stickersContainer}>
-                        {/* Placeholders para os adesivos ganhos */}
-                        <View style={styles.stickerPlaceholder}><FontAwesome5 name="star" size={24} color="#F1C40F" /></View>
-                        <View style={styles.stickerPlaceholder}><FontAwesome5 name="smile" size={24} color="#3498DB" /></View>
-                        <View style={styles.stickerPlaceholder}><FontAwesome5 name="heart" size={24} color="#E74C3C" /></View>
-                        <View style={[styles.stickerPlaceholder, styles.stickerLocked]}><FontAwesome5 name="lock" size={16} color="#BDC3C7" /></View>
-                        <View style={[styles.stickerPlaceholder, styles.stickerLocked]}><FontAwesome5 name="lock" size={16} color="#BDC3C7" /></View>
+                        {stickerRewards.map((reward, index) => {
+                            const isUnlocked = index < earnedStickersCount;
+
+                            return (
+                                <View key={index} style={[styles.stickerPlaceholder, !isUnlocked && styles.stickerLocked]}>
+                                    {isUnlocked ? (
+                                        <FontAwesome5 name={reward.icon} size={20} color={reward.color} />
+                                    ) : (
+                                        <FontAwesome5 name="lock" size={14} color="#BDC3C7" />
+                                    )}
+                                </View>
+                            );
+                        })}
                     </View>
                 </View>
 
                 {/* Botão de Ação */}
-                <TouchableOpacity style={styles.actionButton} onPress={() => alert('Escovação registrada! 🎉')}>
-                    <Text style={styles.actionButtonText}>Concluir Escovação</Text>
+                <TouchableOpacity 
+                    style={styles.actionButton} 
+                    onPress={() => setIsCelebrating(true)}>
+                    <Text style={styles.actionButtonText}>CONCLUIR ESCOVAÇÃO</Text>
                 </TouchableOpacity>
 
             </ScrollView>
+
+            <FloatingBalloons
+                visible={isCelebrating}
+                onComplete={() => setIsCelebrating(false)}
+            />
         </SafeAreaView>
     );
 };
