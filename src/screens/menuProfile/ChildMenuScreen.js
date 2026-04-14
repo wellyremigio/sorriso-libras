@@ -20,20 +20,23 @@ const ChildMenuScreen = ({ navigation }) => {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate('WeeklyGoals')} style={styles.rewardButton}>
-          <FontAwesome5 name="star" size={24} color="F1C40F"/>
+          <FontAwesome5 name="star" size={24} color="#F1C40F"/>
         </TouchableOpacity>
       </View>
 
       <View style={styles.titleContainer}>
-        <Text style={styles.mainTitle}>Aprenda a Cuidar dos Seus Dentes!</Text>
+        <Text style={styles.mainTitle}>APRENDA A CUIDAR DE SEUS DENTES!</Text>
       </View>
 
       <ScrollView style={styles.listContainer}>
-        {menuItems.map((item) => (
+        {menuItems.map((item, index) => (
           <TouchableOpacity
             key={item.id}
             style={styles.menuItem}
-            onPress={() => navigation.navigate('Lesson')}
+            onPress={() => navigation.navigate('Lesson', {
+              menuItems: menuItems,
+              initialIndex: index,
+            })}
           >
             <Text style={styles.itemText}>{item.title}</Text>
             <Ionicons name="chevron-forward" size={24} color="#7F8C8D" />
@@ -63,7 +66,6 @@ const styles = StyleSheet.create({
   },
   rewardButton:{
     padding: 5,
-    // Adicionamos um leve fundo circular para dar destaque ao ícone
     backgroundColor: '#FEF9E7',
     borderRadius: 20,
     width: 40,

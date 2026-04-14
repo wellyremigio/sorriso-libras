@@ -13,8 +13,8 @@ const WeeklyGoalsScreen = ({ navigation }) => {
         { id: 'night', title: 'Noite', icon: 'moon' },
     ];
 
-    const [completedBush, setCompleteBrush] = useState({});
-    const [isCelebrating, setIsCelebrating ] = useState(false);
+    const [completedBrush, setCompleteBrush] = useState({});
+    const [isCelebrating, setIsCelebrating] = useState(false);
 
     const toggleCheck = (day, shiftId) => {
         const key = `${day}-${shiftId}`;
@@ -24,13 +24,13 @@ const WeeklyGoalsScreen = ({ navigation }) => {
         }));
     };
 
-    const totalCompleted = Object.values(completedBush).filter(Boolean).length;
+    const totalCompleted = Object.values(completedBrush).filter(Boolean).length;
     const totalGoal = 21;
 
     const earnedStickersCount = daysOfWeek.reduce((acc, day) => {
-        const isMorningDone = completedBush[`${day}-morning`];
-        const isAfternoonDone = completedBush[`${day}-afternoon`];
-        const isNightDone = completedBush[`${day}-night`];
+        const isMorningDone = completedBrush[`${day}-morning`];
+        const isAfternoonDone = completedBrush[`${day}-afternoon`];
+        const isNightDone = completedBrush[`${day}-night`];
 
         if (isMorningDone && isAfternoonDone && isNightDone) {
             return acc + 1;
@@ -54,7 +54,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
             {/* Header Clássico */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
-                    <Ionicons name="arrow-back" size={28} color="#7F8C8D" />
+                    <Ionicons name="chevron-back" size={28} color="#2C3E50" />
                 </TouchableOpacity>
                 <View style={styles.logoContainer}>
                     <Text style={styles.logoText}>LOGO</Text>
@@ -65,49 +65,41 @@ const WeeklyGoalsScreen = ({ navigation }) => {
             </View>
 
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-
-                {/* Título e Mascote Placeholder */}
                 <View style={styles.topSection}>
                     <Text style={styles.mainTitle}>Minhas Metas da Semana</Text>
                     <View style={styles.mascotPlaceholder}>
-                        <Text style={styles.mascotText}>#Todo Área para o Mascote</Text>
+                        <Text style={styles.mascotText}>[Área para o Mascote Incentivador]</Text>
                     </View>
                 </View>
 
-                {/* Card do Calendário */}
                 <View style={styles.calendarCard}>
                     <Text style={styles.goalText}>✨ Meta: 3x ao dia ✨</Text>
 
-                    {/* Cabeçalho dos Dias da Semana */}
                     <View style={styles.calendarHeaderRow}>
-                        <View style={styles.shiftColumnHeader} /> {/* Espaço vazio para alinhar com os ícones */}
+                        <View style={styles.shiftColumnHeader} />
                         {daysOfWeek.map((day, index) => (
-                            <View key={index} style={styles.dayHeaderCell}>
+                            <View key={`header-${index}`} style={styles.dayHeaderCell}>
                                 <Text style={styles.dayHeaderText}>{day}</Text>
                             </View>
                         ))}
                     </View>
 
-                    {/* Linhas dos Turnos (Manhã, Tarde, Noite) */}
                     {brushingShifts.map((shift) => (
                         <View key={shift.id} style={styles.calendarRow}>
-                            {/* Ícone do turno na primeira coluna */}
                             <View style={styles.shiftIconCell}>
                                 <FontAwesome5 name={shift.icon} size={16} color="#7F8C8D" />
                             </View>
 
-                            {/* Checkboxes para cada dia da semana */}
                             {daysOfWeek.map((day, index) => {
                                 const key = `${day}-${shift.id}`;
-                                const isChecked = !!completedBush[key];
+                                const isChecked = !!completedBrush[key];
                                 return (
-                                    <View key={`${shift.id}-${index}`} style={styles.checkCell}>
+                                    <View key={key} style={styles.checkCell}>
                                         <TouchableOpacity
                                             style={[styles.checkbox, isChecked && styles.checkboxActive]}
                                             onPress={() => toggleCheck(day, shift.id)}
-                                        // activeOpacity={0.7}   
                                         >
-                                            {isChecked && <Ionicons name="checkmark" size={16} color="#FFF" />}
+                                            {isChecked ? <Ionicons name="checkmark" size={16} color="#FFF" /> : null}
                                         </TouchableOpacity>
                                     </View>
                                 );
@@ -116,7 +108,6 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                     ))}
                 </View>
 
-                {/* Barra de Progresso e Texto */}
                 <View style={styles.progressSection}>
                     <Text style={styles.progressText}>{totalCompleted}/{totalGoal} escovações cumpridas</Text>
                     <View style={styles.progressBarBackground}>
@@ -124,15 +115,13 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                     </View>
                 </View>
 
-                {/* Área de Recompensas (Adesivos) */}
                 <View style={styles.rewardsSection}>
                     <Text style={styles.rewardsTitle}>Meus Adesivos Diários</Text>
                     <View style={styles.stickersContainer}>
                         {stickerRewards.map((reward, index) => {
                             const isUnlocked = index < earnedStickersCount;
-
                             return (
-                                <View key={index} style={[styles.stickerPlaceholder, !isUnlocked && styles.stickerLocked]}>
+                                <View key={`sticker-${index}`} style={[styles.stickerPlaceholder, !isUnlocked && styles.stickerLocked]}>
                                     {isUnlocked ? (
                                         <FontAwesome5 name={reward.icon} size={20} color={reward.color} />
                                     ) : (
@@ -144,18 +133,17 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                     </View>
                 </View>
 
-                {/* Botão de Ação */}
-                <TouchableOpacity 
-                    style={styles.actionButton} 
-                    onPress={() => setIsCelebrating(true)}>
+                <TouchableOpacity style={styles.actionButton} onPress={() => setIsCelebrating(true)}>
                     <Text style={styles.actionButtonText}>CONCLUIR ESCOVAÇÃO</Text>
                 </TouchableOpacity>
-
             </ScrollView>
 
             <FloatingBalloons
                 visible={isCelebrating}
-                onComplete={() => setIsCelebrating(false)}
+                onComplete={() => {
+                    setIsCelebrating(false);
+                    navigation.navigate('Home');
+                }}
             />
         </SafeAreaView>
     );
