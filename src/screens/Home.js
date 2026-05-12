@@ -1,86 +1,177 @@
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome5 } from '@expo/vector-icons';
 import ProfileButton from '../components/profilePage/ProfileButton';
 
 const Home = ({ navigation }) => {
+
   return (
-    <SafeAreaView style={styles.container}>
+    <ImageBackground
+      source={require('../assets/imagem_fundo.png')}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={styles.container}>
 
-      <View style={styles.containerLogo}>
-        <Image
-          source={require('../assets/logo.png')}
-          style={styles.imageLogo}
-          resizeMode="contain"
-        />
-      </View>
+        <View style={styles.containerLogo}>
+          <Image
+            source={require('../assets/criancas_sorrindo_logo.png')}
+            style={styles.imageLogo}
+            resizeMode="contain"
+          />
+        </View>
 
-      <Text style={styles.tittle}>Quem está usando o app?</Text>
+        <Text style={styles.title}>Quem está usando o aplicativo?</Text>
 
-      {/* Botões usando o componente reutilizável */}
-      <View style={styles.containerButton}>
-        <ProfileButton
-          icon="tooth"
-          tittle="SOU DENTISTA"
-          onPress={() => navigation.navigate('DentistMenu')}
-        />
-        <ProfileButton
-          icon="child"
-          tittle="  SOU CRIANÇA"
-          onPress={() => navigation.navigate('ChildMenu')}
-        />
-        <ProfileButton
-          icon="hand-holding-heart"
-          tittle="SOU CUIDADOR"
-          onPress={() => navigation.navigate('CaregiverMenu')}
-        />
-      </View>
-    </SafeAreaView>
+        <View style={styles.containerButton}>
+          <TouchableOpacity
+            style={[styles.button, styles.btnDentist]}
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate('DentistMenu')}
+          >
+            <View style={styles.iconWrapper}>
+              <Image
+                source={require('../assets/estetoscopio_img.png')}
+                style={styles.buttonIcon}
+                resizeMode="contain"
+              />
+            </View>
+            <Text style={styles.buttonText}>Sou Dentista</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, styles.btnChild]}
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate('ChildMenu')}
+          >
+            <View style={styles.iconWrapper}>
+              <Image 
+                source={require('../assets/criancas_img.png')} 
+                style={styles.buttonIcon}
+                resizeMode="contain"
+              />
+            </View>
+            <Text style={styles.buttonText}>Sou Criança</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, styles.btnCaregiver]}
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate('CaregiverMenu')}
+          >
+            <View style={styles.iconWrapper}>
+              <Image 
+                source={require('../assets/cuidador_img.png')} 
+                style={styles.buttonIcon}
+                resizeMode="contain"
+                />
+            </View>
+            <Text style={styles.buttonText}>Sou Cuidador</Text>
+
+          </TouchableOpacity>
+
+        </View>
+      </SafeAreaView>
+    </ImageBackground>
   );
 }
 
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#FFFBEF',
-    paddingHorizontal: 20,
+    paddingHorizontal: 24, // Maior respiro lateral
     justifyContent: 'space-between',
   },
   containerLogo: {
-    marginTop: 60,
+    marginTop: 48,
     alignItems: 'center',
     width: '100%',
-    height: 120,
+    height: 160, // Aumentei um pouco para acomodar bem a ilustração das crianças
   },
   imageLogo: {
-    width: '80%', // Ajuste a largura conforme o design
+    width: '90%',
     height: '100%',
   },
-  tittle: {
-    fontSize: 22,
+  title: {
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#2C3E50',
+    color: '#4A4A4A', // Um cinza um pouco mais quente para combinar com o fundo
     textAlign: 'center',
-    marginBottom: 20,
+    marginVertical: 16,
+    lineHeight: 32, // Melhora a leitura da quebra de linha
   },
   containerButton: {
     width: '100%',
+    gap: 16, // Distância uniforme entre os botões
+    paddingHorizontal: 8,
   },
+
+  // Estilo Base dos Botões (O segredo do efeito 3D)
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 72,
+    borderRadius: 36,
+    paddingHorizontal: 16,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.4)', // Reflexo claro na borda superior
+    borderBottomWidth: 6, // Sombra inferior para dar profundidade (Pílula 3D)
+  },
+
+  // Cores Específicas de cada Botão
+  btnDentist: {
+    backgroundColor: '#74C4CD',
+    borderBottomColor: '#50A2AC', // Tom mais escuro para a sombra
+  },
+  btnChild: {
+    backgroundColor: '#F3A1B5',
+    borderBottomColor: '#D67C92',
+  },
+  btnCaregiver: {
+    backgroundColor: '#F5B8CA',
+    borderBottomColor: '#D994A7',
+  },
+
+  iconWrapper: {
+    width: 48,
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  buttonIcon: {
+    width: '100%',
+    height: '100%',
+  },
+  buttonText: {
+    fontSize: 20,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    textShadowColor: 'rgba(0, 0, 0, 0.1)', // Sombra leve no texto para destacar
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+
   containerPagination: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: 30,
+    marginBottom: 40,
+    gap: 8,
   },
   point: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#D5D8DC',
-    marginHorizontal: 5,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: 'rgba(0, 0, 0, 0.15)', // Bolinhas inativas mais sutis
   },
   activePoint: {
-    backgroundColor: '#7F8C8D',
+    backgroundColor: '#74C4CD', // Cor puxada para a paleta principal
   },
 });
 
