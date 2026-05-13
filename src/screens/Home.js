@@ -76,7 +76,6 @@ const Home = ({ navigation }) => {
   );
 }
 
-
 const styles = StyleSheet.create({
   background: {
     flex: 1,
