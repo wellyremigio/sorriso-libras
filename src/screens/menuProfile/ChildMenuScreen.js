@@ -5,17 +5,37 @@ import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 const ChildMenuScreen = ({ navigation }) => {
 
   const menuItems = [
-    { id: '1', title: 'Como escovar os dentes e usar fio dental de forma correta' },
-    { id: '2', title: 'Uso de fio dental na infância' },
-    { id: '3', title: 'Alimentos saudáveis para os dentes e que fazem mal para os dentes' },
-    { id: '4', title: 'Creme dental ideal e quantidade de creme dental' },
-    { id: '5', title: 'Como escolher a escova adequada e realizar a troca da escova' },
+    {
+      id: '1',
+      title: 'Como escovar os dentes e usar fio dental de forma correta',
+      image: require('../../assets/tooth_dental_menu_child.png'),
+    },
+    {
+      id: '2',
+      title: 'Uso de fio dental na infância',
+      image: require('../../assets/dental_floss_menu_child.png'),
+    },
+    {
+      id: '3',
+      title: 'Alimentos saudáveis para os dentes e que fazem mal para os dentes',
+      image: require('../../assets/food_menu_child.png'),
+    },
+    {
+      id: '4',
+      title: 'Creme dental ideal e quantidade de creme dental',
+      image: require('../../assets/dental_pasta_menu_child.png'),
+    },
+    {
+      id: '5',
+      title: 'Como escolher a escova adequada e realizar a troca da escova',
+      image: require('../../assets/toothbrush_menu_child.png'),
+    },
   ];
   return (
     <ImageBackground
       source={require('../../assets/background_menu_child.png')}
       style={styles.background}
-      resizeMode="cover"    
+      resizeMode="cover"
     >
       <SafeAreaView style={styles.container}>
 
@@ -41,19 +61,19 @@ const ChildMenuScreen = ({ navigation }) => {
           {menuItems.map((item, index) => (
             <TouchableOpacity
               key={item.id}
-              style={styles.menuItem}
+              style={[styles.menuItem, styles.btnColor]}
               onPress={() => navigation.navigate('ChildLesson', {
                 menuItems: menuItems,
                 initialIndex: index,
               })}
             >
               <View style={styles.imagePlaceholder}>
-                {/* Quando tiver as imagens, substitua esta View por:
-                  <Image source={require('../../assets/sua_imagem.png')} style={styles.itemImage} /> 
-                */}
+                <Image source={item.image} style={styles.itemImage} />
               </View>
 
-              <Text style={styles.itemText}>{item.title}</Text>
+              <View style={styles.textContainer}>
+                <Text style={styles.itemText}>{item.title}</Text>
+              </View>
               <Ionicons name="chevron-forward" size={24} color="#FFF" />
             </TouchableOpacity>
           ))}
@@ -73,7 +93,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'transparent', // Garante que o fundo apareça
-    
   },
   header: {
     flexDirection: 'row',
@@ -82,6 +101,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 10,
     paddingBottom: 0,
+    zIndex: 10,
   },
   iconCircle: {
     width: 44,
@@ -114,7 +134,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
   },
-  
   // Estilo principal dos botões da lista (Wireframe)
   menuItem: {
     flexDirection: 'row',
@@ -126,38 +145,46 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderWidth: 2,
     borderColor: '#F0E4E7', // Borda rosinha/cinza bem suave
-    // Sombra para dar profundidade
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
   },
-
-  // Área reservada para a imagem
   imagePlaceholder: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#EAECEE', // Cinza claro enquanto não tem a imagem
-    marginRight: 15,
+    width: 80,
+    height: 80,
+    marginRight: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  
+  btnColor: {
+    backgroundColor: '#f1becb',
+    borderColor: '#e77e98',
+  },
   // Estilo para quando você colocar a tag <Image />
   itemImage: {
-    width: 50,
-    height: 50,
+    width: '100%',
+    height: '100%',
     borderRadius: 25,
     resizeMode: 'contain',
   },
 
   // Texto adaptado para o novo contraste
-  itemText: {
+  textContainer: {
     flex: 1,
-    fontSize: 14,
+    //backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+    //backgroundColor: 'rgba(177, 139, 139, 0.85)',
+  },
+  itemText: {
+    fontSize: 17,
     color: '#4E342E', // Texto em tom quente e escuro
     fontWeight: '700',
-    marginRight: 10,
+    //backgroundColor: 'rgba(143, 13, 13, 0.85)',
   },
   containerLogo: {
     marginTop: -50,
