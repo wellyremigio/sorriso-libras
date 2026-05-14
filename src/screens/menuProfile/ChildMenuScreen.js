@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: 'transparent', // Garante que o fundo apareça
+    backgroundColor: 'transparent',
   },
   header: {
     flexDirection: 'row',
@@ -107,14 +107,14 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: 'rgba(255, 255, 255, 0.6)', // Fundo translúcido para os botões do topo
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1.5,
     borderColor: '#E8D4D8',
   },
   titleContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.75)', // Efeito pílula translúcida
+    backgroundColor: 'rgba(255, 255, 255, 0.75)',
     marginHorizontal: 30,
     paddingVertical: 12,
     paddingHorizontal: 20,
@@ -127,24 +127,23 @@ const styles = StyleSheet.create({
   mainTitle: {
     fontSize: 16,
     fontWeight: '900',
-    color: '#6D4C41', // Marrom escuro/quente
+    color: '#6D4C41',
     textAlign: 'center',
   },
   listContainer: {
     flex: 1,
     paddingHorizontal: 20,
   },
-  // Estilo principal dos botões da lista (Wireframe)
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.85)', // Quase branco, levemente transparente
-    borderRadius: 30, // Bem arredondado
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    borderRadius: 30,
     paddingVertical: 8,
     paddingHorizontal: 10,
     marginBottom: 16,
     borderWidth: 2,
-    borderColor: '#F0E4E7', // Borda rosinha/cinza bem suave
+    borderColor: '#F0E4E7',
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -162,29 +161,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#f1becb',
     borderColor: '#e77e98',
   },
-  // Estilo para quando você colocar a tag <Image />
   itemImage: {
     width: '100%',
     height: '100%',
     borderRadius: 25,
     resizeMode: 'contain',
   },
-
-  // Texto adaptado para o novo contraste
   textContainer: {
     flex: 1,
-    //backgroundColor: 'rgba(255, 255, 255, 0.85)',
     justifyContent: 'center',
     paddingVertical: 8,
     paddingHorizontal: 10,
     borderRadius: 20,
-    //backgroundColor: 'rgba(177, 139, 139, 0.85)',
   },
   itemText: {
     fontSize: 17,
-    color: '#4E342E', // Texto em tom quente e escuro
+    color: '#4E342E',
     fontWeight: '700',
-    //backgroundColor: 'rgba(143, 13, 13, 0.85)',
   },
   containerLogo: {
     marginTop: -50,
