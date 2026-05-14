@@ -78,7 +78,6 @@ const ChildMenuScreen = ({ navigation }) => {
             </TouchableOpacity>
           ))}
         </ScrollView>
-
       </SafeAreaView>
     </ImageBackground>
   );
