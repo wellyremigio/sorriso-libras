@@ -67,7 +67,7 @@ const ChildMenuScreen = ({ navigation }) => {
                 initialIndex: index,
               })}
             >
-              <View style={styles.imagePlaceholder}>
+              <View style={styles.imageContainer}>
                 <Image source={item.image} style={styles.itemImage} />
               </View>
 
@@ -97,9 +97,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     paddingTop: 10,
-    paddingBottom: 0,
+    paddingBottom: 20,
     zIndex: 10,
   },
   iconCircle: {
@@ -123,12 +123,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 25,
   },
-  mainTitle: {
-    fontSize: 16,
-    fontWeight: '900',
-    color: '#6D4C41',
-    textAlign: 'center',
-  },
   listContainer: {
     flex: 1,
     paddingHorizontal: 20,
@@ -149,7 +143,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
   },
-  imagePlaceholder: {
+  imageContainer: {
     width: 80,
     height: 80,
     marginRight: 6,

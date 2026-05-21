@@ -54,7 +54,7 @@ const Home = ({ navigation }) => {
             <Text style={styles.buttonText}>Sou Criança</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={[styles.button, styles.btnCaregiver]}
             activeOpacity={0.8}
             onPress={() => navigation.navigate('CaregiverMenu')}
@@ -68,7 +68,7 @@ const Home = ({ navigation }) => {
             </View>
             <Text style={styles.buttonText}>Sou Cuidador</Text>
 
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
         </View>
       </SafeAreaView>
