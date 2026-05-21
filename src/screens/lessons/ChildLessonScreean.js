@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -42,71 +42,90 @@ const ChildLessonScreen = ({ navigation, route }) => {
   return (
     <SafeAreaView style={styles.container}>
 
-      <View style={styles.header}>
+      <View style={styles.topHeader}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
-          <Ionicons name="arrow-back" size={28} color="#7F8C8D" />
+          <Ionicons name="arrow-back" size={28} color="#5D4037" />
         </TouchableOpacity>
 
+        <View style={styles.logoPlaceholder}>
+          <Image source={require('../../assets/upper_logo.png')} style={styles.logoImage} resizeMode="contain" />
+        </View>
+
         <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
-          <Ionicons name="home" size={26} color="#7F8C8D" />
+          <Ionicons name="home" size={26} color="#5D4037" />
         </TouchableOpacity>
       </View>
 
-      <View style={styles.titleContainer}>
+      <View style={styles.titleBanner}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#7F8C8D" style={styles.titleArrow} />
+        </TouchableOpacity>
         <Text style={styles.titleText}>{currentItem.title}</Text>
       </View>
 
-      <View style={styles.videoContainer}>
-        <View style={styles.videoPlaceholder}>
-          <FontAwesome5 name="play-circle" size={50} color="#BDC3C7" />
-          <Text style={styles.videoTime}>0:00 / 1:30</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+
+        <View style={styles.videoCard}>
+          <View style={styles.videoMainArea}>
+            <View style={styles.playButtonCircle}>
+              <Ionicons name="play" size={32} color="#FFF" style={{ marginLeft: 4 }} />
+            </View>
+          </View>
+
+          <View style={styles.librasWindow}>
+            <Ionicons name="person" size={40} color="#BDC3C7" />
+          </View>
+
+          <View style={styles.videoControls}>
+            <Ionicons name="play" size={16} color="#FFF" />
+            <Text style={styles.videoTime}>0,7%</Text>
+            <View style={styles.progressBarTrack}>
+              <View style={styles.progressBarFill} />
+              <View style={styles.progressThumb} />
+            </View>
+            <Ionicons name="options" size={16} color="#FFF" />
+          </View>
         </View>
-        <View style={styles.librasContainer}>
-          <FontAwesome5 name="hands-helping" size={30} color="#7F8C8D" />
+
+        <View style={styles.stepIndicatorContainer}>
+          <Text style={styles.stepText}>Passo {currentIndex + 1}  {currentItem.title}</Text>
+          <Text style={styles.stepTextRight}>{currentIndex + 1}/{totalSteps}</Text>
         </View>
-      </View>
 
-      <View style={styles.stepIndicatorContainer}>
-        <Text style={styles.stepText}>Vídeo {currentIndex + 1}</Text>
-        <Text style={styles.stepSubtitle} numberOfLines={1}>Aula Atual</Text>
-        <Text style={styles.stepText}>{currentIndex + 1} / {totalSteps}</Text>
-      </View>
+        <View style={styles.explanationBox}>
+          <Text style={styles.explanationText}>
+            Escove os dentes com movimentos suaves por 2 minutos.
+          </Text>
+        </View>
 
-      <View style={styles.explanationBox}>
-        <Text style={styles.explanationText}>
-          Preste bastante atenção ao vídeo acima e acompanhe as explicações em Libras para cuidar super bem dos seus dentes!
-        </Text>
-      </View>
+        <TouchableOpacity
+          style={styles.nextButton}
+          onPress={handleNextStep}
+          disabled={showStickerPopup || isCelebrating}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.nextButtonText}>
+            {currentIndex === totalSteps - 1 ? 'Finalizar' : 'Próximo'}
+          </Text>
+        </TouchableOpacity>
 
-      {/* Botão Próximo - Desativado temporariamente enquanto a animação rola para evitar cliques duplos */}
-      <TouchableOpacity
-        style={styles.nextButton}
-        onPress={handleNextStep}
-        disabled={showStickerPopup || isCelebrating}
-      >
-        <Text style={styles.nextButtonText}>
-          {currentIndex === totalSteps - 1 ? 'FINALIZAR' : 'PRÓXIMO VÍDEO'}
-        </Text>
-      </TouchableOpacity>
-
-      <View style={styles.dotsContainer}>
-        {menuItems.map((_, index) => (
-          <View
-            key={index}
-            style={[
-              styles.dot,
-              currentIndex === index && styles.activeDot
-            ]}
-          />
-        ))}
-      </View>
+        <View style={styles.dotsContainer}>
+          {menuItems.map((_, index) => (
+            <View
+              key={index}
+              style={[
+                styles.dot,
+                currentIndex === index && styles.activeDot
+              ]}
+            />
+          ))}
+        </View>
+      </ScrollView>
 
       <FloatingBalloons
         visible={isCelebrating}
         onComplete={onAnimationComplete}
       />
-
-      {/* Pop-up de Adesivo Flutuante */}
       {showStickerPopup && (
         <BlurView intensity={40} tint="dark" style={styles.overlay}>
           <View style={styles.stickerPopupBox}>
@@ -116,14 +135,12 @@ const ChildLessonScreen = ({ navigation, route }) => {
         </BlurView>
       )}
 
-      {/* Pop-up de Finalização do Módulo */}
       {showFinishPopup && (
         <BlurView intensity={70} tint="dark" style={styles.overlay}>
           <View style={styles.finishPopupBox}>
             <FontAwesome5 name="trophy" size={80} color="#F39C12" solid />
             <Text style={styles.finishTitle}>Parabéns!</Text>
             <Text style={styles.finishText}>Você completou todas as lições. Continue cuidando bem do seu sorriso!</Text>
-
             <TouchableOpacity style={styles.finishButton} onPress={handleFinishModule}>
               <Text style={styles.finishButtonText}>VOLTAR AO MENU</Text>
             </TouchableOpacity>
@@ -138,226 +155,164 @@ const ChildLessonScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFBEF'
+    backgroundColor: '#FFF5F7'
   },
-
-  header: {
+  topHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 15,
     paddingTop: 10,
-    paddingBottom: 15
+    paddingBottom: 10
   },
-
-  iconButton: {
-    padding: 5
-  },
-
-  logoContainer: {
-    backgroundColor: '#E0E0E0',
-    paddingVertical: 8,
-    paddingHorizontal: 40,
-    borderRadius: 20
-  },
-
-  logoText: {
-    fontWeight: 'bold',
-    color: '#7F8C8D'
-  },
-
-  titleContainer: {
-    backgroundColor: '#fcf15b',
-    paddingVertical: 12,
+  iconButton: { padding: 5 },
+  logoPlaceholder: {
+    flex: 1,
+    height: 40,
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 15
   },
-
+  logoImage: { width: 300, height: 200 },
+  titleBanner: {
+    backgroundColor: '#F0E4E7',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  titleArrow: { marginRight: 15 },
   titleText: {
-    fontSize: 16,
+    flex: 1,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#2C3E50',
-    textAlign: 'center'
+    color: '#4E342E',
+    textAlign: 'center',
+    marginRight: 35,
   },
-
-  videoContainer: {
-    margin: 15,
-    height: 200,
-    backgroundColor: '#D5D8DC',
-    borderRadius: 10,
+  scrollContent: { paddingBottom: 30 },
+  videoCard: {
+    marginHorizontal: 20,
+    height: 220,
+    backgroundColor: '#A2C4C9',
+    borderRadius: 20,
     overflow: 'hidden',
     position: 'relative',
+    borderWidth: 3,
+    borderColor: '#8CAAB0'
+  },
+  videoMainArea: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#BDC3C7'
   },
-
-  videoTime: {
-    position: 'absolute',
-    bottom: 10,
-    left: 10,
-    color: '#FFF',
-    fontWeight: 'bold'
+  playButtonCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-
-  librasContainer: {
+  librasWindow: {
     position: 'absolute',
-    bottom: 10,
+    bottom: 40,
     right: 10,
     width: 80,
-    height: 80,
-    backgroundColor: '#EAEDED',
-    borderRadius: 8,
+    height: 90,
+    backgroundColor: '#ECF0F1',
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#FFF',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#BDC3C7'
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
   },
-
+  videoControls: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    height: 30,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    gap: 8,
+  },
+  videoTime: { color: '#FFF', fontSize: 12, fontWeight: 'bold' },
+  progressBarTrack: {
+    flex: 1,
+    height: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    borderRadius: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  progressBarFill: {
+    width: '30%',
+    height: '100%',
+    backgroundColor: '#FFF',
+    borderRadius: 2,
+  },
+  progressThumb: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#FFF',
+    marginLeft: -5,
+  },
   stepIndicatorContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#3498DB',
-    marginHorizontal: 15,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    backgroundColor: '#E58B9D',
+    marginHorizontal: 20,
+    marginTop: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     borderRadius: 25
   },
-
-  stepText: {
-    fontWeight: 'bold',
-    color: '#FFF',
-    fontSize: 16
-  },
-
-  stepSubtitle: {
-    flex: 1,
-    textAlign: 'center',
-    color: '#FFF',
-    fontSize: 16,
-    paddingHorizontal: 10
-  },
-
+  stepText: { fontWeight: 'bold', color: '#FFF', fontSize: 16, flex: 1 },
+  stepTextRight: { fontWeight: 'bold', color: '#FFF', fontSize: 16 },
   explanationBox: {
-    backgroundColor: '#FFF',
-    marginHorizontal: 15,
+    backgroundColor: '#FDFBF7',
+    marginHorizontal: 20,
     marginTop: 15,
     padding: 20,
     borderRadius: 15,
     borderWidth: 2,
-    borderColor: '#E0E0E0',
-    minHeight: 100,
+    borderColor: '#E8D4D8',
     justifyContent: 'center'
   },
-
-  explanationText: {
-    fontSize: 16,
-    color: '#34495E',
-    textAlign: 'center'
-  },
-
+  explanationText: { fontSize: 16, color: '#4E342E', textAlign: 'center', fontWeight: '500' },
   nextButton: {
-    backgroundColor: '#2ECC71',
-    marginHorizontal: 15,
-    marginTop: 20,
-    paddingVertical: 15,
-    borderRadius: 25,
-    alignItems: 'center'
-  },
-
-  nextButtonText: {
-    color: '#FFF',
-    fontSize: 20,
-    fontWeight: 'bold'
-  },
-
-  dotsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    backgroundColor: '#F3A1B5',
+    marginHorizontal: 20,
+    marginTop: 25,
+    paddingVertical: 18,
+    borderRadius: 35,
     alignItems: 'center',
-    marginTop: 20
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+    borderBottomWidth: 6,
+    borderBottomColor: '#D67C92',
   },
-
-  dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#D5D8DC',
-    marginHorizontal: 5
-  },
-
-  activeDot: {
-    backgroundColor: '#7F8C8D'
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject, // Força a camada a cobrir a tela do topo ao rodapé
-    justifyContent: 'center', // Centraliza verticalmente
-    alignItems: 'center', // Centraliza horizontalmente
-    zIndex: 1000,
-  },
-
-  // O adesivo já estava bom, apenas ajustei o nome para casar com o CSS
-  stickerPopupBox: {
-    backgroundColor: '#FFF',
-    padding: 30,
-    borderRadius: 20,
-    alignItems: 'center',
-    elevation: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-  },
-  stickerPopupTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#2C3E50',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-
-  // Pop-up de Finalização
-  finishPopupBox: {
-    backgroundColor: '#FFF',
-    padding: 30, // Aumentei um pouco o padding para o conteúdo respirar melhor
-    borderRadius: 20,
-    alignItems: 'center',
-    width: '85%',
-    elevation: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-  },
-  finishTitle: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: '#2C3E50',
-    marginTop: 15,
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  finishText: {
-    fontSize: 16,
-    color: '#7F8C8D',
-    textAlign: 'center',
-    marginBottom: 25,
-  },
-  finishButton: {
-    backgroundColor: '#2ECC71',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 25,
-    width: '100%',
-    alignItems: 'center',
-  },
-  finishButtonText: {
-    color: '#FFF',
-    fontSize: 18,
-    fontWeight: 'bold',
-  }
+  nextButtonText: { color: '#FFF', fontSize: 22, fontWeight: 'bold', textShadowColor: 'rgba(0, 0, 0, 0.1)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 },
+  dotsContainer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 25 },
+  dot: { width: 12, height: 12, borderRadius: 6, backgroundColor: '#E8D4D8', marginHorizontal: 6 },
+  activeDot: { backgroundColor: '#F3A1B5' },
+  overlay: { ...StyleSheet.absoluteFillObject, justifyContent: 'center', alignItems: 'center', zIndex: 1000 },
+  stickerPopupBox: { backgroundColor: '#FFF', padding: 30, borderRadius: 20, alignItems: 'center', width: '80%', elevation: 10 },
+  stickerPopupTitle: { fontSize: 20, fontWeight: 'bold', color: '#2C3E50', marginBottom: 20, textAlign: 'center' },
+  finishPopupBox: { backgroundColor: '#FFF', padding: 30, borderRadius: 20, alignItems: 'center', width: '85%', elevation: 10 },
+  finishTitle: { fontSize: 26, fontWeight: 'bold', color: '#2C3E50', marginTop: 15, marginBottom: 10, textAlign: 'center' },
+  finishText: { fontSize: 16, color: '#7F8C8D', textAlign: 'center', marginBottom: 25 },
+  finishButton: { backgroundColor: '#2ECC71', paddingVertical: 15, paddingHorizontal: 30, borderRadius: 25, width: '100%', alignItems: 'center' },
+  finishButtonText: { color: '#FFF', fontSize: 18, fontWeight: 'bold' }
 });
 
 export default ChildLessonScreen;
