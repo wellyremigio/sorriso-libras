@@ -1,12 +1,24 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
-import { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import FloatingBalloons from '../../components/animation/FloatingBalloons';
 
+// Variáveis de Cor Centrais para facilitar a alteração futura
+const COLORS = {
+    background: '#FFF5F7',
+    primaryPink: '#F3A1B5', // Cor do botão principal
+    darkPink: '#D67C92',    // Sombra do botão principal
+    tableHeader: '#E8A7B9', // Rosa do cabeçalho da tabela
+    tableCell: '#FDF7F8',   // Fundo quase branco da tabela
+    textDark: '#4E342E',
+    textLightPink: '#FFF',
+    grayBorder: '#E8D4D8'
+};
+
 const WeeklyGoalsScreen = ({ navigation }) => {
-    // Simulando dados do calendário
     const daysOfWeek = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
     const brushingShifts = [
         { id: 'morning', title: 'Manhã', icon: 'sun' },
@@ -17,107 +29,121 @@ const WeeklyGoalsScreen = ({ navigation }) => {
     const [completedBrush, setCompleteBrush] = useState({});
     const [isCelebrating, setIsCelebrating] = useState(false);
 
+    // Descobre o dia atual (0=Domingo, 1=Segunda, etc.) e mapeia para a nossa array
+    const currentDayIndex = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
+    const currentDayName = daysOfWeek[currentDayIndex];
+
+    const totalGoal = 21;
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const savedData = await AsyncStorage.getItem('@stickers_progress');
+                if (savedData !== null) setCompleteBrush(JSON.parse(savedData));
+            } catch (e) { console.error(e); }
+        };
+        loadData();
+    }, []);
+
     useFocusEffect(
         useCallback(() => {
             setCompleteBrush((prevState) => {
                 const currentTotal = Object.values(prevState).filter(Boolean).length;
-                // Se ao entrar na tela a meta já estava 100% preenchida, zera tudo para a nova semana!
                 if (currentTotal >= totalGoal) {
+                    AsyncStorage.removeItem('@stickers_progress');
                     return {};
                 }
-                return prevState; // Caso contrário, mantém como estava
+                return prevState;
             });
         }, [])
     );
 
-    const toggleCheck = (day, shiftId) => {
+    const toggleCheck = async (day, shiftId) => {
         const key = `${day}-${shiftId}`;
-        setCompleteBrush((prevState) => ({
-            ...prevState,
-            [key]: !prevState[key]
-        }));
+        setCompleteBrush((prevState) => {
+            const newState = { ...prevState, [key]: !prevState[key] };
+            AsyncStorage.setItem('@stickers_progress', JSON.stringify(newState)).catch(e => console.error(e));
+            return newState;
+        });
     };
 
     const totalCompleted = Object.values(completedBrush).filter(Boolean).length;
-    const totalGoal = 21;
+    const brushesToday = [
+        completedBrush[`${currentDayName}-morning`],
+        completedBrush[`${currentDayName}-afternoon`],
+        completedBrush[`${currentDayName}-night`]
+    ].filter(Boolean).length;
 
-    const earnedStickersCount = daysOfWeek.reduce((acc, day) => {
-        const isMorningDone = completedBrush[`${day}-morning`];
-        const isAfternoonDone = completedBrush[`${day}-afternoon`];
-        const isNightDone = completedBrush[`${day}-night`];
-
-        if (isMorningDone && isAfternoonDone && isNightDone) {
-            return acc + 1;
-        }
-        return acc;
-    }, 0);
-
-    const stickerRewards = [
-        { icon: 'star', color: '#F1C40F' },
-        { icon: 'smile', color: '#3498DB' },
-        { icon: 'heart', color: '#E74C3C' },
-        { icon: 'award', color: '#9B59B6' },
-        { icon: 'medal', color: '#E67E22' },
-        { icon: 'crown', color: '#1ABC9C' },
-        { icon: 'trophy', color: '#F39C12' }
-    ];
+    const brushesLeftToday = 3 - brushesToday;
 
     return (
         <SafeAreaView style={styles.container}>
 
-            {/* Header Clássico */}
-            <View style={styles.header}>
+            <View style={styles.topHeader}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
-                    <Ionicons name="chevron-back" size={28} color="#2C3E50" />
+                    <Ionicons name="arrow-back" size={28} color={COLORS.textDark} />
                 </TouchableOpacity>
-                {/* Agrupamos os botões da direita para mantê-los alinhados */}
-                <View style={styles.rightIconsGroup}>
-                    <TouchableOpacity onPress={() => navigation.navigate('StickerGallery')} style={styles.iconButton}>
-                        <FontAwesome5 name="book-open" size={22} color="#7F8C8D" />
-                    </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
-                        <Ionicons name="home" size={26} color="#7F8C8D" />
-                    </TouchableOpacity>
+                <View style={styles.logoPlaceholder}>
+                    <Image source={require('../../assets/upper_logo.png')} style={styles.logoImage} resizeMode="contain" />
                 </View>
+
+                <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
+                    <Ionicons name="home" size={26} color={COLORS.textDark} />
+                </TouchableOpacity>
+            </View>
+
+            <View style={styles.titleBanner}>
+                <Text style={styles.titleText}>Minhas Metas da Semana</Text>
             </View>
 
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                <View style={styles.topSection}>
-                    <Text style={styles.mainTitle}>Minhas Metas da Semana</Text>
-                    <View style={styles.mascotPlaceholder}>
-                        <Text style={styles.mascotText}> #todo Área para o Mascote Incentivador</Text>
-                    </View>
+
+                {/* 3. Indicador de Meta do Dia Atual */}
+                <View style={styles.todayGoalBanner}>
+                    <FontAwesome5 name="tooth" size={20} color={COLORS.primaryPink} style={{ marginRight: 10 }} />
+                    <Text style={styles.todayGoalText}>
+                        {currentDayName}:
+                        {brushesLeftToday === 0
+                            ? " Parabéns! Meta diária atingida!!"
+                            : ` Faltam ${brushesLeftToday} escovações hoje`}
+                    </Text>
                 </View>
 
-                <View style={styles.calendarCard}>
-                    <Text style={styles.goalText}>✨ Meta: 3x ao dia ✨</Text>
-
-                    <View style={styles.calendarHeaderRow}>
-                        <View style={styles.shiftColumnHeader} />
+                {/* 4. Tabela de Checkbox */}
+                <View style={styles.tableContainer}>
+                    <View style={styles.tableHeaderRow}>
                         {daysOfWeek.map((day, index) => (
-                            <View key={`header-${index}`} style={styles.dayHeaderCell}>
-                                <Text style={styles.dayHeaderText}>{day}</Text>
+                            <View key={`header-${index}`} style={styles.tableHeaderCell}>
+                                <Text style={styles.tableHeaderText}>{day}</Text>
                             </View>
                         ))}
                     </View>
 
-                    {brushingShifts.map((shift) => (
-                        <View key={shift.id} style={styles.calendarRow}>
-                            <View style={styles.shiftIconCell}>
-                                <FontAwesome5 name={shift.icon} size={16} color="#7F8C8D" />
-                            </View>
-
+                    {brushingShifts.map((shift, shiftIndex) => (
+                        <View key={shift.id} style={[
+                            styles.tableRow,
+                            shiftIndex === brushingShifts.length - 1 && { borderBottomWidth: 0 }
+                        ]}>
                             {daysOfWeek.map((day, index) => {
                                 const key = `${day}-${shift.id}`;
                                 const isChecked = !!completedBrush[key];
+
+                                // Verifica se a coluna atual é de um dia que ainda não chegou
+                                const isFutureDay = index > currentDayIndex;
+
                                 return (
-                                    <View key={key} style={styles.checkCell}>
+                                    <View key={key} style={styles.tableCell}>
                                         <TouchableOpacity
-                                            style={[styles.checkbox, isChecked && styles.checkboxActive]}
+                                            style={[
+                                                styles.checkbox,
+                                                isChecked && styles.checkboxActive,
+                                                isFutureDay && styles.checkboxDisabled // Aplica estilo apagado
+                                            ]}
                                             onPress={() => toggleCheck(day, shift.id)}
+                                            activeOpacity={0.7}
+                                            disabled={isFutureDay} // Bloqueia o clique se for no futuro
                                         >
-                                            {isChecked ? <Ionicons name="checkmark" size={16} color="#FFF" /> : null}
+                                            {isChecked ? <Ionicons name="checkmark" size={20} color={COLORS.primaryPink} /> : null}
                                         </TouchableOpacity>
                                     </View>
                                 );
@@ -126,33 +152,29 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                     ))}
                 </View>
 
+                {/* 5. Barra de Progresso Semanal */}
                 <View style={styles.progressSection}>
-                    <Text style={styles.progressText}>{totalCompleted}/{totalGoal} escovações cumpridas</Text>
+                    <Text style={styles.progressText}>{totalCompleted}/{totalGoal} escovações concluídas</Text>
                     <View style={styles.progressBarBackground}>
                         <View style={[styles.progressBarFill, { width: `${(totalCompleted / totalGoal) * 100}%` }]} />
                     </View>
                 </View>
 
-                <View style={styles.rewardsSection}>
-                    <Text style={styles.rewardsTitle}>Meus Adesivos Diários</Text>
-                    <View style={styles.stickersContainer}>
-                        {stickerRewards.map((reward, index) => {
-                            const isUnlocked = index < earnedStickersCount;
-                            return (
-                                <View key={`sticker-${index}`} style={[styles.stickerPlaceholder, !isUnlocked && styles.stickerLocked]}>
-                                    {isUnlocked ? (
-                                        <FontAwesome5 name={reward.icon} size={20} color={reward.color} />
-                                    ) : (
-                                        <FontAwesome5 name="lock" size={14} color="#BDC3C7" />
-                                    )}
-                                </View>
-                            );
-                        })}
+                {/* 6. Card de Incentivo e Espaço para Adesivo */}
+                <View style={styles.incentiveCard}>
+                    <Text style={styles.incentiveMainText}>Continue assim! Você está indo muito bem! ✨</Text>
+                    <Text style={styles.incentiveSubText}>Ganhe um adesivo se completar sua meta semanal!</Text>
+
+                    {/* Placeholder para a imagem do adesivo no canto */}
+                    <View style={styles.stickerImagePlaceholder}>
+                        <Image source={require('../../assets/star.png')} style={styles.stickerImage} />
+
                     </View>
                 </View>
 
-                <TouchableOpacity style={styles.actionButton} onPress={() => setIsCelebrating(true)}>
-                    <Text style={styles.actionButtonText}>CONCLUIR ESCOVAÇÃO</Text>
+                {/* 7. Botão Concluir */}
+                <TouchableOpacity style={styles.actionButton} onPress={() => setIsCelebrating(true)} activeOpacity={0.8}>
+                    <Text style={styles.actionButtonText}>Concluir Escovação</Text>
                 </TouchableOpacity>
             </ScrollView>
 
@@ -168,201 +190,64 @@ const WeeklyGoalsScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
+    container: { flex: 1, backgroundColor: COLORS.background },
+
+    // Header
+    topHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 15, paddingTop: 10, paddingBottom: 10 },
+    iconButton: { padding: 5 },
+    logoPlaceholder: { flex: 1, height: 40, backgroundColor: '#F0E4E7', borderRadius: 20, marginHorizontal: 15, justifyContent: 'center', alignItems: 'center' },
+    logoText: { color: '#A08B8B', fontSize: 12, fontWeight: 'bold' },
+
+    // Título
+    titleBanner: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, paddingHorizontal: 20, marginBottom: 15 },
+    titleArrow: { marginRight: 15 },
+    titleText: { flex: 1, fontSize: 18, fontWeight: 'bold', color: COLORS.textDark, textAlign: 'center', marginRight: 35 },
+
+    scrollContent: { paddingHorizontal: 20, paddingBottom: 30 },
+
+    // Banner de Meta do Dia
+    todayGoalBanner: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F9E4E8', paddingVertical: 12, paddingHorizontal: 20, borderRadius: 25, marginBottom: 20, borderWidth: 1, borderColor: '#F4D1D9' },
+    todayGoalText: { fontSize: 15, fontWeight: 'bold', color: COLORS.textDark },
+
+    // Tabela (Wireframe)
+    tableContainer: { backgroundColor: COLORS.tableCell, borderRadius: 20, borderWidth: 3, borderColor: '#F4D1D9', overflow: 'hidden', marginBottom: 20 },
+    tableHeaderRow: { flexDirection: 'row', backgroundColor: COLORS.tableHeader, paddingVertical: 10 },
+    tableHeaderCell: { flex: 1, alignItems: 'center' },
+    tableHeaderText: { color: '#FFF', fontWeight: 'bold', fontSize: 14 },
+    tableRow: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#F4D1D9' },
+    tableCell: { flex: 1, alignItems: 'center', paddingVertical: 10, borderRightWidth: 1, borderRightColor: '#F4D1D9' },
+    checkbox: { width: 30, height: 30, borderRadius: 8, backgroundColor: '#FFF', borderWidth: 2, borderColor: '#E8C5CC', justifyContent: 'center', alignItems: 'center', elevation: 1 },
+    checkboxActive: { borderColor: COLORS.primaryPink }, // Borda fica rosa quando clica
+
+    // Barra de Progresso Semanal
+    progressSection: { backgroundColor: '#F3A1B5', borderRadius: 25, paddingVertical: 10, paddingHorizontal: 20, marginBottom: 20 },
+    progressText: { color: '#FFF', fontWeight: 'bold', textAlign: 'center', marginBottom: 8, fontSize: 14 },
+    progressBarBackground: { height: 8, backgroundColor: 'rgba(255,255,255,0.4)', borderRadius: 4, overflow: 'hidden' },
+    progressBarFill: { height: '100%', backgroundColor: '#FFF' },
+
+    // Card de Incentivo
+    incentiveCard: { backgroundColor: '#FFF', borderRadius: 20, padding: 20, borderWidth: 2, borderColor: '#F4D1D9', position: 'relative', marginBottom: 30 },
+    incentiveMainText: { fontSize: 16, fontWeight: 'bold', color: COLORS.textDark, textAlign: 'center', marginBottom: 10, paddingRight: 40 },
+    incentiveSubText: { fontSize: 14, color: '#7F8C8D', textAlign: 'center', paddingRight: 40 },
+    stickerImagePlaceholder: { position: 'absolute', bottom: -15, right: -10, width: 80, height: 80, borderRadius: 40, backgroundColor: '#FDF7F8', borderWidth: 2, borderColor: '#F4D1D9', justifyContent: 'center', alignItems: 'center', elevation: 4 },
+    stickerImage: { width: '100%', height: '100%', resizeMode: 'contain' },
+
+    // Botão Concluir (Pílula 3D)
+    actionButton: { backgroundColor: COLORS.primaryPink, paddingVertical: 18, borderRadius: 35, alignItems: 'center', borderWidth: 2, borderColor: 'rgba(255, 255, 255, 0.5)', borderBottomWidth: 6, borderBottomColor: COLORS.darkPink },
+    actionButtonText: { color: '#FFF', fontSize: 20, fontWeight: 'bold', textShadowColor: 'rgba(0, 0, 0, 0.1)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 },
+    logoImage: { width: 300, height: 200 },
+    checkboxDisabled: {
+        backgroundColor: '#F5E9EC',
+        borderColor: '#E8D4D8',
+        opacity: 0.5
+    },
+    logoPlaceholder: {
         flex: 1,
-        backgroundColor: '#FAFAFA',
-    },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 15,
-        paddingTop: 10,
-        paddingBottom: 10,
-    },
-    iconButton: {
-        padding: 5,
-    },
-    rightIconsGroup: { 
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        gap: 15 // Esse gap dá um espacinho entre o livro e a casinha
-    },
-    logoContainer: {
-        backgroundColor: '#E0E0E0',
-        paddingVertical: 8,
-        paddingHorizontal: 40,
-        borderRadius: 20,
-    },
-    logoText: {
-        fontWeight: 'bold',
-        color: '#7F8C8D',
-    },
-    scrollContent: {
-        paddingHorizontal: 20,
-        paddingBottom: 30,
-    },
-    topSection: {
-        alignItems: 'center',
-        marginTop: 10,
-        marginBottom: 20,
-    },
-    mainTitle: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: '#2C3E50',
-        marginBottom: 15,
-    },
-    mascotPlaceholder: {
-        width: '100%',
-        height: 100,
-        backgroundColor: '#EBF5FB',
-        borderRadius: 15,
-        borderStyle: 'dashed',
-        borderWidth: 2,
-        borderColor: '#3498DB',
+        height: 40,
         justifyContent: 'center',
         alignItems: 'center',
     },
-    mascotText: {
-        color: '#3498DB',
-        fontWeight: 'bold',
-    },
-    calendarCard: {
-        backgroundColor: '#FFF',
-        borderRadius: 15,
-        padding: 15,
-        borderWidth: 1,
-        borderColor: '#E0E0E0',
-        elevation: 2, // Sombra Android
-        shadowColor: '#000', // Sombra iOS
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-    },
-    goalText: {
-        textAlign: 'center',
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#F39C12',
-        marginBottom: 15,
-    },
-    calendarHeaderRow: {
-        flexDirection: 'row',
-        borderBottomWidth: 1,
-        borderBottomColor: '#ECF0F1',
-        paddingBottom: 8,
-        marginBottom: 8,
-    },
-    shiftColumnHeader: {
-        width: 30, // Espaço para o ícone lateral
-    },
-    dayHeaderCell: {
-        flex: 1,
-        alignItems: 'center',
-    },
-    dayHeaderText: {
-        fontSize: 12,
-        fontWeight: 'bold',
-        color: '#7F8C8D',
-    },
-    calendarRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 8,
-    },
-    shiftIconCell: {
-        width: 30,
-        alignItems: 'center',
-    },
-    checkCell: {
-        flex: 1,
-        alignItems: 'center',
-    },
-    checkbox: {
-        width: 24,
-        height: 24,
-        borderRadius: 6,
-        borderWidth: 2,
-        borderColor: '#BDC3C7',
-        backgroundColor: '#F8F9F9',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    checkboxActive: {
-        backgroundColor: '#2ECC71',
-        borderColor: '#2ECC71',
-    },
-    progressSection: {
-        marginTop: 20,
-    },
-    progressText: {
-        fontSize: 14,
-        color: '#34495E',
-        fontWeight: 'bold',
-        marginBottom: 5,
-    },
-    progressBarBackground: {
-        height: 10,
-        backgroundColor: '#E0E0E0',
-        borderRadius: 5,
-        overflow: 'hidden',
-    },
-    progressBarFill: {
-        height: '100%',
-        backgroundColor: '#3498DB',
-    },
-    rewardsSection: {
-        marginTop: 25,
-        backgroundColor: '#FFF',
-        padding: 15,
-        borderRadius: 15,
-        borderWidth: 1,
-        borderColor: '#E0E0E0',
-    },
-    rewardsTitle: {
-        textAlign: 'center',
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#2C3E50',
-        marginBottom: 10,
-    },
-    stickersContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-    },
-    stickerPlaceholder: {
-        width: 45,
-        height: 45,
-        backgroundColor: '#FDFEFE',
-        borderRadius: 22.5,
-        borderWidth: 2,
-        borderColor: '#F1C40F',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    stickerLocked: {
-        borderColor: '#ECF0F1',
-        backgroundColor: '#F8F9F9',
-    },
-    actionButton: {
-        backgroundColor: '#3498DB',
-        marginTop: 25,
-        paddingVertical: 15,
-        borderRadius: 25,
-        alignItems: 'center',
-        elevation: 3,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-    },
-    actionButtonText: {
-        color: '#FFF',
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
+
 });
 
 export default WeeklyGoalsScreen;

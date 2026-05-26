@@ -57,9 +57,6 @@ const ChildLessonScreen = ({ navigation, route }) => {
       </View>
 
       <View style={styles.titleBanner}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#7F8C8D" style={styles.titleArrow} />
-        </TouchableOpacity>
         <Text style={styles.titleText}>{currentItem.title}</Text>
       </View>
 
