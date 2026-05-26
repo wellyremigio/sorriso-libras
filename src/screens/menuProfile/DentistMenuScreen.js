@@ -65,7 +65,7 @@ const DentistMenuScreen = ({ navigation }) => {
             <TouchableOpacity
               key={item.id}
               style={[styles.menuItem, styles.btnColor]}
-              onPress={() => navigation.navigate('AdultLesson', {
+              onPress={() => navigation.navigate('ChildLesson', {
                 menuItems: menuItems,
                 initialIndex: index,
               })}
