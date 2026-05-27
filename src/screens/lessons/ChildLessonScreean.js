@@ -9,34 +9,56 @@ const ChildLessonScreen = ({ navigation, route }) => {
   const { menuItems = [], initialIndex = 0 } = route.params || {};
 
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+
   const [isCelebrating, setIsCelebrating] = useState(false);
   const [showStickerPopup, setShowStickerPopup] = useState(false);
   const [showFinishPopup, setShowFinishPopup] = useState(false);
+  
 
   const totalSteps = menuItems.length > 0 ? menuItems.length : 1;
   const currentItem = menuItems[currentIndex] || { title: 'Carregando...' };
 
+  // const handleNextStep = () => {
+  //   setShowStickerPopup(true);
+  //   setTimeout(() => {
+  //     setShowStickerPopup(false);
+  //     setIsCelebrating(true);
+  //   }, 1500);
+  // };
+
+  // const onAnimationComplete = () => {
+  //   setIsCelebrating(false);
+
+  //   if (currentIndex < totalSteps - 1) {
+  //     setCurrentIndex(currentIndex + 1);
+  //   } else {
+  //     setShowFinishPopup(true);
+  //   }
+  // };
+
+  // const handleFinishModule = () => {
+  //   setShowFinishPopup(false);
+  //   navigation.goBack();
+  // };
+
   const handleNextStep = () => {
-    setShowStickerPopup(true);
+    // 1. Navega imediatamente para a nova tela de conquista
+    navigation.navigate('StickerAchievementScreen');
+
+    // 2. Atrasa a troca do vídeo em meio segundo. 
+    // Isso garante que o usuário não veja o vídeo mudando no fundo enquanto a transição de tela acontece.
     setTimeout(() => {
-      setShowStickerPopup(false);
-      setIsCelebrating(true);
-    }, 1500);
-  };
-
-  const onAnimationComplete = () => {
-    setIsCelebrating(false);
-
-    if (currentIndex < totalSteps - 1) {
-      setCurrentIndex(currentIndex + 1);
-    } else {
-      setShowFinishPopup(true);
-    }
+      if (currentIndex < totalSteps - 1) {
+        setCurrentIndex(currentIndex + 1);
+      } else {
+        setShowFinishPopup(true); // Se for o último vídeo, prepara o pop-up de troféu para quando ele voltar
+      }
+    }, 500); 
   };
 
   const handleFinishModule = () => {
     setShowFinishPopup(false);
-    navigation.goBack();
+    navigation.navigate('Home'); // Vai para a Home em vez de voltar, já que o módulo acabou
   };
 
   return (
@@ -98,7 +120,6 @@ const ChildLessonScreen = ({ navigation, route }) => {
         <TouchableOpacity
           style={styles.nextButton}
           onPress={handleNextStep}
-          disabled={showStickerPopup || isCelebrating}
           activeOpacity={0.8}
         >
           <Text style={styles.nextButtonText}>
@@ -118,20 +139,7 @@ const ChildLessonScreen = ({ navigation, route }) => {
           ))}
         </View>
       </ScrollView>
-
-      <FloatingBalloons
-        visible={isCelebrating}
-        onComplete={onAnimationComplete}
-      />
-      {showStickerPopup && (
-        <BlurView intensity={40} tint="dark" style={styles.overlay}>
-          <View style={styles.stickerPopupBox}>
-            <Text style={styles.stickerPopupTitle}>QUE LEGAL, VOCÊ GANHOU UM ADESIVO!</Text>
-            <FontAwesome5 name="star" size={80} color="#F1C40F" solid />
-          </View>
-        </BlurView>
-      )}
-
+      
       {showFinishPopup && (
         <BlurView intensity={70} tint="dark" style={styles.overlay}>
           <View style={styles.finishPopupBox}>
@@ -139,7 +147,7 @@ const ChildLessonScreen = ({ navigation, route }) => {
             <Text style={styles.finishTitle}>Parabéns!</Text>
             <Text style={styles.finishText}>Você completou todas as lições. Continue cuidando bem do seu sorriso!</Text>
             <TouchableOpacity style={styles.finishButton} onPress={handleFinishModule}>
-              <Text style={styles.finishButtonText}>VOLTAR AO MENU</Text>
+              <Text style={styles.finishButtonText}>VOLTAR À TELA INICIAL</Text>
             </TouchableOpacity>
           </View>
         </BlurView>

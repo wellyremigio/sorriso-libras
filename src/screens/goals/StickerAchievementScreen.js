@@ -30,7 +30,7 @@ const StickerAchievementScreen = ({ navigation, route }) => {
             resizeMode="cover"
         >
             <SafeAreaView style={styles.container}>
-                
+
                 {/* 1. View de Topo com Balões e Confetes (Sobreposição) */}
                 <View style={styles.headerDecoration}>
                     {/* Balão Rosa Grande - Esquerda */}
@@ -64,13 +64,13 @@ const StickerAchievementScreen = ({ navigation, route }) => {
 
                 {/* 2. Área Central de Conteúdo */}
                 <View style={styles.content}>
-                    
+
                     {/* Título de Parabéns */}
                     <Text style={styles.mainTitle}>Parabéns!</Text>
 
                     {/* Avatar das Crianças (Menino e Menina) */}
                     <View style={styles.avatarContainer}>
-                        <Image 
+                        <Image
                             source={require('../../assets/sticker_pop.png')} // Imagem isolada do avatar
                             style={styles.avatarImage}
                             resizeMode="contain"
@@ -84,14 +84,14 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                     <View style={styles.adesivoHighlight}>
                         {/* Efeito de Brilho Estelar no fundo */}
                         <View style={styles.brilhoStars}>
-                            <Ionicons name="star" size={20} color="#FFF" style={{position: 'absolute', top: 10, left: 10}} />
-                            <Ionicons name="star" size={16} color="#FFF" style={{position: 'absolute', bottom: 15, right: 15}} />
-                            <Ionicons name="star" size={12} color="#FFF" style={{position: 'absolute', top: 30, right: 30}} />
+                            <Ionicons name="star" size={20} color="#FFF" style={{ position: 'absolute', top: 10, left: 10 }} />
+                            <Ionicons name="star" size={16} color="#FFF" style={{ position: 'absolute', bottom: 15, right: 15 }} />
+                            <Ionicons name="star" size={12} color="#FFF" style={{ position: 'absolute', top: 30, right: 30 }} />
                         </View>
-                        
+
                         {/* O Adesivo Real */}
-                        <Image 
-                            source={require('../../assets/adesivo_dente_escovando.png')} // Imagem do adesivo real
+                        <Image
+                            source={require('../../assets/stickers/sticker1.png')} // Imagem do adesivo real
                             style={styles.adesivoImage}
                             resizeMode="contain"
                         />
@@ -113,7 +113,7 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                         <View style={styles.pageDot} />
                         <View style={styles.pageDot} />
                     </View>
-                    
+
                 </View>
 
             </SafeAreaView>
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
         alignItems: 'center'
     },
-    
+
     // Decoração do Topo (Balões e Confetes)
     headerDecoration: {
         position: 'absolute',
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
         textShadowOffset: { width: 0, height: 2 },
         textShadowRadius: 4
     },
-    
+
     avatarContainer: {
         width: '80%',
         height: 120,

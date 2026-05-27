@@ -7,6 +7,7 @@ import ChildLessonScreen from '../screens/lessons/ChildLessonScreean';
 import WeeklyGoalsScreen from '../screens/goals/WeeklyGoalsScreen';
 import AdultLessonScreen from '../screens/lessons/AdultLessonScreen';
 import StickerGalleryScreen from '../screens/goals/StickerGalleryScreen';
+import StickerAchievementScreen from '../screens/goals/StickerAchievementScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -72,6 +73,14 @@ const AppRoutes = () => {
                 options={{
                     headerShown: false,
                     animation: 'slide_from_right'
+                }}
+            />
+            <Stack.Screen
+                name="StickerAchievementScreen"
+                component={StickerAchievementScreen}
+                options={{
+                    headerShown: false,
+                    presentation: 'modal',
                 }}
             />
         </Stack.Navigator>
