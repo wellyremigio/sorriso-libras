@@ -87,9 +87,15 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                     <Image source={require('../../assets/upper_logo.png')} style={styles.logoImage} resizeMode="contain" />
                 </View>
 
-                <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
-                    <Ionicons name="home" size={26} color={COLORS.textDark} />
-                </TouchableOpacity>
+                <View style={styles.rightIconsGroup}>
+                    <TouchableOpacity onPress={() => navigation.navigate('StickerGallery')} style={styles.iconButton}>
+                        <FontAwesome5 name="book-open" size={22} color={COLORS.textDark} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
+                        <Ionicons name="home" size={26} color={COLORS.textDark} />
+                    </TouchableOpacity>
+                </View>
             </View>
 
             <View style={styles.titleBanner}>
@@ -109,47 +115,67 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                     </Text>
                 </View>
 
-                {/* 4. Tabela de Checkbox */}
-                <View style={styles.tableContainer}>
-                    <View style={styles.tableHeaderRow}>
-                        {daysOfWeek.map((day, index) => (
-                            <View key={`header-${index}`} style={styles.tableHeaderCell}>
-                                <Text style={styles.tableHeaderText}>{day}</Text>
+              
+                {/* 4. Calendário (Ícones fora + Tabela Menor) */}
+                {/* 4. Calendário (Ícones fora + Tabela Menor) */}
+                <View style={styles.calendarWrapper}>
+                    
+                    {/* Coluna da Esquerda (Ícones Flutuantes) */}
+                    <View style={styles.iconColumn}>
+                        
+                        {/* Espaço vazio para alinhar com o cabeçalho da tabela */}
+                        <View style={styles.iconHeaderSpace} /> 
+                        
+                        {brushingShifts.map((shift) => (
+                            <View key={`icon-${shift.id}`} style={styles.iconCell}>
+                                <FontAwesome5 name={shift.icon} size={18} color="#A08B8B" />
                             </View>
                         ))}
                     </View>
 
-                    {brushingShifts.map((shift, shiftIndex) => (
-                        <View key={shift.id} style={[
-                            styles.tableRow,
-                            shiftIndex === brushingShifts.length - 1 && { borderBottomWidth: 0 }
-                        ]}>
-                            {daysOfWeek.map((day, index) => {
-                                const key = `${day}-${shift.id}`;
-                                const isChecked = !!completedBrush[key];
-
-                                // Verifica se a coluna atual é de um dia que ainda não chegou
-                                const isFutureDay = index > currentDayIndex;
-
-                                return (
-                                    <View key={key} style={styles.tableCell}>
-                                        <TouchableOpacity
-                                            style={[
-                                                styles.checkbox,
-                                                isChecked && styles.checkboxActive,
-                                                isFutureDay && styles.checkboxDisabled // Aplica estilo apagado
-                                            ]}
-                                            onPress={() => toggleCheck(day, shift.id)}
-                                            activeOpacity={0.7}
-                                            disabled={isFutureDay} // Bloqueia o clique se for no futuro
-                                        >
-                                            {isChecked ? <Ionicons name="checkmark" size={20} color={COLORS.primaryPink} /> : null}
-                                        </TouchableOpacity>
-                                    </View>
-                                );
-                            })}
+                    {/* Coluna da Direita (Tabela com Bordas) */}
+                    <View style={styles.tableContainer}>
+                        
+                        {/* Cabeçalho (Seg - Dom) */}
+                        <View style={styles.tableHeaderRow}>
+                            {daysOfWeek.map((day, index) => (
+                                <View key={`header-${index}`} style={styles.tableHeaderCell}>
+                                    <Text style={styles.tableHeaderText}>{day}</Text>
+                                </View>
+                            ))}
                         </View>
-                    ))}
+
+                        {/* Linhas de Checkbox */}
+                        {brushingShifts.map((shift, shiftIndex) => (
+                            <View key={shift.id} style={[
+                                styles.tableRow,
+                                shiftIndex === brushingShifts.length - 1 && { borderBottomWidth: 0 }
+                            ]}>
+                                {daysOfWeek.map((day, index) => {
+                                    const key = `${day}-${shift.id}`;
+                                    const isChecked = !!completedBrush[key];
+                                    const isFutureDay = index > currentDayIndex;
+
+                                    return (
+                                        <View key={key} style={styles.tableCell}>
+                                            <TouchableOpacity
+                                                style={[
+                                                    styles.checkbox,
+                                                    isChecked && styles.checkboxActive,
+                                                    isFutureDay && styles.checkboxDisabled
+                                                ]}
+                                                onPress={() => toggleCheck(day, shift.id)}
+                                                activeOpacity={0.7}
+                                                disabled={isFutureDay}
+                                            >
+                                                {isChecked ? <Ionicons name="checkmark" size={16} color={COLORS.primaryPink} /> : null}
+                                            </TouchableOpacity>
+                                        </View>
+                                    );
+                                })}
+                            </View>
+                        ))}
+                    </View>
                 </View>
 
                 {/* 5. Barra de Progresso Semanal */}
@@ -190,62 +216,277 @@ const WeeklyGoalsScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: COLORS.background },
+    container: {
+        flex: 1,
+        backgroundColor: COLORS.background,
+    },
 
     // Header
-    topHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 15, paddingTop: 10, paddingBottom: 10 },
-    iconButton: { padding: 5 },
-    logoPlaceholder: { flex: 1, height: 40, backgroundColor: '#F0E4E7', borderRadius: 20, marginHorizontal: 15, justifyContent: 'center', alignItems: 'center' },
-    logoText: { color: '#A08B8B', fontSize: 12, fontWeight: 'bold' },
-
-    // Título
-    titleBanner: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, paddingHorizontal: 20, marginBottom: 15 },
-    titleArrow: { marginRight: 15 },
-    titleText: { flex: 1, fontSize: 18, fontWeight: 'bold', color: COLORS.textDark, textAlign: 'center', marginRight: 35 },
-
-    scrollContent: { paddingHorizontal: 20, paddingBottom: 30 },
-
-    // Banner de Meta do Dia
-    todayGoalBanner: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F9E4E8', paddingVertical: 12, paddingHorizontal: 20, borderRadius: 25, marginBottom: 20, borderWidth: 1, borderColor: '#F4D1D9' },
-    todayGoalText: { fontSize: 15, fontWeight: 'bold', color: COLORS.textDark },
-
-    // Tabela (Wireframe)
-    tableContainer: { backgroundColor: COLORS.tableCell, borderRadius: 20, borderWidth: 3, borderColor: '#F4D1D9', overflow: 'hidden', marginBottom: 20 },
-    tableHeaderRow: { flexDirection: 'row', backgroundColor: COLORS.tableHeader, paddingVertical: 10 },
-    tableHeaderCell: { flex: 1, alignItems: 'center' },
-    tableHeaderText: { color: '#FFF', fontWeight: 'bold', fontSize: 14 },
-    tableRow: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#F4D1D9' },
-    tableCell: { flex: 1, alignItems: 'center', paddingVertical: 10, borderRightWidth: 1, borderRightColor: '#F4D1D9' },
-    checkbox: { width: 30, height: 30, borderRadius: 8, backgroundColor: '#FFF', borderWidth: 2, borderColor: '#E8C5CC', justifyContent: 'center', alignItems: 'center', elevation: 1 },
-    checkboxActive: { borderColor: COLORS.primaryPink }, // Borda fica rosa quando clica
-
-    // Barra de Progresso Semanal
-    progressSection: { backgroundColor: '#F3A1B5', borderRadius: 25, paddingVertical: 10, paddingHorizontal: 20, marginBottom: 20 },
-    progressText: { color: '#FFF', fontWeight: 'bold', textAlign: 'center', marginBottom: 8, fontSize: 14 },
-    progressBarBackground: { height: 8, backgroundColor: 'rgba(255,255,255,0.4)', borderRadius: 4, overflow: 'hidden' },
-    progressBarFill: { height: '100%', backgroundColor: '#FFF' },
-
-    // Card de Incentivo
-    incentiveCard: { backgroundColor: '#FFF', borderRadius: 20, padding: 20, borderWidth: 2, borderColor: '#F4D1D9', position: 'relative', marginBottom: 30 },
-    incentiveMainText: { fontSize: 16, fontWeight: 'bold', color: COLORS.textDark, textAlign: 'center', marginBottom: 10, paddingRight: 40 },
-    incentiveSubText: { fontSize: 14, color: '#7F8C8D', textAlign: 'center', paddingRight: 40 },
-    stickerImagePlaceholder: { position: 'absolute', bottom: -15, right: -10, width: 80, height: 80, borderRadius: 40, backgroundColor: '#FDF7F8', borderWidth: 2, borderColor: '#F4D1D9', justifyContent: 'center', alignItems: 'center', elevation: 4 },
-    stickerImage: { width: '100%', height: '100%', resizeMode: 'contain' },
-
-    // Botão Concluir (Pílula 3D)
-    actionButton: { backgroundColor: COLORS.primaryPink, paddingVertical: 18, borderRadius: 35, alignItems: 'center', borderWidth: 2, borderColor: 'rgba(255, 255, 255, 0.5)', borderBottomWidth: 6, borderBottomColor: COLORS.darkPink },
-    actionButtonText: { color: '#FFF', fontSize: 20, fontWeight: 'bold', textShadowColor: 'rgba(0, 0, 0, 0.1)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 },
-    logoImage: { width: 300, height: 200 },
-    checkboxDisabled: {
-        backgroundColor: '#F5E9EC',
-        borderColor: '#E8D4D8',
-        opacity: 0.5
+    topHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 15,
+        paddingTop: 10,
+        paddingBottom: 10,
     },
+
+    rightIconsGroup: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+    },
+
+    iconButton: {
+        padding: 5,
+    },
+
     logoPlaceholder: {
         flex: 1,
         height: 40,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+
+    logoImage: {
+        width: 300,
+        height: 200,
+    },
+
+    logoText: {
+        color: '#A08B8B',
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
+
+    // Título
+    titleBanner: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        marginBottom: 15,
+    },
+
+    titleArrow: {
+        marginRight: 15,
+    },
+
+    titleText: {
+        flex: 1,
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: COLORS.textDark,
+        textAlign: 'center',
+        marginRight: 35,
+    },
+
+    scrollContent: {
+        paddingHorizontal: 20,
+        paddingBottom: 30,
+    },
+
+    // Banner da meta do dia
+    todayGoalBanner: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#F9E4E8',
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 25,
+        marginBottom: 20,
+        borderWidth: 1,
+        borderColor: '#F4D1D9',
+    },
+
+    todayGoalText: {
+        fontSize: 15,
+        fontWeight: 'bold',
+        color: COLORS.textDark,
+    },
+
+    // Tabela
+// --- ESTILOS DO CALENDÁRIO ---
+    calendarWrapper: {
+        flexDirection: 'row',
+        marginBottom: 20,
+        alignItems: 'stretch'
+    },
+    iconColumn: {
+        width: 26, // Coluna fininha só para os ícones
+        marginRight: 8,
+        justifyContent: 'flex-start'
+    },
+    iconHeaderSpace: {
+        height: 36 // Altura exata do cabeçalho da tabela
+    },
+    iconCell: {
+        height: 44, // Altura exata das linhas da tabela
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    tableContainer: {
+        flex: 1, // Ocupa o restante da tela
+        backgroundColor: COLORS.tableCell,
+        borderRadius: 15, // Curvatura um pouco mais suave
+        borderWidth: 2, // Borda um pouco mais fina
+        borderColor: '#F4D1D9',
+        overflow: 'hidden'
+    },
+    tableHeaderRow: {
+        flexDirection: 'row',
+        backgroundColor: COLORS.tableHeader,
+        height: 36, // Fixado para alinhar com iconHeaderSpace
+        alignItems: 'center'
+    },
+    tableHeaderCell: {
+        flex: 1,
+        alignItems: 'center'
+    },
+    tableHeaderText: {
+        color: '#FFF',
+        fontWeight: 'bold',
+        fontSize: 12 // Fonte menor para caber em telas pequenas
+    },
+    tableRow: {
+        flexDirection: 'row',
+        height: 44, // Fixado para alinhar com iconCell
+        borderBottomWidth: 1,
+        borderBottomColor: '#F4D1D9'
+    },
+    tableCell: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRightWidth: 1,
+        borderRightColor: '#F4D1D9'
+    },
+    checkbox: {
+        width: 24, // Bem menor que os 30 de antes
+        height: 24,
+        borderRadius: 6,
+        backgroundColor: '#FFF',
+        borderWidth: 2,
+        borderColor: '#E8C5CC',
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 1
+    },
+    checkboxActive: {
+        borderColor: COLORS.primaryPink
+    },
+    checkboxDisabled: {
+        backgroundColor: '#F5E9EC',
+        borderColor: '#E8D4D8',
+        opacity: 0.5
+    },
+
+    // Barra de progresso semanal
+    progressSection: {
+        backgroundColor: '#F3A1B5',
+        borderRadius: 25,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        marginBottom: 20,
+    },
+
+    progressText: {
+        color: '#FFF',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 8,
+        fontSize: 14,
+    },
+
+    progressBarBackground: {
+        height: 8,
+        backgroundColor: 'rgba(255,255,255,0.4)',
+        borderRadius: 4,
+        overflow: 'hidden',
+    },
+
+    progressBarFill: {
+        height: '100%',
+        backgroundColor: '#FFF',
+    },
+
+    // Card de incentivo
+    incentiveCard: {
+        backgroundColor: '#FFF',
+        borderRadius: 20,
+        padding: 20,
+        borderWidth: 2,
+        borderColor: '#F4D1D9',
+        position: 'relative',
+        marginBottom: 30,
+    },
+
+    incentiveMainText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: COLORS.textDark,
+        textAlign: 'center',
+        marginBottom: 10,
+        paddingRight: 40,
+    },
+
+    incentiveSubText: {
+        fontSize: 14,
+        color: '#7F8C8D',
+        textAlign: 'center',
+        paddingRight: 40,
+    },
+
+    stickerImagePlaceholder: {
+        position: 'absolute',
+        bottom: -15,
+        right: -10,
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        backgroundColor: '#FDF7F8',
+        borderWidth: 2,
+        borderColor: '#F4D1D9',
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 4,
+    },
+
+    stickerImage: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'contain',
+    },
+
+    // Botão concluir
+    actionButton: {
+        backgroundColor: COLORS.primaryPink,
+        paddingVertical: 18,
+        borderRadius: 35,
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: 'rgba(255, 255, 255, 0.5)',
+        borderBottomWidth: 6,
+        borderBottomColor: COLORS.darkPink,
+    },
+
+    actionButtonText: {
+        color: '#FFF',
+        fontSize: 20,
+        fontWeight: 'bold',
+        textShadowColor: 'rgba(0, 0, 0, 0.1)',
+        textShadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        textShadowRadius: 2,
+    },
+    shiftIconCell: {
+        width: 35,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRightWidth: 1,
+        borderRightColor: '#F4D1D9'
     },
 
 });
