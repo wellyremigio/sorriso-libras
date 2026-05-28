@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
+import { Ionicons, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FloatingBalloons from '../../components/animation/FloatingBalloons';
@@ -93,7 +93,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
 
                 <View style={styles.rightIconsGroup}>
                     <TouchableOpacity onPress={() => navigation.navigate('StickerGallery')} style={styles.iconButton}>
-                        <FontAwesome5 name="book-open" size={22} color={COLORS.textDark} />
+                        <MaterialCommunityIcons name="sticker-emoji" size={22} color={COLORS.textDark} />
                     </TouchableOpacity>
 
                     <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
