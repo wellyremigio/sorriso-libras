@@ -31,7 +31,7 @@ const Home = ({ navigation }) => {
           >
             <View style={styles.iconWrapper}>
               <Image
-                source={require('../assets/estetoscopio_img.png')}
+                source={require('../assets/dentist_menu_dentist.png')}
                 style={styles.buttonIcon}
                 resizeMode="contain"
               />
@@ -85,16 +85,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 24, // Maior respiro lateral
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
   containerLogo: {
     marginTop: 48,
     alignItems: 'center',
     width: '100%',
-    height: 160, // Aumentei um pouco para acomodar bem a ilustração das crianças
+    height: 230, // Aumentei um pouco para acomodar bem a ilustração das crianças
   },
   imageLogo: {
-    width: '90%',
+    width: '100%',
     height: '100%',
   },
   title: {
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 72,
+    height: 80,
     borderRadius: 36,
     paddingHorizontal: 16,
     borderWidth: 2,
@@ -138,8 +138,8 @@ const styles = StyleSheet.create({
   },
 
   iconWrapper: {
-    width: 48,
-    height: 48,
+    width: 75,
+    height: 75,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
