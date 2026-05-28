@@ -44,9 +44,19 @@ const ChildMenuScreen = ({ navigation }) => {
             <Ionicons name="chevron-back" size={28} color="#2C3E50" />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigation.navigate('WeeklyGoals')} style={styles.rewardButton}>
-            <FontAwesome5 name="star" size={24} color="#F1C40F" />
+          <TouchableOpacity onPress={() => navigation.navigate('WeeklyGoals')} style={styles.brushingButton}>
+            <Image
+              source={require('../../assets/icon_brush_screen.png')} // Confirme se o caminho está correto
+              style={styles.brushingImage}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
+          {/* <TouchableOpacity
+            onPress={() => navigation.navigate('WeeklyGoals')}
+            style={styles.rewardButton}
+          >
+            <FontAwesome5 name="tooth" size={24} color="#e4e7eb" />
+          </TouchableOpacity> */}
         </View>
 
         <View style={styles.containerLogo}>
@@ -182,6 +192,18 @@ const styles = StyleSheet.create({
   imageLogo: {
     width: '100%',
     height: '100%',
+  },
+  brushingButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 2,
+    borderRadius: 20,
+  },
+  brushingImage: {
+    width: 70,
+    height: 70
   },
 });
 

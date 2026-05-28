@@ -79,8 +79,12 @@ const WeeklyGoalsScreen = ({ navigation }) => {
         <SafeAreaView style={styles.container}>
 
             <View style={styles.topHeader}>
-                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
-                    <Ionicons name="arrow-back" size={28} color={COLORS.textDark} />
+                <TouchableOpacity
+                    onPress={() => navigation.goBack()}
+                    style={styles.iconButton}
+                    hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+                >
+                    <Ionicons name="chevron-back" size={28} color={COLORS.textDark} />
                 </TouchableOpacity>
 
                 <View style={styles.logoPlaceholder}>
@@ -115,17 +119,17 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                     </Text>
                 </View>
 
-              
+
                 {/* 4. Calendário (Ícones fora + Tabela Menor) */}
                 {/* 4. Calendário (Ícones fora + Tabela Menor) */}
                 <View style={styles.calendarWrapper}>
-                    
+
                     {/* Coluna da Esquerda (Ícones Flutuantes) */}
                     <View style={styles.iconColumn}>
-                        
+
                         {/* Espaço vazio para alinhar com o cabeçalho da tabela */}
-                        <View style={styles.iconHeaderSpace} /> 
-                        
+                        <View style={styles.iconHeaderSpace} />
+
                         {brushingShifts.map((shift) => (
                             <View key={`icon-${shift.id}`} style={styles.iconCell}>
                                 <FontAwesome5 name={shift.icon} size={18} color="#A08B8B" />
@@ -135,7 +139,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
 
                     {/* Coluna da Direita (Tabela com Bordas) */}
                     <View style={styles.tableContainer}>
-                        
+
                         {/* Cabeçalho (Seg - Dom) */}
                         <View style={styles.tableHeaderRow}>
                             {daysOfWeek.map((day, index) => (
@@ -229,6 +233,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         paddingTop: 10,
         paddingBottom: 10,
+        zIndex: 10,
+        elevation: 10,
     },
 
     rightIconsGroup: {
@@ -237,8 +243,18 @@ const styles = StyleSheet.create({
         gap: 12,
     },
 
+    // iconButton: {
+    //     padding: 5,
+    // },
     iconButton: {
-        padding: 5,
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        backgroundColor: 'rgba(255, 255, 255, 0.6)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1.5,
+        borderColor: '#E8D4D8',
     },
 
     logoPlaceholder: {
@@ -249,8 +265,8 @@ const styles = StyleSheet.create({
     },
 
     logoImage: {
-        width: 300,
-        height: 200,
+        width: 230,
+        height: 230,
     },
 
     logoText: {
@@ -306,7 +322,7 @@ const styles = StyleSheet.create({
     },
 
     // Tabela
-// --- ESTILOS DO CALENDÁRIO ---
+    // --- ESTILOS DO CALENDÁRIO ---
     calendarWrapper: {
         flexDirection: 'row',
         marginBottom: 20,
