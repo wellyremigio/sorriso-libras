@@ -13,7 +13,7 @@ const ChildLessonScreen = ({ navigation, route }) => {
   const [isCelebrating, setIsCelebrating] = useState(false);
   const [showStickerPopup, setShowStickerPopup] = useState(false);
   const [showFinishPopup, setShowFinishPopup] = useState(false);
-  
+
 
   const totalSteps = menuItems.length > 0 ? menuItems.length : 1;
   const currentItem = menuItems[currentIndex] || { title: 'Carregando...' };
@@ -53,7 +53,7 @@ const ChildLessonScreen = ({ navigation, route }) => {
       } else {
         setShowFinishPopup(true); // Se for o último vídeo, prepara o pop-up de troféu para quando ele voltar
       }
-    }, 500); 
+    }, 500);
   };
 
   const handleFinishModule = () => {
@@ -139,16 +139,33 @@ const ChildLessonScreen = ({ navigation, route }) => {
           ))}
         </View>
       </ScrollView>
-      
+
       {showFinishPopup && (
-        <BlurView intensity={70} tint="dark" style={styles.overlay}>
+        <BlurView intensity={50} tint="light" style={styles.overlay}>
           <View style={styles.finishPopupBox}>
-            <FontAwesome5 name="trophy" size={80} color="#F39C12" solid />
+
+            {/* Círculo de Destaque para o Adesivo */}
+            <View style={styles.stickerGlow}>
+              <Image
+                source={require('../../assets/stickers/sticker6.png')}
+                style={styles.finishSticker}
+                resizeMode="contain"
+              />
+            </View>
+
             <Text style={styles.finishTitle}>Parabéns!</Text>
-            <Text style={styles.finishText}>Você completou todas as lições. Continue cuidando bem do seu sorriso!</Text>
-            <TouchableOpacity style={styles.finishButton} onPress={handleFinishModule}>
-              <Text style={styles.finishButtonText}>VOLTAR À TELA INICIAL</Text>
+            <Text style={styles.finishText}>
+              Você completou todas as lições. Continue cuidando bem do seu sorriso!
+            </Text>
+
+            <TouchableOpacity
+              style={styles.finishButton}
+              onPress={handleFinishModule}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.finishButtonText}>Voltar à Tela Inicial</Text>
             </TouchableOpacity>
+
           </View>
         </BlurView>
       )}
@@ -310,14 +327,83 @@ const styles = StyleSheet.create({
   dotsContainer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 25 },
   dot: { width: 12, height: 12, borderRadius: 6, backgroundColor: '#E8D4D8', marginHorizontal: 6 },
   activeDot: { backgroundColor: '#F3A1B5' },
-  overlay: { ...StyleSheet.absoluteFillObject, justifyContent: 'center', alignItems: 'center', zIndex: 1000 },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+    backgroundColor: 'rgba(255, 245, 247, 0.4)' // Um rosinha bem translúcido
+  },
   stickerPopupBox: { backgroundColor: '#FFF', padding: 30, borderRadius: 20, alignItems: 'center', width: '80%', elevation: 10 },
   stickerPopupTitle: { fontSize: 20, fontWeight: 'bold', color: '#2C3E50', marginBottom: 20, textAlign: 'center' },
-  finishPopupBox: { backgroundColor: '#FFF', padding: 30, borderRadius: 20, alignItems: 'center', width: '85%', elevation: 10 },
-  finishTitle: { fontSize: 26, fontWeight: 'bold', color: '#2C3E50', marginTop: 15, marginBottom: 10, textAlign: 'center' },
-  finishText: { fontSize: 16, color: '#7F8C8D', textAlign: 'center', marginBottom: 25 },
-  finishButton: { backgroundColor: '#2ECC71', paddingVertical: 15, paddingHorizontal: 30, borderRadius: 25, width: '100%', alignItems: 'center' },
-  finishButtonText: { color: '#FFF', fontSize: 18, fontWeight: 'bold' }
+  finishPopupBox: {
+    backgroundColor: '#FFFFFF',
+    padding: 32, // Mantendo a proporção de grid
+    borderRadius: 30,
+    alignItems: 'center',
+    width: '85%',
+    borderWidth: 4,
+    borderColor: '#F4D1D9', // Borda rosa clara
+    elevation: 10,
+    shadowColor: '#F3A1B5',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12
+  },
+  stickerGlow: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#FFF9E6', // Fundo amarelinho bem claro
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
+    borderWidth: 3,
+    borderColor: '#FDEBD0',
+    borderStyle: 'dashed'
+  },
+  finishSticker: {
+    width: 200,
+    height: 200
+  },
+
+  // Textos
+  finishTitle: {
+    fontSize: 32,
+    fontWeight: '900',
+    color: '#2C4A63', // Aquele azul escuro elegante dos títulos
+    marginBottom: 8,
+    textAlign: 'center'
+  },
+  finishText: {
+    fontSize: 16,
+    color: '#7F8C8D',
+    textAlign: 'center',
+    marginBottom: 32,
+    lineHeight: 24
+  },
+
+  // Botão Pílula 3D
+  finishButton: {
+    backgroundColor: '#F3A1B5',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 35,
+    width: '100%',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+    borderBottomWidth: 6,
+    borderBottomColor: '#D67C92'
+  },
+  finishButtonText: {
+    color: '#FFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2
+  }
 });
 
 export default ChildLessonScreen;
