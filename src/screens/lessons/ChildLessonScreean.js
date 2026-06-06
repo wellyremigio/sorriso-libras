@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ImageBackground } from 'react-native';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,39 +7,12 @@ import { BlurView } from 'expo-blur';
 
 const ChildLessonScreen = ({ navigation, route }) => {
   const { menuItems = [], initialIndex = 0 } = route.params || {};
-
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
-
   const [isCelebrating, setIsCelebrating] = useState(false);
   const [showStickerPopup, setShowStickerPopup] = useState(false);
   const [showFinishPopup, setShowFinishPopup] = useState(false);
-
-
   const totalSteps = menuItems.length > 0 ? menuItems.length : 1;
   const currentItem = menuItems[currentIndex] || { title: 'Carregando...' };
-
-  // const handleNextStep = () => {
-  //   setShowStickerPopup(true);
-  //   setTimeout(() => {
-  //     setShowStickerPopup(false);
-  //     setIsCelebrating(true);
-  //   }, 1500);
-  // };
-
-  // const onAnimationComplete = () => {
-  //   setIsCelebrating(false);
-
-  //   if (currentIndex < totalSteps - 1) {
-  //     setCurrentIndex(currentIndex + 1);
-  //   } else {
-  //     setShowFinishPopup(true);
-  //   }
-  // };
-
-  // const handleFinishModule = () => {
-  //   setShowFinishPopup(false);
-  //   navigation.goBack();
-  // };
 
   const handleNextStep = () => {
     // 1. Navega imediatamente para a nova tela de conquista
@@ -62,122 +35,133 @@ const ChildLessonScreen = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ImageBackground
+      source={require("../../assets/imagem_fundo.png")}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={styles.container}>
 
-      <View style={styles.topHeader}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
-          <Ionicons name="arrow-back" size={28} color="#5D4037" />
-        </TouchableOpacity>
+        <View style={styles.topHeader}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
+            <Ionicons name="arrow-back" size={28} color="#5D4037" />
+          </TouchableOpacity>
 
-        <View style={styles.logoPlaceholder}>
-          <Image source={require('../../assets/upper_logo.png')} style={styles.logoImage} resizeMode="contain" />
+          <View style={styles.logoPlaceholder}>
+            <Image source={require('../../assets/upper_logo.png')} style={styles.logoImage} resizeMode="contain" />
+          </View>
+
+          <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
+            <Ionicons name="home" size={26} color="#5D4037" />
+          </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
-          <Ionicons name="home" size={26} color="#5D4037" />
-        </TouchableOpacity>
-      </View>
+        <View style={styles.titleBanner}>
+          <Text style={styles.titleText}>{currentItem.title}</Text>
+        </View>
 
-      <View style={styles.titleBanner}>
-        <Text style={styles.titleText}>{currentItem.title}</Text>
-      </View>
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <View style={styles.videoCard}>
+            <View style={styles.videoMainArea}>
+              <View style={styles.playButtonCircle}>
+                <Ionicons name="play" size={32} color="#FFF" style={{ marginLeft: 4 }} />
+              </View>
+            </View>
 
-        <View style={styles.videoCard}>
-          <View style={styles.videoMainArea}>
-            <View style={styles.playButtonCircle}>
-              <Ionicons name="play" size={32} color="#FFF" style={{ marginLeft: 4 }} />
+            <View style={styles.librasWindow}>
+              <Ionicons name="person" size={40} color="#BDC3C7" />
+            </View>
+
+            <View style={styles.videoControls}>
+              <Ionicons name="play" size={16} color="#FFF" />
+              <Text style={styles.videoTime}>0,7%</Text>
+              <View style={styles.progressBarTrack}>
+                <View style={styles.progressBarFill} />
+                <View style={styles.progressThumb} />
+              </View>
+              <Ionicons name="options" size={16} color="#FFF" />
             </View>
           </View>
 
-          <View style={styles.librasWindow}>
-            <Ionicons name="person" size={40} color="#BDC3C7" />
+          <View style={styles.stepIndicatorContainer}>
+            <Text style={styles.stepText}>Passo {currentIndex + 1}  {currentItem.title}</Text>
+            <Text style={styles.stepTextRight}>{currentIndex + 1}/{totalSteps}</Text>
           </View>
 
-          <View style={styles.videoControls}>
-            <Ionicons name="play" size={16} color="#FFF" />
-            <Text style={styles.videoTime}>0,7%</Text>
-            <View style={styles.progressBarTrack}>
-              <View style={styles.progressBarFill} />
-              <View style={styles.progressThumb} />
-            </View>
-            <Ionicons name="options" size={16} color="#FFF" />
-          </View>
-        </View>
-
-        <View style={styles.stepIndicatorContainer}>
-          <Text style={styles.stepText}>Passo {currentIndex + 1}  {currentItem.title}</Text>
-          <Text style={styles.stepTextRight}>{currentIndex + 1}/{totalSteps}</Text>
-        </View>
-
-        <View style={styles.explanationBox}>
-          <Text style={styles.explanationText}>
-            Escove os dentes com movimentos suaves por 2 minutos.
-          </Text>
-        </View>
-
-        <TouchableOpacity
-          style={styles.nextButton}
-          onPress={handleNextStep}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.nextButtonText}>
-            {currentIndex === totalSteps - 1 ? 'Finalizar' : 'Próximo'}
-          </Text>
-        </TouchableOpacity>
-
-        <View style={styles.dotsContainer}>
-          {menuItems.map((_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.dot,
-                currentIndex === index && styles.activeDot
-              ]}
-            />
-          ))}
-        </View>
-      </ScrollView>
-
-      {showFinishPopup && (
-        <BlurView intensity={50} tint="light" style={styles.overlay}>
-          <View style={styles.finishPopupBox}>
-
-            {/* Círculo de Destaque para o Adesivo */}
-            <View style={styles.stickerGlow}>
-              <Image
-                source={require('../../assets/stickers/sticker6.png')}
-                style={styles.finishSticker}
-                resizeMode="contain"
-              />
-            </View>
-
-            <Text style={styles.finishTitle}>Parabéns!</Text>
-            <Text style={styles.finishText}>
-              Você completou todas as lições. Continue cuidando bem do seu sorriso!
+          <View style={styles.explanationBox}>
+            <Text style={styles.explanationText}>
+              Escove os dentes com movimentos suaves por 2 minutos.
             </Text>
-
-            <TouchableOpacity
-              style={styles.finishButton}
-              onPress={handleFinishModule}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.finishButtonText}>Voltar à Tela Inicial</Text>
-            </TouchableOpacity>
-
           </View>
-        </BlurView>
-      )}
 
-    </SafeAreaView>
+          <TouchableOpacity
+            style={styles.nextButton}
+            onPress={handleNextStep}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.nextButtonText}>
+              {currentIndex === totalSteps - 1 ? 'Finalizar' : 'Próximo'}
+            </Text>
+          </TouchableOpacity>
+
+          <View style={styles.dotsContainer}>
+            {menuItems.map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.dot,
+                  currentIndex === index && styles.activeDot
+                ]}
+              />
+            ))}
+          </View>
+        </ScrollView>
+
+        {showFinishPopup && (
+          <BlurView intensity={50} tint="light" style={styles.overlay}>
+            <View style={styles.finishPopupBox}>
+
+              {/* Círculo de Destaque para o Adesivo */}
+              <View style={styles.stickerGlow}>
+                <Image
+                  source={require('../../assets/stickers/sticker6.png')}
+                  style={styles.finishSticker}
+                  resizeMode="contain"
+                />
+              </View>
+
+              <Text style={styles.finishTitle}>Parabéns!</Text>
+              <Text style={styles.finishText}>
+                Você completou todas as lições. Continue cuidando bem do seu sorriso!
+              </Text>
+
+              <TouchableOpacity
+                style={styles.finishButton}
+                onPress={handleFinishModule}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.finishButtonText}>Voltar à Tela Inicial</Text>
+              </TouchableOpacity>
+
+            </View>
+          </BlurView>
+        )}
+
+      </SafeAreaView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF5F7'
+    backgroundColor: "transparent"
+  },
+  background:{
+    flex: 1,
+    width: "100%",
+    height: "100%"
   },
   topHeader: {
     flexDirection: 'row',
