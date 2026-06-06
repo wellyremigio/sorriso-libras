@@ -44,19 +44,9 @@ const ChildMenuScreen = ({ navigation }) => {
             <Ionicons name="chevron-back" size={28} color="#2C3E50" />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigation.navigate('WeeklyGoals')} style={styles.brushingButton}>
-            <Image
-              source={require('../../assets/icon_brush_screen.png')} // Confirme se o caminho está correto
-              style={styles.brushingImage}
-              resizeMode="contain"
-            />
+          <TouchableOpacity onPress={() => navigation.navigate('WeeklyGoals')} style={styles.goalsActionBtn}>
+            <Text style={styles.goalsBtn}> Metas </Text>
           </TouchableOpacity>
-          {/* <TouchableOpacity
-            onPress={() => navigation.navigate('WeeklyGoals')}
-            style={styles.rewardButton}
-          >
-            <FontAwesome5 name="tooth" size={24} color="#e4e7eb" />
-          </TouchableOpacity> */}
         </View>
 
         <View style={styles.containerLogo}>
@@ -193,17 +183,26 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  brushingButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 2,
+  goalsActionBtn: {
+    backgroundColor: '#ecd83f',
+    paddingVertical: 8,
     borderRadius: 20,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#b4a31d',
+    borderBottomWidth: 6,
+    // borderBottomColor: COLORS.darkPink,
   },
-  brushingImage: {
-    width: 70,
-    height: 70
+  goalsBtn: {
+    color: '#4E342E',
+    fontSize: 20,
+    fontWeight: 'bold',
+    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    textShadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    textShadowRadius: 2,
   },
 });
 
