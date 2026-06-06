@@ -154,8 +154,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   btnColor: {
-    backgroundColor: '#eca8e2',
-    borderColor: '#9743a6',
+    backgroundColor: '#74C4CD',
+    borderColor: '#50A2AC',
   },
   itemImage: {
     width: '100%',

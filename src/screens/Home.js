@@ -132,10 +132,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#F3A1B5',
     borderBottomColor: '#D67C92',
   },
-  btnCaregiver: {
-    backgroundColor: '#F5B8CA',
-    borderBottomColor: '#D994A7',
-  },
 
   iconWrapper: {
     width: 75,

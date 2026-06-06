@@ -29,7 +29,6 @@ const WeeklyGoalsScreen = ({ navigation }) => {
     const [completedBrush, setCompleteBrush] = useState({});
     const [isCelebrating, setIsCelebrating] = useState(false);
 
-    // Descobre o dia atual (0=Domingo, 1=Segunda, etc.) e mapeia para a nossa array
     const currentDayIndex = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
     const currentDayName = daysOfWeek[currentDayIndex];
 
