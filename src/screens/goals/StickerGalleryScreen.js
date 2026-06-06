@@ -17,7 +17,7 @@ const COLORS = {
 const StickerGalleryScreen = ({ navigation }) => {
     const stickersData = Array.from({ length: 24 }).map((_, index) => ({
         id: String(index + 1),
-        unlocked: index < 12 // Os 12 primeiros ficam desbloqueados
+        unlocked: index < 12
     }));
 
     const totalStickers = stickersData.length;
@@ -28,7 +28,6 @@ const StickerGalleryScreen = ({ navigation }) => {
         if (item.unlocked) {
             return (
                 <View style={[styles.card, styles.cardUnlocked]}>
-                    {/* Espaço reservado para a imagem real do adesivo */}
                     <Text style={styles.placeholderText}>Img</Text>
                 </View>
             );
@@ -43,7 +42,7 @@ const StickerGalleryScreen = ({ navigation }) => {
 
     return (
         <ImageBackground
-            source={require('../../assets/stickers_background.png')} // Substitua pelo nome correto do seu fundo
+            source={require('../../assets/imagem_fundo.png')} // Substitua pelo nome correto do seu fundo
             style={styles.background}
             resizeMode="cover"
         >

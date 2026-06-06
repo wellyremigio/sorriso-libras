@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -75,156 +75,163 @@ const WeeklyGoalsScreen = ({ navigation }) => {
     const brushesLeftToday = 3 - brushesToday;
 
     return (
-        <SafeAreaView style={styles.container}>
-
-            <View style={styles.topHeader}>
-                <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    style={styles.iconButton}
-                    hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
-                >
-                    <Ionicons name="chevron-back" size={28} color={COLORS.textDark} />
-                </TouchableOpacity>
-
-                <View style={styles.logoPlaceholder}>
-                    <Image source={require('../../assets/upper_logo.png')} style={styles.logoImage} resizeMode="contain" />
-                </View>
-
-                <View style={styles.rightIconsGroup}>
-                    <TouchableOpacity onPress={() => navigation.navigate('StickerGallery')} style={styles.iconButton}>
-                        <MaterialCommunityIcons name="sticker-emoji" size={22} color={COLORS.textDark} />
+        <ImageBackground
+            source={require("../../assets/imagem_fundo.png")}
+            style={styles.background}
+            resizeMethod="cover"
+        >
+            <SafeAreaView style={styles.container}>
+                <View style={styles.topHeader}>
+                    <TouchableOpacity
+                        onPress={() => navigation.goBack()}
+                        style={styles.iconButton}
+                        hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+                    >
+                        <Ionicons name="chevron-back" size={28} color={COLORS.textDark} />
                     </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
-                        <Ionicons name="home" size={26} color={COLORS.textDark} />
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-            <View style={styles.titleBanner}>
-                <Text style={styles.titleText}>Minhas Metas da Semana</Text>
-            </View>
-
-            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-
-                {/* 3. Indicador de Meta do Dia Atual */}
-                <View style={styles.todayGoalBanner}>
-                    <FontAwesome5 name="tooth" size={20} color={COLORS.primaryPink} style={{ marginRight: 10 }} />
-                    <Text style={styles.todayGoalText}>
-                        {currentDayName}:
-                        {brushesLeftToday === 0
-                            ? " Parabéns! Meta diária atingida!!"
-                            : ` Faltam ${brushesLeftToday} escovações hoje`}
-                    </Text>
-                </View>
-
-
-                {/* 4. Calendário (Ícones fora + Tabela Menor) */}
-                {/* 4. Calendário (Ícones fora + Tabela Menor) */}
-                <View style={styles.calendarWrapper}>
-
-                    {/* Coluna da Esquerda (Ícones Flutuantes) */}
-                    <View style={styles.iconColumn}>
-
-                        {/* Espaço vazio para alinhar com o cabeçalho da tabela */}
-                        <View style={styles.iconHeaderSpace} />
-
-                        {brushingShifts.map((shift) => (
-                            <View key={`icon-${shift.id}`} style={styles.iconCell}>
-                                <FontAwesome5 name={shift.icon} size={18} color="#A08B8B" />
-                            </View>
-                        ))}
+                    <View style={styles.logoPlaceholder}>
+                        <Image source={require('../../assets/upper_logo.png')} style={styles.logoImage} resizeMode="contain" />
                     </View>
 
-                    {/* Coluna da Direita (Tabela com Bordas) */}
-                    <View style={styles.tableContainer}>
+                    <View style={styles.rightIconsGroup}>
+                        <TouchableOpacity onPress={() => navigation.navigate('StickerGallery')} style={styles.iconButton}>
+                            <MaterialCommunityIcons name="sticker-emoji" size={22} color={COLORS.textDark} />
+                        </TouchableOpacity>
 
-                        {/* Cabeçalho (Seg - Dom) */}
-                        <View style={styles.tableHeaderRow}>
-                            {daysOfWeek.map((day, index) => (
-                                <View key={`header-${index}`} style={styles.tableHeaderCell}>
-                                    <Text style={styles.tableHeaderText}>{day}</Text>
+                        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
+                            <Ionicons name="home" size={26} color={COLORS.textDark} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                <View style={styles.titleBanner}>
+                    <Text style={styles.titleText}>Minhas Metas da Semana</Text>
+                </View>
+
+                <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+
+                    {/* 3. Indicador de Meta do Dia Atual */}
+                    <View style={styles.todayGoalBanner}>
+                        <FontAwesome5 name="tooth" size={20} color={COLORS.primaryPink} style={{ marginRight: 10 }} />
+                        <Text style={styles.todayGoalText}>
+                            {currentDayName}:
+                            {brushesLeftToday === 0
+                                ? " Parabéns! Meta diária atingida!!"
+                                : ` Faltam ${brushesLeftToday} escovações hoje`}
+                        </Text>
+                    </View>
+
+
+                    {/* 4. Calendário (Ícones fora + Tabela Menor) */}
+                    {/* 4. Calendário (Ícones fora + Tabela Menor) */}
+                    <View style={styles.calendarWrapper}>
+
+                        {/* Coluna da Esquerda (Ícones Flutuantes) */}
+                        <View style={styles.iconColumn}>
+
+                            {/* Espaço vazio para alinhar com o cabeçalho da tabela */}
+                            <View style={styles.iconHeaderSpace} />
+
+                            {brushingShifts.map((shift) => (
+                                <View key={`icon-${shift.id}`} style={styles.iconCell}>
+                                    <FontAwesome5 name={shift.icon} size={18} color="#A08B8B" />
                                 </View>
                             ))}
                         </View>
 
-                        {/* Linhas de Checkbox */}
-                        {brushingShifts.map((shift, shiftIndex) => (
-                            <View key={shift.id} style={[
-                                styles.tableRow,
-                                shiftIndex === brushingShifts.length - 1 && { borderBottomWidth: 0 }
-                            ]}>
-                                {daysOfWeek.map((day, index) => {
-                                    const key = `${day}-${shift.id}`;
-                                    const isChecked = !!completedBrush[key];
-                                    const isFutureDay = index > currentDayIndex;
+                        {/* Coluna da Direita (Tabela com Bordas) */}
+                        <View style={styles.tableContainer}>
 
-                                    return (
-                                        <View key={key} style={styles.tableCell}>
-                                            <TouchableOpacity
-                                                style={[
-                                                    styles.checkbox,
-                                                    isChecked && styles.checkboxActive,
-                                                    isFutureDay && styles.checkboxDisabled
-                                                ]}
-                                                onPress={() => toggleCheck(day, shift.id)}
-                                                activeOpacity={0.7}
-                                                disabled={isFutureDay}
-                                            >
-                                                {isChecked ? <Ionicons name="checkmark" size={16} color={COLORS.primaryPink} /> : null}
-                                            </TouchableOpacity>
-                                        </View>
-                                    );
-                                })}
+                            {/* Cabeçalho (Seg - Dom) */}
+                            <View style={styles.tableHeaderRow}>
+                                {daysOfWeek.map((day, index) => (
+                                    <View key={`header-${index}`} style={styles.tableHeaderCell}>
+                                        <Text style={styles.tableHeaderText}>{day}</Text>
+                                    </View>
+                                ))}
                             </View>
-                        ))}
+
+                            {/* Linhas de Checkbox */}
+                            {brushingShifts.map((shift, shiftIndex) => (
+                                <View key={shift.id} style={[
+                                    styles.tableRow,
+                                    shiftIndex === brushingShifts.length - 1 && { borderBottomWidth: 0 }
+                                ]}>
+                                    {daysOfWeek.map((day, index) => {
+                                        const key = `${day}-${shift.id}`;
+                                        const isChecked = !!completedBrush[key];
+                                        const isFutureDay = index > currentDayIndex;
+
+                                        return (
+                                            <View key={key} style={styles.tableCell}>
+                                                <TouchableOpacity
+                                                    style={[
+                                                        styles.checkbox,
+                                                        isChecked && styles.checkboxActive,
+                                                        isFutureDay && styles.checkboxDisabled
+                                                    ]}
+                                                    onPress={() => toggleCheck(day, shift.id)}
+                                                    activeOpacity={0.7}
+                                                    disabled={isFutureDay}
+                                                >
+                                                    {isChecked ? <Ionicons name="checkmark" size={16} color={COLORS.primaryPink} /> : null}
+                                                </TouchableOpacity>
+                                            </View>
+                                        );
+                                    })}
+                                </View>
+                            ))}
+                        </View>
                     </View>
-                </View>
 
-                {/* 5. Barra de Progresso Semanal */}
-                <View style={styles.progressSection}>
-                    <Text style={styles.progressText}>{totalCompleted}/{totalGoal} escovações concluídas</Text>
-                    <View style={styles.progressBarBackground}>
-                        <View style={[styles.progressBarFill, { width: `${(totalCompleted / totalGoal) * 100}%` }]} />
+                    {/* 5. Barra de Progresso Semanal */}
+                    <View style={styles.progressSection}>
+                        <Text style={styles.progressText}>{totalCompleted}/{totalGoal} escovações concluídas</Text>
+                        <View style={styles.progressBarBackground}>
+                            <View style={[styles.progressBarFill, { width: `${(totalCompleted / totalGoal) * 100}%` }]} />
+                        </View>
                     </View>
-                </View>
 
-                {/* 6. Card de Incentivo e Espaço para Adesivo */}
-                <View style={styles.incentiveCard}>
-                    <Text style={styles.incentiveMainText}>Continue assim! Você está indo muito bem! ✨</Text>
-                    <Text style={styles.incentiveSubText}>Ganhe um adesivo se completar sua meta semanal!</Text>
+                    {/* 6. Card de Incentivo e Espaço para Adesivo */}
+                    <View style={styles.incentiveCard}>
+                        <Text style={styles.incentiveMainText}>Continue assim! Você está indo muito bem! ✨</Text>
+                        <Text style={styles.incentiveSubText}>Ganhe um adesivo se completar sua meta semanal!</Text>
 
-                    {/* Placeholder para a imagem do adesivo no canto */}
-                    <View style={styles.stickerImagePlaceholder}>
-                        <Image source={require('../../assets/star.png')} style={styles.stickerImage} />
+                        {/* Placeholder para a imagem do adesivo no canto */}
+                        <View style={styles.stickerImagePlaceholder}>
+                            <Image source={require('../../assets/star.png')} style={styles.stickerImage} />
 
+                        </View>
                     </View>
-                </View>
 
-                {/* 7. Botão Concluir */}
-                <TouchableOpacity style={styles.actionButton} onPress={() => setIsCelebrating(true)} activeOpacity={0.8}>
-                    <Text style={styles.actionButtonText}>Concluir Escovação</Text>
-                </TouchableOpacity>
-            </ScrollView>
+                    {/* 7. Botão Concluir */}
+                    <TouchableOpacity style={styles.actionButton} onPress={() => setIsCelebrating(true)} activeOpacity={0.8}>
+                        <Text style={styles.actionButtonText}>Concluir Escovação</Text>
+                    </TouchableOpacity>
+                </ScrollView>
 
-            <FloatingBalloons
-                visible={isCelebrating}
-                onComplete={() => {
-                    setIsCelebrating(false);
-                    navigation.navigate('Home');
-                }}
-            />
-        </SafeAreaView>
+                <FloatingBalloons
+                    visible={isCelebrating}
+                    onComplete={() => {
+                        setIsCelebrating(false);
+                        navigation.navigate('Home');
+                    }}
+                />
+            </SafeAreaView>
+        </ImageBackground>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: "transparent",
     },
-
-    // Header
+    background: {
+        flex: 1,
+        width: "100%",
+        height: "100%",
+    },
     topHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -235,16 +242,11 @@ const styles = StyleSheet.create({
         zIndex: 10,
         elevation: 10,
     },
-
     rightIconsGroup: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: 12,
     },
-
-    // iconButton: {
-    //     padding: 5,
-    // },
     iconButton: {
         width: 44,
         height: 44,
@@ -255,26 +257,21 @@ const styles = StyleSheet.create({
         borderWidth: 1.5,
         borderColor: '#E8D4D8',
     },
-
     logoPlaceholder: {
         flex: 1,
         height: 40,
         justifyContent: 'center',
         alignItems: 'center',
     },
-
     logoImage: {
         width: 230,
         height: 230,
     },
-
     logoText: {
         color: '#A08B8B',
         fontSize: 12,
         fontWeight: 'bold',
     },
-
-    // Título
     titleBanner: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -282,11 +279,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         marginBottom: 15,
     },
-
     titleArrow: {
         marginRight: 15,
     },
-
     titleText: {
         flex: 1,
         fontSize: 18,
@@ -295,13 +290,10 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginRight: 35,
     },
-
     scrollContent: {
         paddingHorizontal: 20,
         paddingBottom: 30,
     },
-
-    // Banner da meta do dia
     todayGoalBanner: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -313,27 +305,23 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#F4D1D9',
     },
-
     todayGoalText: {
         fontSize: 15,
         fontWeight: 'bold',
         color: COLORS.textDark,
     },
-
-    // Tabela
-    // --- ESTILOS DO CALENDÁRIO ---
     calendarWrapper: {
         flexDirection: 'row',
         marginBottom: 20,
         alignItems: 'stretch'
     },
     iconColumn: {
-        width: 26, // Coluna fininha só para os ícones
+        width: 26,
         marginRight: 8,
         justifyContent: 'flex-start'
     },
     iconHeaderSpace: {
-        height: 36 // Altura exata do cabeçalho da tabela
+        height: 36
     },
     iconCell: {
         height: 44, // Altura exata das linhas da tabela

@@ -33,7 +33,7 @@ const ChildMenuScreen = ({ navigation }) => {
   ];
   return (
     <ImageBackground
-      source={require('../../assets/background_menu_child.png')}
+      source={require('../../assets/imagem_fundo.png')}
       style={styles.background}
       resizeMode="cover"
     >

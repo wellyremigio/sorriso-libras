@@ -40,7 +40,7 @@ const DentistMenuScreen = ({ navigation }) => {
   return (
 
     <ImageBackground
-      source={require('../../assets/background_menu_dentist.png')}
+      source={require('../../assets/imagem_fundo.png')}
       style={styles.background}
       resizeMode="cover"
     >
