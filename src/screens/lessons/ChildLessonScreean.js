@@ -5,6 +5,24 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import FloatingBalloons from '../../components/animation/FloatingBalloons';
 import { BlurView } from 'expo-blur';
 
+
+
+const COLORS = {
+  textDark: '#4A2C2A',
+
+  stepCard: '#A2C4C9',
+  stepCardShadow: '#74AEB6',
+
+  infoCard: '#FFFDFC',
+  infoCardBorder: '#DCEEEF',
+
+  nextButton: '#78dda0',
+  nextButtonShadow: '#33b962',
+
+  activeDot: '#74C4CD',
+  inactiveDot: '#E7DDE2',
+};
+
 const ChildLessonScreen = ({ navigation, route }) => {
   const { menuItems = [], initialIndex = 0 } = route.params || {};
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
@@ -14,12 +32,9 @@ const ChildLessonScreen = ({ navigation, route }) => {
   const totalSteps = menuItems.length > 0 ? menuItems.length : 1;
   const currentItem = menuItems[currentIndex] || { title: 'Carregando...' };
 
-  const handleNextStep = () => {
-    // 1. Navega imediatamente para a nova tela de conquista
-    navigation.navigate('StickerAchievementScreen');
 
-    // 2. Atrasa a troca do vídeo em meio segundo. 
-    // Isso garante que o usuário não veja o vídeo mudando no fundo enquanto a transição de tela acontece.
+  const handleNextStep = () => {
+    navigation.navigate('StickerAchievementScreen');
     setTimeout(() => {
       if (currentIndex < totalSteps - 1) {
         setCurrentIndex(currentIndex + 1);
@@ -121,8 +136,6 @@ const ChildLessonScreen = ({ navigation, route }) => {
         {showFinishPopup && (
           <BlurView intensity={50} tint="light" style={styles.overlay}>
             <View style={styles.finishPopupBox}>
-
-              {/* Círculo de Destaque para o Adesivo */}
               <View style={styles.stickerGlow}>
                 <Image
                   source={require('../../assets/stickers/sticker6.png')}
@@ -158,7 +171,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "transparent"
   },
-  background:{
+  background: {
     flex: 1,
     width: "100%",
     height: "100%"
@@ -285,18 +298,24 @@ const styles = StyleSheet.create({
   stepText: { fontWeight: 'bold', color: '#FFF', fontSize: 16, flex: 1 },
   stepTextRight: { fontWeight: 'bold', color: '#FFF', fontSize: 16 },
   explanationBox: {
-    backgroundColor: '#FDFBF7',
+    backgroundColor: COLORS.infoCard,
+    borderColor: COLORS.infoCardBorder,
     marginHorizontal: 20,
     marginTop: 15,
     padding: 20,
     borderRadius: 15,
     borderWidth: 2,
-    borderColor: '#E8D4D8',
     justifyContent: 'center'
   },
-  explanationText: { fontSize: 16, color: '#4E342E', textAlign: 'center', fontWeight: '500' },
+  explanationText: {
+    fontSize: 16,
+    color: COLORS.textDark,
+    textAlign: 'center',
+    fontWeight: '500'
+  },
   nextButton: {
-    backgroundColor: '#F3A1B5',
+    backgroundColor: COLORS.nextButton,
+    borderBottomColor: COLORS.nextButtonShadow,
     marginHorizontal: 20,
     marginTop: 25,
     paddingVertical: 18,
@@ -305,12 +324,25 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'rgba(255, 255, 255, 0.5)',
     borderBottomWidth: 6,
-    borderBottomColor: '#D67C92',
   },
-  nextButtonText: { color: '#FFF', fontSize: 22, fontWeight: 'bold', textShadowColor: 'rgba(0, 0, 0, 0.1)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 },
+  nextButtonText: { 
+    color: '#FFF', 
+    fontSize: 22, 
+    fontWeight: 'bold', 
+    textShadowColor: 'rgba(0, 0, 0, 0.1)', 
+    textShadowOffset: { width: 0, height: 1 }, 
+    textShadowRadius: 2 
+  },
   dotsContainer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 25 },
-  dot: { width: 12, height: 12, borderRadius: 6, backgroundColor: '#E8D4D8', marginHorizontal: 6 },
-  activeDot: { backgroundColor: '#F3A1B5' },
+  dot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: COLORS.stepCard,
+    borderBottomColor: COLORS.stepCardShadow,
+    marginHorizontal: 6
+  },
+  activeDot: { backgroundColor: COLORS.activeDot },
   overlay: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
@@ -350,8 +382,6 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200
   },
-
-  // Textos
   finishTitle: {
     fontSize: 32,
     fontWeight: '900',
@@ -366,10 +396,9 @@ const styles = StyleSheet.create({
     marginBottom: 32,
     lineHeight: 24
   },
-
-  // Botão Pílula 3D
   finishButton: {
-    backgroundColor: '#F3A1B5',
+    backgroundColor: '#A9DFBF',
+    borderBottomColor: COLORS.nextButtonShadow,
     paddingVertical: 16,
     paddingHorizontal: 24,
     borderRadius: 35,
@@ -378,7 +407,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'rgba(255, 255, 255, 0.5)',
     borderBottomWidth: 6,
-    borderBottomColor: '#D67C92'
   },
   finishButtonText: {
     color: '#FFF',
