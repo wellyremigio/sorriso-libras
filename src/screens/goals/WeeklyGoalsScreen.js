@@ -6,16 +6,28 @@ import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FloatingBalloons from '../../components/animation/FloatingBalloons';
 
-// Variáveis de Cor Centrais para facilitar a alteração futura
 const COLORS = {
     background: '#FFF5F7',
-    primaryPink: '#F3A1B5', // Cor do botão principal
-    darkPink: '#D67C92',    // Sombra do botão principal
-    tableHeader: '#E8A7B9', // Rosa do cabeçalho da tabela
-    tableCell: '#FDF7F8',   // Fundo quase branco da tabela
-    textDark: '#4E342E',
+    darkPink: '#D67C92',
+    tableHeader: '#E8A7B9',
+    tableCell: '#FDF7F8',
     textLightPink: '#FFF',
-    grayBorder: '#E8D4D8'
+    grayBorder: '#E8D4D8',
+    textDark: '#4A2C2A',
+    primaryPink: '#F3A1B5',
+    pinkShadow: '#D67C92',
+    pastelBlue: '#A2C4C9',
+    blueShadow: '#74AEB6',
+    pastelGreen: '#A9DFBF',
+    greenShadow: '#7FBF95',
+    cream: '#FFFDFC',
+    creamBorder: '#DCEEEF',
+    disabledBg: '#F5ECEF',
+    disabledBorder: '#E8D7DD',
+    mutedText: '#7F8C8D',
+    bgCheckbox: 'E9F8EF',
+    progressBarText: '2C3E50',
+    lightPink: '#F4D1D9',
 };
 
 const WeeklyGoalsScreen = ({ navigation }) => {
@@ -112,7 +124,12 @@ const WeeklyGoalsScreen = ({ navigation }) => {
 
                     {/* 3. Indicador de Meta do Dia Atual */}
                     <View style={styles.todayGoalBanner}>
-                        <FontAwesome5 name="tooth" size={20} color={COLORS.primaryPink} style={{ marginRight: 10 }} />
+                        <FontAwesome5 
+                            name="tooth" 
+                            size={20} 
+                            color={COLORS.blueShadow} 
+                            style={{ marginRight: 10 }} 
+                        />
                         <Text style={styles.todayGoalText}>
                             {currentDayName}:
                             {brushesLeftToday === 0
@@ -121,28 +138,20 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                         </Text>
                     </View>
 
-
-                    {/* 4. Calendário (Ícones fora + Tabela Menor) */}
-                    {/* 4. Calendário (Ícones fora + Tabela Menor) */}
                     <View style={styles.calendarWrapper}>
 
-                        {/* Coluna da Esquerda (Ícones Flutuantes) */}
+                       
                         <View style={styles.iconColumn}>
-
-                            {/* Espaço vazio para alinhar com o cabeçalho da tabela */}
                             <View style={styles.iconHeaderSpace} />
-
                             {brushingShifts.map((shift) => (
                                 <View key={`icon-${shift.id}`} style={styles.iconCell}>
-                                    <FontAwesome5 name={shift.icon} size={18} color="#A08B8B" />
+                                    <FontAwesome5 name={shift.icon} size={18} color="#74AEB6" />
                                 </View>
                             ))}
                         </View>
 
-                        {/* Coluna da Direita (Tabela com Bordas) */}
                         <View style={styles.tableContainer}>
 
-                            {/* Cabeçalho (Seg - Dom) */}
                             <View style={styles.tableHeaderRow}>
                                 {daysOfWeek.map((day, index) => (
                                     <View key={`header-${index}`} style={styles.tableHeaderCell}>
@@ -151,7 +160,6 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                                 ))}
                             </View>
 
-                            {/* Linhas de Checkbox */}
                             {brushingShifts.map((shift, shiftIndex) => (
                                 <View key={shift.id} style={[
                                     styles.tableRow,
@@ -174,7 +182,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                                                     activeOpacity={0.7}
                                                     disabled={isFutureDay}
                                                 >
-                                                    {isChecked ? <Ionicons name="checkmark" size={16} color={COLORS.primaryPink} /> : null}
+                                                    {isChecked ? <Ionicons name="checkmark" size={16} color={COLORS.greenShadow} /> : null}
                                                 </TouchableOpacity>
                                             </View>
                                         );
@@ -184,7 +192,6 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                         </View>
                     </View>
 
-                    {/* 5. Barra de Progresso Semanal */}
                     <View style={styles.progressSection}>
                         <Text style={styles.progressText}>{totalCompleted}/{totalGoal} escovações concluídas</Text>
                         <View style={styles.progressBarBackground}>
@@ -192,19 +199,16 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                         </View>
                     </View>
 
-                    {/* 6. Card de Incentivo e Espaço para Adesivo */}
                     <View style={styles.incentiveCard}>
                         <Text style={styles.incentiveMainText}>Continue assim! Você está indo muito bem! ✨</Text>
                         <Text style={styles.incentiveSubText}>Ganhe um adesivo se completar sua meta semanal!</Text>
 
-                        {/* Placeholder para a imagem do adesivo no canto */}
                         <View style={styles.stickerImagePlaceholder}>
                             <Image source={require('../../assets/star.png')} style={styles.stickerImage} />
 
                         </View>
                     </View>
 
-                    {/* 7. Botão Concluir */}
                     <TouchableOpacity style={styles.actionButton} onPress={() => setIsCelebrating(true)} activeOpacity={0.8}>
                         <Text style={styles.actionButtonText}>Concluir Escovação</Text>
                     </TouchableOpacity>
@@ -297,13 +301,13 @@ const styles = StyleSheet.create({
     todayGoalBanner: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#F9E4E8',
+        backgroundColor: COLORS.creamBorder,
         paddingVertical: 12,
         paddingHorizontal: 20,
         borderRadius: 25,
         marginBottom: 20,
         borderWidth: 1,
-        borderColor: '#F4D1D9',
+        borderColor: '#A2C4C9',
     },
     todayGoalText: {
         fontSize: 15,
@@ -324,22 +328,22 @@ const styles = StyleSheet.create({
         height: 36
     },
     iconCell: {
-        height: 44, // Altura exata das linhas da tabela
+        height: 44,
         justifyContent: 'center',
         alignItems: 'center'
     },
     tableContainer: {
-        flex: 1, // Ocupa o restante da tela
-        backgroundColor: COLORS.tableCell,
-        borderRadius: 15, // Curvatura um pouco mais suave
-        borderWidth: 2, // Borda um pouco mais fina
-        borderColor: '#F4D1D9',
+        flex: 1,
+        backgroundColor: COLORS.cream,
+        borderRadius: 15,
+        borderWidth: 2,
+        borderColor: COLORS.pastelBlue,
         overflow: 'hidden'
     },
     tableHeaderRow: {
         flexDirection: 'row',
-        backgroundColor: COLORS.tableHeader,
-        height: 36, // Fixado para alinhar com iconHeaderSpace
+        backgroundColor: COLORS.pastelBlue,
+        height: 36,
         alignItems: 'center'
     },
     tableHeaderCell: {
@@ -349,23 +353,23 @@ const styles = StyleSheet.create({
     tableHeaderText: {
         color: '#FFF',
         fontWeight: 'bold',
-        fontSize: 12 // Fonte menor para caber em telas pequenas
+        fontSize: 12
     },
     tableRow: {
         flexDirection: 'row',
-        height: 44, // Fixado para alinhar com iconCell
+        height: 44,
         borderBottomWidth: 1,
-        borderBottomColor: '#F4D1D9'
+        borderBottomColor: COLORS.creamBorder
     },
     tableCell: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
         borderRightWidth: 1,
-        borderRightColor: '#F4D1D9'
+        borderRightColor: COLORS.creamBorder
     },
     checkbox: {
-        width: 24, // Bem menor que os 30 de antes
+        width: 24,
         height: 24,
         borderRadius: 6,
         backgroundColor: '#FFF',
@@ -376,54 +380,49 @@ const styles = StyleSheet.create({
         elevation: 1
     },
     checkboxActive: {
-        borderColor: COLORS.primaryPink
+        borderColor: COLORS.greenShadow,
+        backgroundColor: COLORS.bgCheckbox
     },
     checkboxDisabled: {
-        backgroundColor: '#F5E9EC',
-        borderColor: '#E8D4D8',
+        backgroundColor: '#F5ECEF',
+        borderColor: '#E8D7DD',
         opacity: 0.5
     },
-
-    // Barra de progresso semanal
     progressSection: {
-        backgroundColor: '#F3A1B5',
+        backgroundColor: COLORS.pastelGreen,
+        borderBottomColor: COLORS.greenShadow,
+        borderColor: 'rgba(255, 255, 255, 0.6)',
         borderRadius: 25,
         paddingVertical: 10,
         paddingHorizontal: 20,
         marginBottom: 20,
     },
-
     progressText: {
-        color: '#FFF',
+        color: COLORS.progressBarText,
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 8,
         fontSize: 14,
     },
-
     progressBarBackground: {
         height: 8,
-        backgroundColor: 'rgba(255,255,255,0.4)',
+        backgroundColor: 'rgba(255, 255, 255, 0.65)',
         borderRadius: 4,
         overflow: 'hidden',
     },
-
     progressBarFill: {
         height: '100%',
-        backgroundColor: '#FFF',
+        backgroundColor: COLORS.blueShadow,
     },
-
-    // Card de incentivo
     incentiveCard: {
-        backgroundColor: '#FFF',
+        backgroundColor: COLORS.cream,
         borderRadius: 20,
         padding: 20,
         borderWidth: 2,
-        borderColor: '#F4D1D9',
+        borderColor: COLORS.lightPink,
         position: 'relative',
         marginBottom: 30,
     },
-
     incentiveMainText: {
         fontSize: 16,
         fontWeight: 'bold',
@@ -432,14 +431,12 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         paddingRight: 40,
     },
-
     incentiveSubText: {
         fontSize: 14,
         color: '#7F8C8D',
         textAlign: 'center',
         paddingRight: 40,
     },
-
     stickerImagePlaceholder: {
         position: 'absolute',
         bottom: -15,
@@ -447,34 +444,30 @@ const styles = StyleSheet.create({
         width: 80,
         height: 80,
         borderRadius: 40,
-        backgroundColor: '#FDF7F8',
+        backgroundColor: COLORS.cream,
         borderWidth: 2,
-        borderColor: '#F4D1D9',
+        borderColor: COLORS.lightPink,
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 4,
     },
-
     stickerImage: {
         width: '100%',
         height: '100%',
         resizeMode: 'contain',
     },
-
-    // Botão concluir
     actionButton: {
-        backgroundColor: COLORS.primaryPink,
+        backgroundColor: COLORS.pastelGreen,
         paddingVertical: 18,
         borderRadius: 35,
         alignItems: 'center',
         borderWidth: 2,
         borderColor: 'rgba(255, 255, 255, 0.5)',
         borderBottomWidth: 6,
-        borderBottomColor: COLORS.darkPink,
+        borderBottomColor: COLORS.blueShadow,
     },
-
     actionButtonText: {
-        color: '#FFF',
+        color: '#2C3E50',
         fontSize: 20,
         fontWeight: 'bold',
         textShadowColor: 'rgba(0, 0, 0, 0.1)',
@@ -489,9 +482,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRightWidth: 1,
-        borderRightColor: '#F4D1D9'
+        borderRightColor: COLORS.lightPink
     },
-
 });
 
 export default WeeklyGoalsScreen;

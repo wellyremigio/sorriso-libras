@@ -12,12 +12,12 @@ const COLORS = {
     paginationActive: '#A2C4C9', // Azul claro do ponto ativo
     paginationInactive: '#BDC3C7', // Cinza dos pontos inativos
     white: '#FFFFFF',
-    adesivoBorder: '#E8D4D8'    // Cor suave para a borda do adesivo
+    adesivoBorder: '#E8D4D8',
+    nextButton: '#78dda0',
+    nextButtonShadow: '#33b962',  // Cor suave para a borda do adesivo
 };
 
 const StickerAchievementScreen = ({ navigation, route }) => {
-    // Por enquanto, não estamos passando dados, mas deixei a estrutura pronta
-    // const { stickerImage = require('../../assets/adesivo_dente_escovando.png'), stickerName = 'Dente Forte' } = route.params || {};
 
     const handleContinue = () => {
         navigation.goBack();
@@ -171,9 +171,8 @@ const styles = StyleSheet.create({
         marginTop: 60 // Puxa o conteúdo um pouco para baixo para equilibrar com o topo
     },
     mainTitle: {
-        fontFamily: 'Comfortaa', // Fonte amigável
         fontSize: 48,
-        fontWeight: '900',
+        fontWeight: '700',
         color: COLORS.titleBlue,
         textAlign: 'center',
         marginBottom: 20,
@@ -202,7 +201,6 @@ const styles = StyleSheet.create({
         marginBottom: 30
     },
 
-    // Destaque do Adesivo (Wireframe)
     adesivoHighlight: {
         width: 180,
         height: 180,
@@ -236,7 +234,8 @@ const styles = StyleSheet.create({
 
     // Botão Continuar (Pílula 3D)
     actionButton: {
-        backgroundColor: COLORS.primaryPink,
+        backgroundColor: COLORS.nextButton,
+        borderBottomColor: COLORS.nextButtonShadow,
         paddingVertical: 18,
         paddingHorizontal: 40,
         borderRadius: 35,
@@ -244,7 +243,6 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: 'rgba(255, 255, 255, 0.5)',
         borderBottomWidth: 6,
-        borderBottomColor: COLORS.darkPink,
         width: '100%',
         marginBottom: 30,
         // Sombra para dar profundidade
