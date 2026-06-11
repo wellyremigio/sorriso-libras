@@ -1,119 +1,127 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons'; // Mantivemos o Ionicons para placeholders se necessário
+import { Ionicons } from '@expo/vector-icons';
 
-// Variáveis de Cor Centrais para facilitar a alteração futura
 const COLORS = {
     background: '#FFF5F7',
-    titleBlue: '#2C4A63',       // Azul escuro do título
-    textGrey: '#7F8C8D',        // Cinza da descrição
-    primaryPink: '#F3A1B5',     // Rosa do botão principal
-    darkPink: '#D67C92',        // Sombra do botão principal
-    paginationActive: '#A2C4C9', // Azul claro do ponto ativo
-    paginationInactive: '#BDC3C7', // Cinza dos pontos inativos
+    titleBlue: '#2C4A63',
+    textGrey: '#7F8C8D',
+    primaryPink: '#F3A1B5',
+    darkPink: '#D67C92',
+    paginationActive: '#A2C4C9',
+    paginationInactive: '#BDC3C7',
     white: '#FFFFFF',
     adesivoBorder: '#E8D4D8',
     nextButton: '#78dda0',
-    nextButtonShadow: '#33b962',  // Cor suave para a borda do adesivo
+    nextButtonShadow: '#33b962',
+    titleGold: '#D4AF37',
+    specialBorder: '#FFD700',
+    titleGold: '#D4AF37',
+    titleGold: '#D4AF37',
 };
 
 const StickerAchievementScreen = ({ navigation, route }) => {
 
+    const { isFinalAchievement = false } = route.params || {};
+
     const handleContinue = () => {
-        navigation.goBack();
+        if (isFinalAchievement) {
+            navigation.navigate('Home');
+        } else {
+            navigation.goBack();
+        }
     };
 
     return (
         <ImageBackground
-            source={require('../../assets/background_celebration.png')} // Fundo de céu/nuvens (image_7.png/image_12.png)
+            source={require('../../assets/background_celebration.png')}
             style={styles.background}
             resizeMode="cover"
         >
             <SafeAreaView style={styles.container}>
-
-                {/* 1. View de Topo com Balões e Confetes (Sobreposição) */}
                 <View style={styles.headerDecoration}>
-                    {/* Balão Rosa Grande - Esquerda */}
                     <View style={[styles.balaoWrapper, { top: 20, left: -20, width: 90, height: 110 }]}>
-                        {/* <Image source={require('../../assets/balao_rosa_grande.png')} style={styles.balaoImage} /> */}
-                        {/* Placeholder de ícone se você não tiver a imagem isolada */}
                         <Ionicons name="balloon" size={70} color="#F5B7B1" />
                     </View>
 
-                    {/* Balão Turquesa Pequeno - Esquerda */}
                     <View style={[styles.balaoWrapper, { top: 70, left: 50, width: 50, height: 60 }]}>
-                        {/* <Image source={require('../../assets/balao_turquesa_pequeno.png')} style={styles.balaoImage} /> */}
                         <Ionicons name="balloon" size={40} color="#A9DFBF" />
                     </View>
 
-                    {/* Confetes no Centro */}
-                    {/* <Image source={require('../../assets/confetes.png')} style={styles.confetesImage} resizeMode="contain" /> */}
-
-                    {/* Balão Rosa Pequeno - Direita */}
                     <View style={[styles.balaoWrapper, { top: 70, right: 50, width: 50, height: 60 }]}>
-                        {/* <Image source={require('../../assets/balao_rosa_pequeno.png')} style={styles.balaoImage} /> */}
                         <Ionicons name="balloon" size={40} color="#F5B7B1" />
                     </View>
 
-                    {/* Balão Turquesa Grande - Direita */}
                     <View style={[styles.balaoWrapper, { top: 20, right: -20, width: 90, height: 110 }]}>
-                        {/* <Image source={require('../../assets/balao_turquesa_grande.png')} style={styles.balaoImage} /> */}
                         <Ionicons name="balloon" size={70} color="#A9DFBF" />
                     </View>
                 </View>
 
-                {/* 2. Área Central de Conteúdo */}
                 <View style={styles.content}>
 
-                    {/* Título de Parabéns */}
-                    <Text style={styles.mainTitle}>Parabéns!</Text>
+                    <Text style={[styles.mainTitle, isFinalAchievement && styles.goldTitle]}>
+                        {isFinalAchievement ? "PARABÉNS!".toUpperCase() : "Parabéns!"}
+                    </Text>
 
-                    {/* Avatar das Crianças (Menino e Menina) */}
                     <View style={styles.avatarContainer}>
                         <Image
-                            source={require('../../assets/sticker_pop.png')} // Imagem isolada do avatar
+                            source={require('../../assets/sticker_pop.png')}
                             style={styles.avatarImage}
                             resizeMode="contain"
                         />
                     </View>
 
-                    {/* Texto de Descrição */}
                     <Text style={styles.descriptionText}>Você conquistou um adesivo!</Text>
 
-                    {/* 3. Destaque do Adesivo Ganho (Conforme image_11.png) */}
-                    <View style={styles.adesivoHighlight}>
-                        {/* Efeito de Brilho Estelar no fundo */}
+                    {!isFinalAchievement && (
+                        <View style={styles.avatarContainer}>
+                            <Image
+                                source={require('../../assets/sticker_pop.png')}
+                                style={styles.avatarImage}
+                                resizeMode="contain"
+                            />
+                        </View>
+                    )}
+
+                    <Text style={styles.descriptionText}>
+                        {isFinalAchievement
+                            ? "Você completou todas as lições. Continue cuidando bem do seu sorriso!"
+                            : "Você conquistou um adesivo!"}
+                    </Text>
+
+                    <View style={[styles.adesivoHighlight, isFinalAchievement && { borderColor: COLORS.specialBorder }]}>
                         <View style={styles.brilhoStars}>
                             <Ionicons name="star" size={20} color="#FFF" style={{ position: 'absolute', top: 10, left: 10 }} />
                             <Ionicons name="star" size={16} color="#FFF" style={{ position: 'absolute', bottom: 15, right: 15 }} />
                             <Ionicons name="star" size={12} color="#FFF" style={{ position: 'absolute', top: 30, right: 30 }} />
                         </View>
 
-                        {/* O Adesivo Real */}
                         <Image
-                            source={require('../../assets/stickers/sticker1.png')} // Imagem do adesivo real
+                            source={isFinalAchievement
+                                ? require('../../assets/trofeu_dente_dourado.png')
+                                : require('../../assets/stickers/sticker1.png')}
                             style={styles.adesivoImage}
                             resizeMode="contain"
                         />
                     </View>
-
-                    {/* 4. Botão Continuar (Pílula 3D) */}
                     <TouchableOpacity
                         style={styles.actionButton}
                         onPress={handleContinue}
                         activeOpacity={0.8}
                     >
-                        <Text style={styles.actionButtonText}>Continuar</Text>
+                        <Text style={styles.actionButtonText}>
+                            {isFinalAchievement ? "Voltar à Tela Inicial" : "Continuar"}
+                        </Text>
                     </TouchableOpacity>
 
-                    {/* 5. Indicador de Paginação (Onboarding) */}
-                    <View style={styles.paginationContainer}>
-                        <View style={[styles.pageDot, styles.pageActive]} />
-                        <View style={styles.pageDot} />
-                        <View style={styles.pageDot} />
-                        <View style={styles.pageDot} />
-                    </View>
-
+                    {!isFinalAchievement && (
+                        <View style={styles.paginationContainer}>
+                            <View style={[styles.pageDot, styles.pageActive]} />
+                            <View style={styles.pageDot} />
+                            <View style={styles.pageDot} />
+                            <View style={styles.pageDot} />
+                        </View>
+                    )}
                 </View>
 
             </SafeAreaView>
@@ -132,15 +140,13 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
         alignItems: 'center'
     },
-
-    // Decoração do Topo (Balões e Confetes)
     headerDecoration: {
         position: 'absolute',
         top: 0,
         width: '100%',
         height: 150,
         overflow: 'visible',
-        zIndex: 5 // Garante que fique acima de tudo
+        zIndex: 5
     },
     balaoWrapper: {
         position: 'absolute',
@@ -160,15 +166,13 @@ const styles = StyleSheet.create({
         left: '20%',
         height: '100%'
     },
-
-    // Área Central
     content: {
         flex: 1,
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 40,
-        marginTop: 60 // Puxa o conteúdo um pouco para baixo para equilibrar com o topo
+        marginTop: 60
     },
     mainTitle: {
         fontSize: 48,
@@ -180,7 +184,6 @@ const styles = StyleSheet.create({
         textShadowOffset: { width: 0, height: 2 },
         textShadowRadius: 4
     },
-
     avatarContainer: {
         width: '80%',
         height: 120,
@@ -192,7 +195,6 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%'
     },
-
     descriptionText: {
         fontSize: 18,
         fontWeight: 'bold',
@@ -200,20 +202,17 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 30
     },
-
     adesivoHighlight: {
         width: 180,
         height: 180,
-        backgroundColor: 'transparent', // O preenchimento vem da View interna
+        backgroundColor: 'transparent',
         borderRadius: 25,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 40,
-        // Borda espessa e suave
         borderWidth: 6,
         borderColor: COLORS.adesivoBorder,
         position: 'relative',
-        // Sombra suave para dar profundidade
         elevation: 6,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 3 },
@@ -222,17 +221,15 @@ const styles = StyleSheet.create({
     },
     brilhoStars: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: '#C5D6DA', // Fundo azul claro/cinza com brilho
-        borderRadius: 19, // Ajustado para dentro da borda grossa
+        backgroundColor: '#C5D6DA',
+        borderRadius: 19,
         overflow: 'hidden'
     },
     adesivoImage: {
         width: '80%',
         height: '80%',
-        zIndex: 2 // Acima do fundo estelar
+        zIndex: 2
     },
-
-    // Botão Continuar (Pílula 3D)
     actionButton: {
         backgroundColor: COLORS.nextButton,
         borderBottomColor: COLORS.nextButtonShadow,
@@ -245,7 +242,6 @@ const styles = StyleSheet.create({
         borderBottomWidth: 6,
         width: '100%',
         marginBottom: 30,
-        // Sombra para dar profundidade
         elevation: 4,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -261,8 +257,6 @@ const styles = StyleSheet.create({
         textShadowRadius: 2,
         letterSpacing: 1
     },
-
-    // Indicador de Paginação
     paginationContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
@@ -279,7 +273,16 @@ const styles = StyleSheet.create({
     },
     pageActive: {
         backgroundColor: COLORS.paginationActive
-    }
+    },
+    goldTitle: {
+        fontSize: 56,
+        color: '#FFD700',
+        letterSpacing: 2, 
+        textShadowColor: '#D35400', 
+        textShadowOffset: { width: 0, height: 5 }, 
+        textShadowRadius: 2,
+        marginBottom: 30, 
+    },
 });
 
 export default StickerAchievementScreen;

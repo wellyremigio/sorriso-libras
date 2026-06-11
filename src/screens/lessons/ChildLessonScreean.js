@@ -34,19 +34,28 @@ const ChildLessonScreen = ({ navigation, route }) => {
 
 
   const handleNextStep = () => {
-    navigation.navigate('StickerAchievementScreen');
-    setTimeout(() => {
-      if (currentIndex < totalSteps - 1) {
-        setCurrentIndex(currentIndex + 1);
-      } else {
-        setShowFinishPopup(true); // Se for o último vídeo, prepara o pop-up de troféu para quando ele voltar
-      }
-    }, 500);
+    const isLastStep = currentIndex === totalSteps - 1;
+
+    navigation.navigate('StickerAchievementScreen', {
+      isFinalAchievement: isLastStep,
+    });
+    if (!isLastStep) {
+      setTimeout(() => {
+        setCurrentIndex(currentIndex + 1)
+      }, 500);
+    };
+    // setTimeout(() => {
+    //   if (currentIndex < totalSteps - 1) {
+    //     setCurrentIndex(currentIndex + 1);
+    //   } else {
+    //     setShowFinishPopup(true);
+    //   }
+    // }, 500);
   };
 
   const handleFinishModule = () => {
     setShowFinishPopup(false);
-    navigation.navigate('Home'); // Vai para a Home em vez de voltar, já que o módulo acabou
+    navigation.navigate('Home');
   };
 
   return (
@@ -348,18 +357,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1000,
-    backgroundColor: 'rgba(255, 245, 247, 0.4)' // Um rosinha bem translúcido
+    backgroundColor: 'rgba(255, 245, 247, 0.4)'
   },
   stickerPopupBox: { backgroundColor: '#FFF', padding: 30, borderRadius: 20, alignItems: 'center', width: '80%', elevation: 10 },
   stickerPopupTitle: { fontSize: 20, fontWeight: 'bold', color: '#2C3E50', marginBottom: 20, textAlign: 'center' },
   finishPopupBox: {
     backgroundColor: '#FFFFFF',
-    padding: 32, // Mantendo a proporção de grid
+    padding: 32,
     borderRadius: 30,
     alignItems: 'center',
     width: '85%',
     borderWidth: 4,
-    borderColor: '#F4D1D9', // Borda rosa clara
+    borderColor: '#F4D1D9',
     elevation: 10,
     shadowColor: '#F3A1B5',
     shadowOffset: { width: 0, height: 8 },
@@ -370,7 +379,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: '#FFF9E6', // Fundo amarelinho bem claro
+    backgroundColor: '#FFF9E6',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 24,
@@ -385,7 +394,7 @@ const styles = StyleSheet.create({
   finishTitle: {
     fontSize: 32,
     fontWeight: '900',
-    color: '#2C4A63', // Aquele azul escuro elegante dos títulos
+    color: '#2C4A63',
     marginBottom: 8,
     textAlign: 'center'
   },
