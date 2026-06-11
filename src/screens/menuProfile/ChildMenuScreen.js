@@ -44,8 +44,8 @@ const ChildMenuScreen = ({ navigation }) => {
             <Ionicons name="chevron-back" size={28} color="#2C3E50" />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigation.navigate('WeeklyGoals')} style={styles.goalsActionBtn}>
-            <Text style={styles.goalsBtn}> Metas </Text>
+          <TouchableOpacity  style={styles.goalsBtn} onPress={() => navigation.navigate('WeeklyGoals')}>
+            <Text style={styles.goalsButtonText}> Metas </Text>
           </TouchableOpacity>
         </View>
 
@@ -191,19 +191,22 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#b4a31d',
     borderBottomWidth: 6,
-    // borderBottomColor: COLORS.darkPink,
   },
   goalsBtn: {
-    color: '#4E342E',
-    fontSize: 20,
-    fontWeight: 'bold',
-    textShadowColor: 'rgba(0, 0, 0, 0.1)',
-    textShadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    textShadowRadius: 2,
+    backgroundColor: '#FDE8A8',
+    borderColor: '#E6C45C',
+    borderWidth: 2,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  goalsButtonText: {
+    color: '#4A2C2A',
+    fontSize: 24,
+    fontWeight: 'bold',
+  }
 });
 
 export default ChildMenuScreen;
