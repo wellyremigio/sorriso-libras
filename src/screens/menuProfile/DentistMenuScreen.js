@@ -38,7 +38,6 @@ const DentistMenuScreen = ({ navigation }) => {
   ];
 
   return (
-
     <ImageBackground
       source={require('../../assets/imagem_fundo.png')}
       style={styles.background}
@@ -64,7 +63,10 @@ const DentistMenuScreen = ({ navigation }) => {
           {menuItems.map((item, index) => (
             <TouchableOpacity
               key={item.id}
-              style={[styles.menuItem, styles.btnColor]}
+              style={[
+                styles.menuItem, 
+                index % 2 === 0 ? styles.btnPink : styles.btnBlue
+              ]}
               onPress={() => navigation.navigate('ChildLesson', {
                 menuItems: menuItems,
                 initialIndex: index,
@@ -149,7 +151,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  btnColor: {
+  btnPink: {
+    backgroundColor: '#F3A1B5',
+    borderBottomColor: '#D67C92',
+  },
+
+  btnBlue: {
     backgroundColor: '#74C4CD',
     borderBottomColor: '#50A2AC',
   },
