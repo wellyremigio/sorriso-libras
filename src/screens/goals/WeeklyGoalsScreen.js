@@ -28,6 +28,10 @@ const COLORS = {
     bgCheckbox: 'E9F8EF',
     progressBarText: '2C3E50',
     lightPink: '#F4D1D9',
+    finishButton: '#78dda0',
+    finishButtonShadow: '#33b962',
+    progressColor: '#5bbce9',
+    progressColorBar: '#50A2AC',
 };
 
 const WeeklyGoalsScreen = ({ navigation }) => {
@@ -124,11 +128,11 @@ const WeeklyGoalsScreen = ({ navigation }) => {
 
                     {/* 3. Indicador de Meta do Dia Atual */}
                     <View style={styles.todayGoalBanner}>
-                        <FontAwesome5 
-                            name="tooth" 
-                            size={20} 
-                            color={COLORS.blueShadow} 
-                            style={{ marginRight: 10 }} 
+                        <FontAwesome5
+                            name="tooth"
+                            size={20}
+                            color={'#e7dbdb'}
+                            style={{ marginRight: 10 }}
                         />
                         <Text style={styles.todayGoalText}>
                             {currentDayName}:
@@ -140,7 +144,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
 
                     <View style={styles.calendarWrapper}>
 
-                       
+
                         <View style={styles.iconColumn}>
                             <View style={styles.iconHeaderSpace} />
                             {brushingShifts.map((shift) => (
@@ -301,13 +305,13 @@ const styles = StyleSheet.create({
     todayGoalBanner: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: COLORS.creamBorder,
+        backgroundColor: COLORS.primaryPink,
         paddingVertical: 12,
         paddingHorizontal: 20,
         borderRadius: 25,
         marginBottom: 20,
         borderWidth: 1,
-        borderColor: '#A2C4C9',
+        borderColor: '#db8bdb',
     },
     todayGoalText: {
         fontSize: 15,
@@ -389,7 +393,7 @@ const styles = StyleSheet.create({
         opacity: 0.5
     },
     progressSection: {
-        backgroundColor: COLORS.pastelGreen,
+        backgroundColor: COLORS.progressColor,
         borderBottomColor: COLORS.greenShadow,
         borderColor: 'rgba(255, 255, 255, 0.6)',
         borderRadius: 25,
@@ -412,7 +416,7 @@ const styles = StyleSheet.create({
     },
     progressBarFill: {
         height: '100%',
-        backgroundColor: COLORS.blueShadow,
+        backgroundColor: COLORS.progressColorBar,
     },
     incentiveCard: {
         backgroundColor: COLORS.cream,
@@ -457,14 +461,14 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
     },
     actionButton: {
-        backgroundColor: COLORS.pastelGreen,
+        backgroundColor: COLORS.finishButton,
         paddingVertical: 18,
         borderRadius: 35,
         alignItems: 'center',
         borderWidth: 2,
         borderColor: 'rgba(255, 255, 255, 0.5)',
         borderBottomWidth: 6,
-        borderBottomColor: COLORS.blueShadow,
+        borderBottomColor: COLORS.finishButtonShadow,
     },
     actionButtonText: {
         color: '#2C3E50',

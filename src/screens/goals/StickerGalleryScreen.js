@@ -2,12 +2,11 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, ImageBackgro
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 
-// Cores baseadas no wireframe
 const COLORS = {
-    textBlue: '#2C4A63',      // Título principal
-    textBrown: '#5D4037',     // Subtítulo
-    progressBg: '#E8D1C1',    // Fundo da barra de progresso
-    progressFill: '#ECA852',  // Preenchimento laranja da barra
+    textBlue: '#2C4A63',
+    textBrown: '#5D4037',
+    progressBg: '#E8D1C1',
+    progressFill: '#ECA852',
     cardUnlockedBg: '#FDF7E3',
     cardUnlockedBorder: '#D2A679',
     cardLockedBg: 'rgba(230, 220, 220, 0.4)',
@@ -23,7 +22,6 @@ const StickerGalleryScreen = ({ navigation }) => {
     const totalStickers = stickersData.length;
     const unlockedStickers = stickersData.filter(s => s.unlocked).length;
 
-    // Função que renderiza cada figurinha (Card)
     const renderStickerCard = ({ item }) => {
         if (item.unlocked) {
             return (
@@ -42,51 +40,55 @@ const StickerGalleryScreen = ({ navigation }) => {
 
     return (
         <ImageBackground
-            source={require('../../assets/imagem_fundo.png')} // Substitua pelo nome correto do seu fundo
+            source={require('../../assets/imagem_fundo.png')}
             style={styles.background}
             resizeMode="cover"
         >
             <SafeAreaView style={styles.container}>
-
-                {/* Header Superior */}
                 <View style={styles.topHeader}>
                     <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
                         <Ionicons name="arrow-back" size={28} color={COLORS.textBrown} />
                     </TouchableOpacity>
 
-                    {/* Placeholder da Logo */}
                     <View style={styles.logoPlaceholder}>
                         <Image source={require('../../assets/upper_logo.png')} style={styles.logoImage} resizeMode="contain" />
                     </View>
 
-                    {/* View invisível apenas para manter a logo perfeitamente centralizada */}
                     <View style={styles.iconButton} />
                 </View>
 
-                {/* Títulos */}
                 <View style={styles.titleSection}>
                     <Text style={styles.mainTitle}>Galeria de Adesivos</Text>
                     <Text style={styles.subTitle}>Colecione todos os adesivos!</Text>
                 </View>
 
-                {/* Barra de Progresso Estilo Wireframe */}
                 <View style={styles.progressWrapper}>
                     <View style={styles.progressBarContainer}>
-                        {/* Fundo que preenche a barra */}
-                        <View 
+                        <View
                             style={[
-                                styles.progressBarFill, 
+                                styles.progressBarFill,
                                 { width: `${(unlockedStickers / totalStickers) * 100}%` }
-                            ]} 
+                            ]}
                         />
-                        {/* Texto sobreposto à barra */}
                         <Text style={styles.progressText}>
                             {unlockedStickers} de {totalStickers} desbloqueados
                         </Text>
                     </View>
                 </View>
 
-                {/* Grid de Adesivos */}
+                {/* Seção de Adesivos Especiais em Destaque */}
+                <View style={styles.specialStickersWrapper}>
+                    <View style={[styles.card, styles.specialCard]}>
+                        <Text style={styles.placeholderText}>Especial 1</Text>
+                        {/* <Image source={require('../../assets/especial1.png')} style={styles.stickerImage} /> */}
+                    </View>
+
+                    <View style={[styles.card, styles.specialCard]}>
+                        <Text style={styles.placeholderText}>Especial 2</Text>
+                        {/* <Image source={require('../../assets/especial2.png')} style={styles.stickerImage} /> */}
+                    </View>
+                </View>
+
                 <FlatList
                     data={stickersData}
                     keyExtractor={(item) => item.id}
@@ -97,7 +99,6 @@ const StickerGalleryScreen = ({ navigation }) => {
                     showsVerticalScrollIndicator={false}
                 />
 
-                {/* Contador Inferior (12/24) */}
                 <View style={styles.footerSection}>
                     <Text style={styles.footerText}>
                         {unlockedStickers}/{totalStickers}
@@ -183,7 +184,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 14,
         marginLeft: 15,
-        zIndex: 1, // Garante que o texto fique por cima do preenchimento
+        zIndex: 1,
         textShadowColor: 'rgba(0, 0, 0, 0.2)',
         textShadowOffset: { width: 0, height: 1 },
         textShadowRadius: 2
@@ -197,8 +198,8 @@ const styles = StyleSheet.create({
         marginBottom: 15
     },
     card: {
-        width: '22%', // Permite 4 colunas com um pequeno espaçamento entre elas
-        aspectRatio: 1, // Mantém o card perfeitamente quadrado
+        width: '22%',
+        aspectRatio: 1,
         borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center'
@@ -207,7 +208,7 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.cardUnlockedBg,
         borderWidth: 2,
         borderColor: COLORS.cardUnlockedBorder,
-        elevation: 2, // Sombra leve
+        elevation: 2,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
@@ -217,7 +218,7 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.cardLockedBg,
         borderWidth: 2,
         borderColor: COLORS.cardLockedBorder,
-        borderStyle: 'dashed' // Borda tracejada do wireframe
+        borderStyle: 'dashed'
     },
     placeholderText: {
         fontSize: 12,
@@ -232,7 +233,33 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         color: COLORS.textBrown
-    }
+    },
+    specialStickersWrapper: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        gap: 25,               
+        marginBottom: 30,       
+        paddingHorizontal: 20,
+    },
+    specialCard: {
+        width: '40%',          
+        aspectRatio: 1,        
+        backgroundColor: '#FFF9E6',
+        borderColor: '#ECA852',    
+        borderWidth: 3,
+        borderRadius: 20,
+        elevation: 5,          
+        shadowColor: '#ECA852',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+    },
+    placeholderText: {
+        fontSize: 14,
+        color: '#D2A679',
+        fontWeight: 'bold',
+        textAlign: 'center'
+    },
 });
 
 export default StickerGalleryScreen;
