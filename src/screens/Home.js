@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: 80,
-    borderRadius: 36,
+    borderRadius: 25,
     paddingHorizontal: 16,
     borderWidth: 2,
     borderColor: 'rgba(255, 255, 255, 0.4)', // Reflexo claro na borda superior

@@ -44,7 +44,7 @@ const ChildMenuScreen = ({ navigation }) => {
             <Ionicons name="chevron-back" size={28} color="#2C3E50" />
           </TouchableOpacity>
 
-          <TouchableOpacity  style={styles.goalsBtn} onPress={() => navigation.navigate('WeeklyGoals')}>
+          <TouchableOpacity style={styles.goalsBtn} onPress={() => navigation.navigate('WeeklyGoals')}>
             <Text style={styles.goalsButtonText}> Metas </Text>
           </TouchableOpacity>
         </View>
@@ -130,18 +130,15 @@ const styles = StyleSheet.create({
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
-    borderRadius: 30,
-    paddingVertical: 8,
+    height: 80,
+    borderRadius: 25,
     paddingHorizontal: 10,
-    marginBottom: 16,
     borderWidth: 2,
-    borderColor: '#F0E4E7',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    borderBottomWidth: 6,
+    paddingVertical: 8,
+    marginBottom: 16,
+    borderColor: 'rgba(255, 255, 255, 0.4)', // Reflexo claro na borda superior
+
   },
   imageContainer: {
     width: 80,
@@ -151,8 +148,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   btnColor: {
-    backgroundColor: '#f1becb',
-    borderColor: '#e77e98',
+    backgroundColor: '#F3A1B5',
+    borderBottomColor: '#D67C92',
   },
   itemImage: {
     width: '100%',
@@ -194,11 +191,13 @@ const styles = StyleSheet.create({
   },
   goalsBtn: {
     backgroundColor: '#FDE8A8',
-    borderColor: '#E6C45C',
+    borderColor: 'rgba(255, 255, 255, 0.6)',
+    borderBottomColor: '#E6C45C',
     borderWidth: 2,
-    borderRadius: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+    borderRadius: 17,
+    borderBottomWidth: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 6,
     alignItems: 'center',
     justifyContent: 'center',
   },

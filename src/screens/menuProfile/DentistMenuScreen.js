@@ -130,21 +130,17 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
   },
-    menuItem: {
+  menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
-    borderRadius: 30,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    marginBottom: 16,
+    height: 80,
+    borderRadius: 25,
+    paddingHorizontal: 1,
     borderWidth: 2,
-    borderColor: '#F0E4E7',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    borderBottomWidth: 6,
+    paddingVertical: 8,
+    marginBottom: 16,
+    borderColor: 'rgba(255, 255, 255, 0.4)', // Reflexo claro na borda superior
   },
   imageContainer: {
     width: 80,
@@ -155,7 +151,7 @@ const styles = StyleSheet.create({
   },
   btnColor: {
     backgroundColor: '#74C4CD',
-    borderColor: '#50A2AC',
+    borderBottomColor: '#50A2AC',
   },
   itemImage: {
     width: '100%',
