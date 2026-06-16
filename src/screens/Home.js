@@ -2,8 +2,19 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, ImageBackground } from
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome5 } from '@expo/vector-icons';
 import ProfileButton from '../components/profilePage/ProfileButton';
+import { useEffect } from 'react';
+import { getOrCreateChildId } from '../services/anonymousUserService';
 
 const Home = ({ navigation }) => {
+
+  useEffect(() => {
+    const loadChild = async () => {
+      const childId = await getOrCreateChildId();
+      console.log("CHILD ID: ", childId);
+    };
+
+    loadChild();
+  }, []);
 
   return (
     <ImageBackground

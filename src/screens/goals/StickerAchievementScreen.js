@@ -98,7 +98,7 @@ const StickerAchievementScreen = ({ navigation, route }) => {
 
                         <Image
                             source={isFinalAchievement
-                                ? require('../../assets/trofeu_dente_dourado.png')
+                                ? require('../../assets/stickers/trofeu_dourado_1.png')
                                 : require('../../assets/stickers/sticker1.png')}
                             style={styles.adesivoImage}
                             resizeMode="contain"
