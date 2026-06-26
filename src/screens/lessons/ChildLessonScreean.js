@@ -1,12 +1,10 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ImageBackground, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ImageBackground, ActivityIndicator, Animated, Easing } from 'react-native';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import FloatingBalloons from '../../components/animation/FloatingBalloons';
 import { BlurView } from 'expo-blur';
 import { VideoView, useVideoPlayer } from "expo-video";
 import { getVideosByModule } from '../../services/videoServices';
-
 
 const LessonVideoPlayer = ({ videoUrl }) => {
   const player = useVideoPlayer(videoUrl, (player) => {
@@ -16,7 +14,7 @@ const LessonVideoPlayer = ({ videoUrl }) => {
   if (!videoUrl) {
     return (
       <View style={styles.videoMainArea}>
-        <Text>Vídeo indisponível</Text>
+        <Text style={styles.videoFallbackText}>Vídeo indisponível</Text>
       </View>
     );
   }
@@ -34,16 +32,12 @@ const LessonVideoPlayer = ({ videoUrl }) => {
 
 const COLORS = {
   textDark: '#4A2C2A',
-
   stepCard: '#A2C4C9',
   stepCardShadow: '#74AEB6',
-
   infoCard: '#FFFDFC',
   infoCardBorder: '#DCEEEF',
-
-  nextButton: '#78dda0',
-  nextButtonShadow: '#33b962',
-
+  nextButton: '#78DDA0',
+  nextButtonShadow: '#33B962',
   activeDot: '#74C4CD',
   inactiveDot: '#E7DDE2',
 };
@@ -55,31 +49,54 @@ const ChildLessonScreen = ({ navigation, route }) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const [isCelebrating, setIsCelebrating] = useState(false);
-  const [showStickerPopup, setShowStickerPopup] = useState(false);
   const [showFinishPopup, setShowFinishPopup] = useState(false);
 
-  useEffect(() => {
-    const loadVideos = async () => {
-      try {
-        setLoading(true);
-        const data = await getVideosByModule("children");
-        setVideos(data);
-      } catch (error) {
-        console.error("Erro ao carregar vídeos da criança:", error);
-        setError("Não foi possível carregar os vídeos.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const contentOpacity = useRef(new Animated.Value(0)).current;
+  const contentTranslateY = useRef(new Animated.Value(14)).current;
 
+  const loadVideos = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await getVideosByModule("children");
+      setVideos(data);
+    } catch (error) {
+      console.error("Erro ao carregar vídeos da criança:", error);
+      setError("Não conseguimos carregar os vídeos agora.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     loadVideos();
   }, []);
 
+  useEffect(() => {
+    if (loading || error) {
+      contentOpacity.setValue(0);
+      contentTranslateY.setValue(14);
+      return;
+    }
+
+    Animated.parallel([
+      Animated.timing(contentOpacity, {
+        toValue: 1,
+        duration: 420,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(contentTranslateY, {
+        toValue: 0,
+        duration: 420,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [loading, error, contentOpacity, contentTranslateY]);
+
   const totalSteps = videos.length > 0 ? videos.length : 1;
   const currentItem = videos[currentIndex] || { title: "Carregando..." };
-
 
   const handleNextStep = () => {
     const isLastStep = currentIndex === totalSteps - 1;
@@ -87,11 +104,12 @@ const ChildLessonScreen = ({ navigation, route }) => {
     navigation.navigate('StickerAchievementScreen', {
       isFinalAchievement: isLastStep,
     });
+
     if (!isLastStep) {
       setTimeout(() => {
-        setCurrentIndex(currentIndex + 1)
+        setCurrentIndex(currentIndex + 1);
       }, 500);
-    };
+    }
   };
 
   const handleFinishModule = () => {
@@ -99,33 +117,71 @@ const ChildLessonScreen = ({ navigation, route }) => {
     navigation.navigate('Home');
   };
 
+  const handleGoBack = () => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+      return;
+    }
+
+    navigation.navigate('Home');
+  };
+
+  const renderStatusScreen = ({ title, message, actionLabel, onAction, iconName, showRetry = false, showLoader = false }) => (
+    <ImageBackground
+      source={require("../../assets/imagem_fundo.png")}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={styles.container}>
+        <View style={styles.statusShell}>
+          <View style={styles.statusCard}>
+            <View style={styles.statusIconWrap}>
+              {showLoader && <ActivityIndicator size="large" color="#5D4037" />}
+              <View style={styles.statusIconBubble}>
+                <FontAwesome5 name={iconName} size={24} color="#5D4037" />
+              </View>
+            </View>
+
+            <Text style={styles.statusTitle}>{title}</Text>
+            <Text style={styles.statusText}>{message}</Text>
+
+            <View style={styles.statusActions}>
+              {showRetry && (
+                <TouchableOpacity style={styles.secondaryStatusButton} onPress={loadVideos} activeOpacity={0.85}>
+                  <Text style={styles.secondaryStatusButtonText}>Tentar novamente</Text>
+                </TouchableOpacity>
+              )}
+
+              <TouchableOpacity style={styles.primaryStatusButton} onPress={onAction} activeOpacity={0.85}>
+                <Text style={styles.primaryStatusButtonText}>{actionLabel}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </SafeAreaView>
+    </ImageBackground>
+  );
+
   if (loading) {
-    return (
-      <ImageBackground
-        source={require("../../assets/imagem_fundo.png")}
-        style={styles.background}
-        resizeMode="cover"
-      >
-        <SafeAreaView style={styles.container}>
-          <ActivityIndicator size="large" color="#5D4037" />
-          <Text>Carregando vídeos...</Text>
-        </SafeAreaView>
-      </ImageBackground>
-    );
+    return renderStatusScreen({
+      title: 'Carregando vídeos',
+      message: 'Estamos preparando as aulas para você. Um instante, por favor.',
+      actionLabel: 'Voltar',
+      onAction: handleGoBack,
+      iconName: 'play-circle',
+      showLoader: true,
+    });
   }
 
   if (error) {
-    return (
-      <ImageBackground
-        source={require("../../assets/imagem_fundo.png")}
-        style={styles.background}
-        resizeMode="cover"
-      >
-        <SafeAreaView style={styles.container}>
-          <Text>{error}</Text>
-        </SafeAreaView>
-      </ImageBackground>
-    );
+    return renderStatusScreen({
+      title: 'Ops, algo deu errado',
+      message: error,
+      actionLabel: 'Voltar à tela anterior',
+      onAction: handleGoBack,
+      iconName: 'exclamation-triangle',
+      showRetry: true,
+    });
   }
 
   return (
@@ -135,93 +191,99 @@ const ChildLessonScreen = ({ navigation, route }) => {
       resizeMode="cover"
     >
       <SafeAreaView style={styles.container}>
+        <Animated.View
+          style={[
+            styles.mainContent,
+            {
+              opacity: contentOpacity,
+              transform: [{ translateY: contentTranslateY }],
+            },
+          ]}
+        >
+          <View style={styles.topHeader}>
+            <TouchableOpacity onPress={handleGoBack} style={styles.iconButton}>
+              <Ionicons name="arrow-back" size={28} color="#5D4037" />
+            </TouchableOpacity>
 
-        <View style={styles.topHeader}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
-            <Ionicons name="arrow-back" size={28} color="#5D4037" />
-          </TouchableOpacity>
-
-          <View style={styles.logoPlaceholder}>
-            <Image source={require('../../assets/upper_logo.png')} style={styles.logoImage} resizeMode="contain" />
-          </View>
-
-          <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
-            <Ionicons name="home" size={26} color="#5D4037" />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.titleBanner}>
-          <Text style={styles.titleText}>{currentItem.title}</Text>
-        </View>
-
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-
-          <View style={styles.videoCard}>
-            <LessonVideoPlayer videoUrl={currentItem.video_url} />
-          </View>
-
-          <View style={styles.stepIndicatorContainer}>
-            <Text style={styles.stepText}>Passo {currentIndex + 1}  {currentItem.title}</Text>
-            <Text style={styles.stepTextRight}>{currentIndex + 1}/{totalSteps}</Text>
-          </View>
-
-          <View style={styles.explanationBox}>
-            <Text style={styles.explanationText}>
-              {currentItem.description || "Assista ao vídeo com atenção."}
-            </Text>
-          </View>
-
-          <TouchableOpacity
-            style={styles.nextButton}
-            onPress={handleNextStep}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.nextButtonText}>
-              {currentIndex === totalSteps - 1 ? 'Finalizar' : 'Próximo'}
-            </Text>
-          </TouchableOpacity>
-
-          <View style={styles.dotsContainer}>
-            {videos.map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.dot,
-                  currentIndex === index && styles.activeDot
-                ]}
-              />
-            ))}
-          </View>
-        </ScrollView>
-
-        {showFinishPopup && (
-          <BlurView intensity={50} tint="light" style={styles.overlay}>
-            <View style={styles.finishPopupBox}>
-              <View style={styles.stickerGlow}>
-                <Image
-                  source={require('../../assets/stickers/sticker6.png')}
-                  style={styles.finishSticker}
-                  resizeMode="contain"
-                />
-              </View>
-
-              <Text style={styles.finishTitle}>Parabéns!</Text>
-              <Text style={styles.finishText}>
-                Você completou todas as lições. Continue cuidando bem do seu sorriso!
-              </Text>
-
-              <TouchableOpacity
-                style={styles.finishButton}
-                onPress={handleFinishModule}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.finishButtonText}>Voltar à Tela Inicial</Text>
-              </TouchableOpacity>
-
+            <View style={styles.logoPlaceholder}>
+              <Image source={require('../../assets/upper_logo.png')} style={styles.logoImage} resizeMode="contain" />
             </View>
-          </BlurView>
-        )}
 
+            <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
+              <Ionicons name="home" size={26} color="#5D4037" />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.titleBanner}>
+            <Text style={styles.titleText}>{currentItem.title}</Text>
+          </View>
+
+          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+            <View style={styles.videoCard}>
+              <LessonVideoPlayer videoUrl={currentItem.video_url} />
+            </View>
+
+            <View style={styles.stepIndicatorContainer}>
+              <Text style={styles.stepText}>Passo {currentIndex + 1}  {currentItem.title}</Text>
+              <Text style={styles.stepTextRight}>{currentIndex + 1}/{totalSteps}</Text>
+            </View>
+
+            <View style={styles.explanationBox}>
+              <Text style={styles.explanationText}>
+                {currentItem.description || "Assista ao vídeo com atenção."}
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              style={styles.nextButton}
+              onPress={handleNextStep}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.nextButtonText}>
+                {currentIndex === totalSteps - 1 ? 'Finalizar' : 'Próximo'}
+              </Text>
+            </TouchableOpacity>
+
+            <View style={styles.dotsContainer}>
+              {videos.map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.dot,
+                    currentIndex === index && styles.activeDot
+                  ]}
+                />
+              ))}
+            </View>
+          </ScrollView>
+
+          {showFinishPopup && (
+            <BlurView intensity={50} tint="light" style={styles.overlay}>
+              <View style={styles.finishPopupBox}>
+                <View style={styles.stickerGlow}>
+                  <Image
+                    source={require('../../assets/stickers/sticker6.png')}
+                    style={styles.finishSticker}
+                    resizeMode="contain"
+                  />
+                </View>
+
+                <Text style={styles.finishTitle}>Parabéns!</Text>
+                <Text style={styles.finishText}>
+                  Você completou todas as lições. Continue cuidando bem do seu sorriso!
+                </Text>
+
+                <TouchableOpacity
+                  style={styles.finishButton}
+                  onPress={handleFinishModule}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.finishButtonText}>Voltar à Tela Inicial</Text>
+                </TouchableOpacity>
+              </View>
+            </BlurView>
+          )}
+        </Animated.View>
       </SafeAreaView>
     </ImageBackground>
   );
@@ -236,6 +298,95 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: "100%"
+  },
+  mainContent: {
+    flex: 1,
+  },
+  statusShell: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+  },
+  statusCard: {
+    width: '100%',
+    maxWidth: 420,
+    backgroundColor: 'rgba(255, 255, 255, 0.96)',
+    borderRadius: 30,
+    paddingVertical: 32,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: '#F4D1D9',
+    elevation: 10,
+    shadowColor: '#D97C8D',
+    shadowOpacity: 0.18,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 8 },
+  },
+  statusIconWrap: {
+    width: 100,
+    height: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  statusIconBubble: {
+    position: 'absolute',
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: '#FFF4E6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#F1D3A6',
+  },
+  statusTitle: {
+    fontSize: 26,
+    fontWeight: '900',
+    color: '#4E342E',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  statusText: {
+    fontSize: 16,
+    color: '#7F6A65',
+    textAlign: 'center',
+    lineHeight: 24,
+    marginBottom: 24,
+  },
+  statusActions: {
+    width: '100%',
+    gap: 12,
+  },
+  primaryStatusButton: {
+    backgroundColor: '#78DDA0',
+    paddingVertical: 15,
+    borderRadius: 28,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+    borderBottomWidth: 6,
+    borderBottomColor: '#33B962',
+  },
+  primaryStatusButtonText: {
+    color: '#FFF',
+    fontSize: 17,
+    fontWeight: 'bold',
+  },
+  secondaryStatusButton: {
+    backgroundColor: '#FFF',
+    paddingVertical: 14,
+    borderRadius: 28,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#F0D6DB',
+  },
+  secondaryStatusButtonText: {
+    color: '#5D4037',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   topHeader: {
     flexDirection: 'row',
@@ -257,6 +408,11 @@ const styles = StyleSheet.create({
     height: 220,
     backgroundColor: "#000",
     borderRadius: 20,
+  },
+  videoFallbackText: {
+    color: '#4E342E',
+    fontWeight: '600',
+    fontSize: 16,
   },
   logoImage: { width: 300, height: 200 },
   titleBanner: {
@@ -291,65 +447,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  playButtonCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  librasWindow: {
-    position: 'absolute',
-    bottom: 40,
-    right: 10,
-    width: 80,
-    height: 90,
-    backgroundColor: '#ECF0F1',
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#FFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-  },
-  videoControls: {
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    height: 30,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    gap: 8,
-  },
-  videoTime: { color: '#FFF', fontSize: 12, fontWeight: 'bold' },
-  progressBarTrack: {
-    flex: 1,
-    height: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.4)',
-    borderRadius: 2,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  progressBarFill: {
-    width: '30%',
-    height: '100%',
-    backgroundColor: '#FFF',
-    borderRadius: 2,
-  },
-  progressThumb: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#FFF',
-    marginLeft: -5,
   },
   stepIndicatorContainer: {
     flexDirection: 'row',
@@ -417,8 +514,6 @@ const styles = StyleSheet.create({
     zIndex: 1000,
     backgroundColor: 'rgba(255, 245, 247, 0.4)'
   },
-  stickerPopupBox: { backgroundColor: '#FFF', padding: 30, borderRadius: 20, alignItems: 'center', width: '80%', elevation: 10 },
-  stickerPopupTitle: { fontSize: 20, fontWeight: 'bold', color: '#2C3E50', marginBottom: 20, textAlign: 'center' },
   finishPopupBox: {
     backgroundColor: '#FFFFFF',
     padding: 32,
