@@ -1,36 +1,195 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ImageBackground, Image } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
+import { useEffect, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Animated,
+  Easing,
+  Image,
+  ImageBackground,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+
+import { getVideosByModule } from "../../services/videoServices";
+
+const CHILD_MENU_IMAGES = [
+  require("../../assets/tooth_dental_menu_child.png"),
+  require("../../assets/dental_floss_menu_child.png"),
+  require("../../assets/food_menu_child.png"),
+  require("../../assets/dental_pasta_menu_child.png"),
+  require("../../assets/toothbrush_menu_child.png"),
+];
 
 const ChildMenuScreen = ({ navigation }) => {
+  const [videos, setVideos] = useState([]);
+  const [completedVideoIds, setCompletedVideoIds] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const pulse = useRef(new Animated.Value(0)).current;
 
-  const menuItems = [
-    {
-      id: '1',
-      title: 'Como escovar os dentes e usar fio dental de forma correta',
-      image: require('../../assets/tooth_dental_menu_child.png'),
-    },
-    {
-      id: '2',
-      title: 'Uso de fio dental na infância',
-      image: require('../../assets/dental_floss_menu_child.png'),
-    },
-    {
-      id: '3',
-      title: 'Alimentos saudáveis para os dentes e que fazem mal para os dentes',
-      image: require('../../assets/food_menu_child.png'),
-    },
-    {
-      id: '4',
-      title: 'Creme dental ideal e quantidade de creme dental',
-      image: require('../../assets/dental_pasta_menu_child.png'),
-    },
-    {
-      id: '5',
-      title: 'Como escolher a escova adequada e realizar a troca da escova',
-      image: require('../../assets/toothbrush_menu_child.png'),
-    },
-  ];
+  const loadVideos = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const data = await getVideosByModule("children");
+      setVideos(data);
+    } catch (error) {
+      console.error("Erro ao carregar vídeos da criança:", error);
+      setError("Não foi possível carregar os vídeos.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadVideos();
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      pulse.stopAnimation();
+      pulse.setValue(0);
+      return;
+    }
+
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, {
+          toValue: 1,
+          duration: 700,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulse, {
+          toValue: 0,
+          duration: 700,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    loop.start();
+    return () => loop.stop();
+  }, [loading, pulse]);
+
+  const isModuleCompleted =
+    videos.length > 0 && videos.every((video) => completedVideoIds.includes(video.id));
+
+  const isVideoUnlocked = (index) => {
+    if (isModuleCompleted) return true;
+    if (index === 0) return true;
+
+    const previousVideo = videos[index - 1];
+    return completedVideoIds.includes(previousVideo?.id);
+  };
+
+  const handleOpenVideo = (index) => {
+    const unlocked = isVideoUnlocked(index);
+
+    if (!unlocked) {
+      Alert.alert(
+        "Aula bloqueada",
+        "Assista à aula anterior para liberar este vídeo."
+      );
+      return;
+    }
+
+    navigation.navigate("ChildLesson", {
+      initialIndex: index,
+      videosFromMenu: videos,
+    });
+  };
+
+  const handleGoBack = () => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+      return;
+    }
+
+    navigation.navigate("Home");
+  };
+
+  const renderStatusScreen = ({ title, message, iconName, showSpinner = false, actions = null }) => {
+    const iconScale = pulse.interpolate({
+      inputRange: [0, 1],
+      outputRange: [1, 1.08],
+    });
+
+    const iconOpacity = pulse.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0.82, 1],
+    });
+
+    return (
+      <ImageBackground
+        source={require("../../assets/imagem_fundo.png")}
+        style={styles.background}
+        resizeMode="cover"
+      >
+        <SafeAreaView style={styles.container}>
+          <View style={styles.statusShell}>
+            <View style={styles.statusCard}>
+              <Animated.View
+                style={[
+                  styles.statusIconWrap,
+                  {
+                    transform: [{ scale: iconScale }],
+                    opacity: iconOpacity,
+                  },
+                ]}
+              >
+                {showSpinner && <ActivityIndicator size="large" color="#5D4037" style={styles.statusSpinner} />}
+                <View style={styles.statusIconBubble}>
+                  <FontAwesome5 name={iconName} size={24} color="#5D4037" />
+                </View>
+              </Animated.View>
+
+              <Text style={styles.statusTitle}>{title}</Text>
+              <Text style={styles.statusText}>{message}</Text>
+
+              {actions}
+            </View>
+          </View>
+        </SafeAreaView>
+      </ImageBackground>
+    );
+  };
+
+  if (loading) {
+    return renderStatusScreen({
+      title: "Carregando vídeos",
+      message: "Estamos preparando as aulas para você. Só um instante.",
+      iconName: "play-circle",
+      showSpinner: true,
+    });
+  }
+
+  if (error) {
+    return renderStatusScreen({
+      title: "Não foi possível carregar os vídeos",
+      message: "Verifique sua conexão e tente novamente. Você também pode voltar para a tela anterior.",
+      iconName: "exclamation-triangle",
+      actions: (
+        <View style={styles.statusActions}>
+          <TouchableOpacity style={styles.secondaryStatusButton} onPress={loadVideos} activeOpacity={0.85}>
+            <Text style={styles.secondaryStatusButtonText}>Tentar novamente</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.primaryStatusButton} onPress={handleGoBack} activeOpacity={0.85}>
+            <Text style={styles.primaryStatusButtonText}>Voltar</Text>
+          </TouchableOpacity>
+        </View>
+      ),
+    });
+  }
+
   return (
     <ImageBackground
       source={require('../../assets/imagem_fundo.png')}
@@ -38,7 +197,6 @@ const ChildMenuScreen = ({ navigation }) => {
       resizeMode="cover"
     >
       <SafeAreaView style={styles.container}>
-
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconCircle}>
             <Ionicons name="chevron-back" size={28} color="#2C3E50" />
@@ -58,28 +216,43 @@ const ChildMenuScreen = ({ navigation }) => {
         </View>
 
         <ScrollView style={styles.listContainer} showsVerticalScrollIndicator={false}>
-          {menuItems.map((item, index) => (
-            <TouchableOpacity
-              key={item.id}
-              style={[
-                styles.menuItem,
-                index % 2 === 0 ? styles.btnPink : styles.btnBlue
-              ]}
-              onPress={() => navigation.navigate('ChildLesson', {
-                menuItems: menuItems,
-                initialIndex: index,
-              })}
-            >
-              <View style={styles.imageContainer}>
-                <Image source={item.image} style={styles.itemImage} />
-              </View>
+          {videos.map((item, index) => {
+            const unlocked = isVideoUnlocked(index);
+            const completed = completedVideoIds.includes(item.id);
 
-              <View style={styles.textContainer}>
-                <Text style={styles.itemText}>{item.title}</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={24} color="#FFF" />
-            </TouchableOpacity>
-          ))}
+            return (
+              <TouchableOpacity
+                key={item.id}
+                style={[
+                  styles.menuItem,
+                  index % 2 === 0 ? styles.btnPink : styles.btnBlue,
+                  !unlocked && styles.lockedMenuItem,
+                ]}
+                onPress={() => handleOpenVideo(index)}
+                activeOpacity={unlocked ? 0.8 : 1}
+              >
+                <View style={styles.imageContainer}>
+                  <Image
+                    source={CHILD_MENU_IMAGES[index]}
+                    style={styles.itemImage}
+                    resizeMode="contain"
+                  />
+                </View>
+
+                <View style={styles.textContainer}>
+                  <Text style={styles.itemText}>{item.title}</Text>
+                </View>
+
+                {completed ? (
+                  <Ionicons name="checkmark-circle" size={24} color="#FFF" />
+                ) : unlocked ? (
+                  <Ionicons name="chevron-forward" size={24} color="#FFF" />
+                ) : (
+                  <Ionicons name="lock-closed" size={22} color="#FFF" />
+                )}
+              </TouchableOpacity>
+            );
+          })}
         </ScrollView>
       </SafeAreaView>
     </ImageBackground>
@@ -95,6 +268,97 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'transparent',
+  },
+  statusShell: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+  },
+  statusCard: {
+    width: '100%',
+    maxWidth: 420,
+    backgroundColor: 'rgba(255, 255, 255, 0.96)',
+    borderRadius: 30,
+    paddingVertical: 34,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: '#F4D1D9',
+    elevation: 10,
+    shadowColor: '#D97C8D',
+    shadowOpacity: 0.18,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 8 },
+  },
+  statusIconWrap: {
+    width: 100,
+    height: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 18,
+  },
+  statusSpinner: {
+    position: 'absolute',
+  },
+  statusIconBubble: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: '#FFF4E6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#F1D3A6',
+  },
+  statusTitle: {
+    fontSize: 25,
+    fontWeight: '900',
+    color: '#4E342E',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  statusText: {
+    fontSize: 16,
+    color: '#7F6A65',
+    textAlign: 'center',
+    lineHeight: 24,
+    marginBottom: 22,
+  },
+  statusActions: {
+    width: '100%',
+    gap: 12,
+  },
+  primaryStatusButton: {
+    backgroundColor: '#78DDA0',
+    paddingVertical: 15,
+    borderRadius: 28,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+    borderBottomWidth: 6,
+    borderBottomColor: '#33B962',
+  },
+  primaryStatusButtonText: {
+    color: '#FFF',
+    fontSize: 17,
+    fontWeight: 'bold',
+  },
+  secondaryStatusButton: {
+    backgroundColor: '#FFF',
+    paddingVertical: 14,
+    borderRadius: 28,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#F0D6DB',
+  },
+  secondaryStatusButtonText: {
+    color: '#5D4037',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  lockedMenuItem: {
+    opacity: 0.55,
   },
   header: {
     flexDirection: 'row',
@@ -140,8 +404,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 6,
     paddingVertical: 8,
     marginBottom: 16,
-    borderColor: 'rgba(255, 255, 255, 0.4)', // Reflexo claro na borda superior
-
+    borderColor: 'rgba(255, 255, 255, 0.4)',
   },
   imageContainer: {
     width: 80,
@@ -154,7 +417,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#F3A1B5',
     borderBottomColor: '#D67C92',
   },
-
   btnBlue: {
     backgroundColor: '#74C4CD',
     borderBottomColor: '#50A2AC',

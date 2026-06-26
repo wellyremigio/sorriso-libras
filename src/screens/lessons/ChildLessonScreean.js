@@ -5,10 +5,17 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { VideoView, useVideoPlayer } from "expo-video";
 import { getVideosByModule } from '../../services/videoServices';
+import { useEventListener } from 'expo';
 
-const LessonVideoPlayer = ({ videoUrl }) => {
+const LessonVideoPlayer = ({ videoUrl, onVideoEnd }) => {
   const player = useVideoPlayer(videoUrl, (player) => {
     player.loop = false;
+    player.muted = false;
+    player.volume = 1;
+  });
+
+  useEventListener(player, "playToEnd", () => {
+    onVideoEnd?.();
   });
 
   if (!videoUrl) {
@@ -43,32 +50,24 @@ const COLORS = {
 };
 
 const ChildLessonScreen = ({ navigation, route }) => {
-  const { initialIndex = 0 } = route.params || {};
-
+  const { initialIndex = 0, videosFromMenu = [] } = route.params || {};
   const [videos, setVideos] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showFinishPopup, setShowFinishPopup] = useState(false);
+  const [hasFinishedCurrentVideo, setHasFinishedCurrentVideo] = useState(false);
 
   const contentOpacity = useRef(new Animated.Value(0)).current;
   const contentTranslateY = useRef(new Animated.Value(14)).current;
 
-  const loadVideos = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await getVideosByModule("children");
-      setVideos(data);
-    } catch (error) {
-      console.error("Erro ao carregar vídeos da criança:", error);
-      setError("Não conseguimos carregar os vídeos agora.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    if (videosFromMenu.length > 0) {
+      setVideos(videosFromMenu);
+      setLoading(false);
+      return;
+    }
+
     loadVideos();
   }, []);
 
@@ -111,6 +110,10 @@ const ChildLessonScreen = ({ navigation, route }) => {
       }, 500);
     }
   };
+
+  useEffect(() => {
+    setHasFinishedCurrentVideo(false);
+  }, [currentIndex]);
 
   const handleFinishModule = () => {
     setShowFinishPopup(false);
@@ -220,7 +223,10 @@ const ChildLessonScreen = ({ navigation, route }) => {
 
           <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
             <View style={styles.videoCard}>
-              <LessonVideoPlayer videoUrl={currentItem.video_url} />
+              <LessonVideoPlayer
+                videoUrl={currentItem.video_url}
+                onVideoEnd={() => setHasFinishedCurrentVideo(true)}
+              />
             </View>
 
             <View style={styles.stepIndicatorContainer}>
@@ -235,12 +241,16 @@ const ChildLessonScreen = ({ navigation, route }) => {
             </View>
 
             <TouchableOpacity
-              style={styles.nextButton}
+              style={[
+                styles.nextButton,
+                !hasFinishedCurrentVideo && styles.nextButtonDisabled,
+              ]}
               onPress={handleNextStep}
-              activeOpacity={0.8}
+              activeOpacity={hasFinishedCurrentVideo ? 0.8 : 1}
+              disabled={!hasFinishedCurrentVideo}
             >
               <Text style={styles.nextButtonText}>
-                {currentIndex === totalSteps - 1 ? 'Finalizar' : 'Próximo'}
+                {currentIndex === totalSteps - 1 ? "Finalizar" : "Próximo"}
               </Text>
             </TouchableOpacity>
 
@@ -301,6 +311,9 @@ const styles = StyleSheet.create({
   },
   mainContent: {
     flex: 1,
+  },
+  nextButtonDisabled: {
+    opacity: 0.5,
   },
   statusShell: {
     flex: 1,
