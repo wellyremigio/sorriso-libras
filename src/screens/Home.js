@@ -4,17 +4,29 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import ProfileButton from '../components/profilePage/ProfileButton';
 import { useEffect } from 'react';
 import { getOrCreateChildId } from '../services/anonymousUserService';
+import { getVideosByMudule } from '../services/videoService';
 
 const Home = ({ navigation }) => {
 
   useEffect(() => {
     const loadChild = async () => {
       const childId = await getOrCreateChildId();
-      console.log("CHILD ID: ", childId);
     };
 
     loadChild();
   }, []);
+
+  useEffect(() => {
+  const loadVideos = async () => {
+    try {
+      const videos = await getVideosByMudule("children");
+    } catch (error) {
+      console.log("Erro ao carregar vídeos:", error);
+    }
+  };
+
+  loadVideos();
+}, []);
 
   return (
     <ImageBackground

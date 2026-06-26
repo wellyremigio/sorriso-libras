@@ -44,13 +44,6 @@ const ChildLessonScreen = ({ navigation, route }) => {
         setCurrentIndex(currentIndex + 1)
       }, 500);
     };
-    // setTimeout(() => {
-    //   if (currentIndex < totalSteps - 1) {
-    //     setCurrentIndex(currentIndex + 1);
-    //   } else {
-    //     setShowFinishPopup(true);
-    //   }
-    // }, 500);
   };
 
   const handleFinishModule = () => {
