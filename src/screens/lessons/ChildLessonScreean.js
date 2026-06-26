@@ -1,11 +1,36 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ImageBackground, ActivityIndicator } from 'react-native';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FloatingBalloons from '../../components/animation/FloatingBalloons';
 import { BlurView } from 'expo-blur';
+import { VideoView, useVideoPlayer } from "expo-video";
+import { getVideosByModule } from '../../services/videoServices';
 
 
+const LessonVideoPlayer = ({ videoUrl }) => {
+  const player = useVideoPlayer(videoUrl, (player) => {
+    player.loop = false;
+  });
+
+  if (!videoUrl) {
+    return (
+      <View style={styles.videoMainArea}>
+        <Text>Vídeo indisponível</Text>
+      </View>
+    );
+  }
+
+  return (
+    <VideoView
+      player={player}
+      style={styles.realVideo}
+      allowsFullscreen
+      allowsPictureInPicture
+      nativeControls
+    />
+  );
+};
 
 const COLORS = {
   textDark: '#4A2C2A',
@@ -24,13 +49,36 @@ const COLORS = {
 };
 
 const ChildLessonScreen = ({ navigation, route }) => {
-  const { menuItems = [], initialIndex = 0 } = route.params || {};
+  const { initialIndex = 0 } = route.params || {};
+
+  const [videos, setVideos] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [isCelebrating, setIsCelebrating] = useState(false);
   const [showStickerPopup, setShowStickerPopup] = useState(false);
   const [showFinishPopup, setShowFinishPopup] = useState(false);
-  const totalSteps = menuItems.length > 0 ? menuItems.length : 1;
-  const currentItem = menuItems[currentIndex] || { title: 'Carregando...' };
+
+  useEffect(() => {
+    const loadVideos = async () => {
+      try {
+        setLoading(true);
+        const data = await getVideosByModule("children");
+        setVideos(data);
+      } catch (error) {
+        console.error("Erro ao carregar vídeos da criança:", error);
+        setError("Não foi possível carregar os vídeos.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadVideos();
+  }, []);
+
+  const totalSteps = videos.length > 0 ? videos.length : 1;
+  const currentItem = videos[currentIndex] || { title: "Carregando..." };
 
 
   const handleNextStep = () => {
@@ -50,6 +98,35 @@ const ChildLessonScreen = ({ navigation, route }) => {
     setShowFinishPopup(false);
     navigation.navigate('Home');
   };
+
+  if (loading) {
+    return (
+      <ImageBackground
+        source={require("../../assets/imagem_fundo.png")}
+        style={styles.background}
+        resizeMode="cover"
+      >
+        <SafeAreaView style={styles.container}>
+          <ActivityIndicator size="large" color="#5D4037" />
+          <Text>Carregando vídeos...</Text>
+        </SafeAreaView>
+      </ImageBackground>
+    );
+  }
+
+  if (error) {
+    return (
+      <ImageBackground
+        source={require("../../assets/imagem_fundo.png")}
+        style={styles.background}
+        resizeMode="cover"
+      >
+        <SafeAreaView style={styles.container}>
+          <Text>{error}</Text>
+        </SafeAreaView>
+      </ImageBackground>
+    );
+  }
 
   return (
     <ImageBackground
@@ -80,25 +157,7 @@ const ChildLessonScreen = ({ navigation, route }) => {
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
           <View style={styles.videoCard}>
-            <View style={styles.videoMainArea}>
-              <View style={styles.playButtonCircle}>
-                <Ionicons name="play" size={32} color="#FFF" style={{ marginLeft: 4 }} />
-              </View>
-            </View>
-
-            <View style={styles.librasWindow}>
-              <Ionicons name="person" size={40} color="#BDC3C7" />
-            </View>
-
-            <View style={styles.videoControls}>
-              <Ionicons name="play" size={16} color="#FFF" />
-              <Text style={styles.videoTime}>0,7%</Text>
-              <View style={styles.progressBarTrack}>
-                <View style={styles.progressBarFill} />
-                <View style={styles.progressThumb} />
-              </View>
-              <Ionicons name="options" size={16} color="#FFF" />
-            </View>
+            <LessonVideoPlayer videoUrl={currentItem.video_url} />
           </View>
 
           <View style={styles.stepIndicatorContainer}>
@@ -108,7 +167,7 @@ const ChildLessonScreen = ({ navigation, route }) => {
 
           <View style={styles.explanationBox}>
             <Text style={styles.explanationText}>
-              Escove os dentes com movimentos suaves por 2 minutos.
+              {currentItem.description || "Assista ao vídeo com atenção."}
             </Text>
           </View>
 
@@ -123,7 +182,7 @@ const ChildLessonScreen = ({ navigation, route }) => {
           </TouchableOpacity>
 
           <View style={styles.dotsContainer}>
-            {menuItems.map((_, index) => (
+            {videos.map((_, index) => (
               <View
                 key={index}
                 style={[
@@ -192,6 +251,12 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  realVideo: {
+    width: "100%",
+    height: 220,
+    backgroundColor: "#000",
+    borderRadius: 20,
   },
   logoImage: { width: 300, height: 200 },
   titleBanner: {
@@ -327,13 +392,13 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.5)',
     borderBottomWidth: 6,
   },
-  nextButtonText: { 
-    color: '#FFF', 
-    fontSize: 22, 
-    fontWeight: 'bold', 
-    textShadowColor: 'rgba(0, 0, 0, 0.1)', 
-    textShadowOffset: { width: 0, height: 1 }, 
-    textShadowRadius: 2 
+  nextButtonText: {
+    color: '#FFF',
+    fontSize: 22,
+    fontWeight: 'bold',
+    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2
   },
   dotsContainer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 25 },
   dot: {

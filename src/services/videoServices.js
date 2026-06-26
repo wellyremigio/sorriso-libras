@@ -10,7 +10,7 @@ export const getVideosByModule = async (module) => {
 
     return await response.json();
   } catch (error) {
-    console.error("Erro ao buscar vídeos:", error);
+    console.error("Erro ao buscar vídeos do back:", error);
     throw error;
   }
 };

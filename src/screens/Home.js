@@ -4,7 +4,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import ProfileButton from '../components/profilePage/ProfileButton';
 import { useEffect } from 'react';
 import { getOrCreateChildId } from '../services/anonymousUserService';
-import { getVideosByMudule } from '../services/videoService';
+import { getVideosByModule } from '../services/videoServices';
 
 const Home = ({ navigation }) => {
 
