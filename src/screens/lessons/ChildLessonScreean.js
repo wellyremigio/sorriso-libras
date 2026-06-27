@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ImageBackground, ActivityIndicator, Animated, Easing } from 'react-native';
+import { View, Alert, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ImageBackground, ActivityIndicator, Animated, Easing } from 'react-native';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { useState, useEffect, useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -6,6 +6,7 @@ import { BlurView } from 'expo-blur';
 import { VideoView, useVideoPlayer } from "expo-video";
 import { getVideosByModule } from '../../services/videoServices';
 import { useEventListener } from 'expo';
+import { completeVideo } from '../../services/videoServices';
 
 const LessonVideoPlayer = ({ videoUrl, onVideoEnd }) => {
   const player = useVideoPlayer(videoUrl, (player) => {
@@ -97,10 +98,13 @@ const ChildLessonScreen = ({ navigation, route }) => {
   const totalSteps = videos.length > 0 ? videos.length : 1;
   const currentItem = videos[currentIndex] || { title: "Carregando..." };
 
-  const handleNextStep = () => {
-    const isLastStep = currentIndex === totalSteps - 1;
+  const handleNextStep = async () => {
+  const isLastStep = currentIndex === totalSteps - 1;
 
-    navigation.navigate('StickerAchievementScreen', {
+  try {
+    await completeVideo(currentItem.id);
+
+    navigation.navigate("StickerAchievementScreen", {
       isFinalAchievement: isLastStep,
     });
 
@@ -109,7 +113,15 @@ const ChildLessonScreen = ({ navigation, route }) => {
         setCurrentIndex(currentIndex + 1);
       }, 500);
     }
-  };
+  } catch (error) {
+    console.error("Erro ao concluir vídeo:", error);
+
+    Alert.alert(
+      "Ops!",
+      "Não conseguimos salvar seu progresso agora. Tente novamente."
+    );
+  }
+};
 
   useEffect(() => {
     setHasFinishedCurrentVideo(false);

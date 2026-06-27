@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -14,8 +14,8 @@ import {
   View,
 } from "react-native";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
-
-import { getVideosByModule } from "../../services/videoServices";
+import { useFocusEffect } from "@react-navigation/native";
+import { getVideosByModule, getCompletedVideos } from "../../services/videoServices";
 
 const DENTIST_MENU_IMAGES = [
   require("../../assets/dentist_menu_dentist.png"),
@@ -38,8 +38,13 @@ const DentistMenuScreen = ({ navigation }) => {
       setLoading(true);
       setError(null);
 
-      const data = await getVideosByModule("dentist");
-      setVideos(data);
+      const videosData = await getVideosByModule("dentist");
+      const completedData = await getCompletedVideos();
+
+      setVideos(videosData);
+
+      const completedIds = completedData.map((item) => item.id);
+      setCompletedVideoIds(completedIds);
     } catch (error) {
       console.error("Erro ao carregar vídeos do dentista:", error);
       setError("Não foi possível carregar os vídeos.");
@@ -48,10 +53,11 @@ const DentistMenuScreen = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    loadVideos();
-  }, []);
-
+  useFocusEffect(
+    useCallback(() => {
+      loadVideos();
+    }, [])
+  );
   useEffect(() => {
     if (!loading) {
       pulse.stopAnimation();
@@ -281,7 +287,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'transparent',
   },
-    statusShell: {
+  statusShell: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

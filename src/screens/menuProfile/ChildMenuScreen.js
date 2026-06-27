@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -14,8 +14,8 @@ import {
   View,
 } from "react-native";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
-
-import { getVideosByModule } from "../../services/videoServices";
+import { useFocusEffect } from "@react-navigation/native";
+import { getVideosByModule, getCompletedVideos } from "../../services/videoServices";
 
 const CHILD_MENU_IMAGES = [
   require("../../assets/tooth_dental_menu_child.png"),
@@ -37,8 +37,13 @@ const ChildMenuScreen = ({ navigation }) => {
       setLoading(true);
       setError(null);
 
-      const data = await getVideosByModule("children");
-      setVideos(data);
+      const videosData = await getVideosByModule("children");
+      const completedData = await getCompletedVideos();
+
+      setVideos(videosData);
+
+      const completedIds = completedData.map((item) => item.id);
+      setCompletedVideoIds(completedIds);
     } catch (error) {
       console.error("Erro ao carregar vídeos da criança:", error);
       setError("Não foi possível carregar os vídeos.");
@@ -47,10 +52,11 @@ const ChildMenuScreen = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    loadVideos();
-  }, []);
-
+  useFocusEffect(
+    useCallback(() => {
+      loadVideos();
+    }, [])
+  );
   useEffect(() => {
     if (!loading) {
       pulse.stopAnimation();
@@ -103,6 +109,7 @@ const ChildMenuScreen = ({ navigation }) => {
 
     navigation.navigate("ChildLesson", {
       initialIndex: index,
+      module: "children",
       videosFromMenu: videos,
     });
   };
