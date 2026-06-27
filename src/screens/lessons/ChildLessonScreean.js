@@ -50,7 +50,7 @@ const COLORS = {
 };
 
 const ChildLessonScreen = ({ navigation, route }) => {
-  const { initialIndex = 0, videosFromMenu = [] } = route.params || {};
+  const { initialIndex = 0,  module = "children", videosFromMenu = [] } = route.params || {};
   const [videos, setVideos] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [loading, setLoading] = useState(true);
