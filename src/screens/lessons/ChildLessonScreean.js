@@ -51,13 +51,14 @@ const COLORS = {
 };
 
 const ChildLessonScreen = ({ navigation, route }) => {
-  const { initialIndex = 0,  module = "children", videosFromMenu = [] } = route.params || {};
+  const { initialIndex = 0, module = "children", videosFromMenu = [] } = route.params || {};
   const [videos, setVideos] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showFinishPopup, setShowFinishPopup] = useState(false);
   const [hasFinishedCurrentVideo, setHasFinishedCurrentVideo] = useState(false);
+  const [savingProgress, setSavingProgress] = useState(false);
 
   const contentOpacity = useRef(new Animated.Value(0)).current;
   const contentTranslateY = useRef(new Animated.Value(14)).current;
@@ -99,29 +100,39 @@ const ChildLessonScreen = ({ navigation, route }) => {
   const currentItem = videos[currentIndex] || { title: "Carregando..." };
 
   const handleNextStep = async () => {
-  const isLastStep = currentIndex === totalSteps - 1;
+    if (savingProgress) return;
 
-  try {
-    await completeVideo(currentItem.id);
+    const isLastStep = currentIndex === totalSteps - 1;
 
-    navigation.navigate("StickerAchievementScreen", {
-      isFinalAchievement: isLastStep,
-    });
+    try {
+      setSavingProgress(true);
 
-    if (!isLastStep) {
-      setTimeout(() => {
-        setCurrentIndex(currentIndex + 1);
-      }, 500);
+      const completionResult = await completeVideo(currentItem.id);
+      const earnedStickers = completionResult?.earned_stickers || [];
+
+      navigation.navigate("StickerAchievementScreen", {
+        earnedStickers: completionResult?.earned_stickers || [],
+        isFinalAchievement: isLastStep,
+        completeVideo: currentItem,
+        module,
+      });
+
+      if (!isLastStep) {
+        setTimeout(() => {
+          setCurrentIndex(currentIndex + 1);
+        }, 500);
+      }
+    } catch (error) {
+      console.error("Erro ao concluir vídeo:", error);
+
+      Alert.alert(
+        "Ops!",
+        "Não conseguimos salvar seu progresso agora. Tente novamente."
+      );
+    } finally {
+      setSavingProgress(false);
     }
-  } catch (error) {
-    console.error("Erro ao concluir vídeo:", error);
-
-    Alert.alert(
-      "Ops!",
-      "Não conseguimos salvar seu progresso agora. Tente novamente."
-    );
-  }
-};
+  };
 
   useEffect(() => {
     setHasFinishedCurrentVideo(false);
@@ -255,14 +266,18 @@ const ChildLessonScreen = ({ navigation, route }) => {
             <TouchableOpacity
               style={[
                 styles.nextButton,
-                !hasFinishedCurrentVideo && styles.nextButtonDisabled,
+                (!hasFinishedCurrentVideo || savingProgress) && styles.nextButtonDisabled,
               ]}
               onPress={handleNextStep}
-              activeOpacity={hasFinishedCurrentVideo ? 0.8 : 1}
-              disabled={!hasFinishedCurrentVideo}
+              activeOpacity={hasFinishedCurrentVideo && !savingProgress ? 0.8 : 1}
+              disabled={!hasFinishedCurrentVideo || savingProgress}
             >
               <Text style={styles.nextButtonText}>
-                {currentIndex === totalSteps - 1 ? "Finalizar" : "Próximo"}
+                {savingProgress
+                  ? "Salvando..."
+                  : currentIndex === totalSteps - 1
+                    ? "Finalizar"
+                    : "Próximo"}
               </Text>
             </TouchableOpacity>
 
@@ -540,11 +555,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 245, 247, 0.4)'
   },
   finishPopupBox: {
-    backgroundColor: '#FFFFFF',
-    padding: 32,
-    borderRadius: 30,
+    paddingHorizontal: 22,
+    paddingTop: 20,
+    paddingBottom: 18,
+    borderRadius: 24,
     alignItems: 'center',
     width: '85%',
+    maxHeight: "82%",
     borderWidth: 4,
     borderColor: '#F4D1D9',
     elevation: 10,
@@ -566,8 +583,8 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed'
   },
   finishSticker: {
-    width: 200,
-    height: 200
+    width: 110,
+    height: 110
   },
   finishTitle: {
     fontSize: 32,

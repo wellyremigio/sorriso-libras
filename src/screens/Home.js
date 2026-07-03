@@ -19,7 +19,7 @@ const Home = ({ navigation }) => {
   useEffect(() => {
   const loadVideos = async () => {
     try {
-      const videos = await getVideosByMudule("children");
+      const videos = await getVideosByModule("children");
     } catch (error) {
       console.log("Erro ao carregar vídeos:", error);
     }

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground, ScrollView, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -16,13 +16,27 @@ const COLORS = {
     nextButtonShadow: '#33b962',
     titleGold: '#D4AF37',
     specialBorder: '#FFD700',
-    titleGold: '#D4AF37',
-    titleGold: '#D4AF37',
 };
 
 const StickerAchievementScreen = ({ navigation, route }) => {
-
+    const { height } = useWindowDimensions();
+    const isCompactHeight = height < 800;
     const { isFinalAchievement = false } = route.params || {};
+
+    const {
+        isFinalAchievement = false,
+        earnedStickers = [],
+    } = route.params || {};
+
+    const earnedSticker = earnedStickers[0];
+
+    const hasEarnedSticker = !!earnedSticker;
+
+    const stickerImageSource = hasEarnedSticker
+        ? { uri: earnedSticker.image_url }
+        : isFinalAchievement
+            ? require('../../assets/stickers/trofeu_dourado_1.png')
+            : require('../../assets/stickers/sticker1.png');
 
     const handleContinue = () => {
         if (isFinalAchievement) {
@@ -57,21 +71,18 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                     </View>
                 </View>
 
-                <View style={styles.content}>
+                <ScrollView
+                    style={styles.scrollView}
+                    contentContainerStyle={[
+                        styles.content,
+                        isCompactHeight && styles.contentCompact,
+                    ]}
+                    showsVerticalScrollIndicator={false}
+                >
 
                     <Text style={[styles.mainTitle, isFinalAchievement && styles.goldTitle]}>
                         {isFinalAchievement ? "PARABÉNS!".toUpperCase() : "Parabéns!"}
                     </Text>
-
-                    <View style={styles.avatarContainer}>
-                        <Image
-                            source={require('../../assets/sticker_pop.png')}
-                            style={styles.avatarImage}
-                            resizeMode="contain"
-                        />
-                    </View>
-
-                    <Text style={styles.descriptionText}>Você conquistou um adesivo!</Text>
 
                     {!isFinalAchievement && (
                         <View style={styles.avatarContainer}>
@@ -86,10 +97,18 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                     <Text style={styles.descriptionText}>
                         {isFinalAchievement
                             ? "Você completou todas as lições. Continue cuidando bem do seu sorriso!"
-                            : "Você conquistou um adesivo!"}
+                            : hasEarnedSticker
+                                ? `Você conquistou um adesivo!`
+                                : "Você concluiu esta lição!"}
                     </Text>
 
-                    <View style={[styles.adesivoHighlight, isFinalAchievement && { borderColor: COLORS.specialBorder }]}>
+                    <View
+                        style={[
+                            styles.adesivoHighlight,
+                            isCompactHeight && styles.adesivoHighlightCompact,
+                            isFinalAchievement && { borderColor: COLORS.specialBorder },
+                        ]}
+                    >
                         <View style={styles.brilhoStars}>
                             <Ionicons name="star" size={20} color="#FFF" style={{ position: 'absolute', top: 10, left: 10 }} />
                             <Ionicons name="star" size={16} color="#FFF" style={{ position: 'absolute', bottom: 15, right: 15 }} />
@@ -97,9 +116,7 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                         </View>
 
                         <Image
-                            source={isFinalAchievement
-                                ? require('../../assets/stickers/trofeu_dourado_1.png')
-                                : require('../../assets/stickers/sticker1.png')}
+                            source={stickerImageSource}
                             style={styles.adesivoImage}
                             resizeMode="contain"
                         />
@@ -122,8 +139,7 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                             <View style={styles.pageDot} />
                         </View>
                     )}
-                </View>
-
+                </ScrollView>
             </SafeAreaView>
         </ImageBackground>
     );
@@ -139,6 +155,10 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'transparent',
         alignItems: 'center'
+    },
+    scrollView: {
+        flex: 1,
+        width: '100%'
     },
     headerDecoration: {
         position: 'absolute',
@@ -167,12 +187,18 @@ const styles = StyleSheet.create({
         height: '100%'
     },
     content: {
-        flex: 1,
+        flexGrow: 1,
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 40,
-        marginTop: 60
+        paddingTop: 70,
+        paddingBottom: 28
+    },
+    contentCompact: {
+        paddingHorizontal: 28,
+        paddingTop: 58,
+        paddingBottom: 18
     },
     mainTitle: {
         fontSize: 48,
@@ -219,6 +245,11 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.15,
         shadowRadius: 5
     },
+    adesivoHighlightCompact: {
+        width: 160,
+        height: 160,
+        marginBottom: 24
+    },
     brilhoStars: {
         ...StyleSheet.absoluteFillObject,
         backgroundColor: '#C5D6DA',
@@ -233,7 +264,7 @@ const styles = StyleSheet.create({
     actionButton: {
         backgroundColor: COLORS.nextButton,
         borderBottomColor: COLORS.nextButtonShadow,
-        paddingVertical: 18,
+        paddingVertical: 16,
         paddingHorizontal: 40,
         borderRadius: 35,
         alignItems: 'center',
@@ -277,11 +308,11 @@ const styles = StyleSheet.create({
     goldTitle: {
         fontSize: 56,
         color: '#FFD700',
-        letterSpacing: 2, 
-        textShadowColor: '#D35400', 
-        textShadowOffset: { width: 0, height: 5 }, 
+        letterSpacing: 2,
+        textShadowColor: '#D35400',
+        textShadowOffset: { width: 0, height: 5 },
         textShadowRadius: 2,
-        marginBottom: 30, 
+        marginBottom: 30,
     },
 });
 
