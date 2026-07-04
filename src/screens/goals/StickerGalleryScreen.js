@@ -1,6 +1,10 @@
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
+import { useCallback, useState } from 'react';
+import { ActivityIndicator } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { getChildStickerGallery } from '../../services/stickerService';
 
 const COLORS = {
     textBlue: '#2C4A63',
@@ -14,10 +18,38 @@ const COLORS = {
 };
 
 const StickerGalleryScreen = ({ navigation }) => {
-    const earnedStickers = [];
+    const [earnedStickers, setEarnedStickers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const specialStickers = earnedStickers.filter((s) => s.is_special);
-    const normalStickers = earnedStickers.filter((s) => !s.is_special);
+    const loadStickerGallery = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const data = await getChildStickerGallery();
+            setEarnedStickers(data);
+        } catch (error) {
+            console.error("Erro ao carregar galeria de adesivos:", error);
+            setError("Não foi possível carregar sua galeria agora.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useFocusEffect(
+        useCallback(() => {
+            loadStickerGallery();
+        }, [])
+    );
+
+    const specialStickers = earnedStickers
+        .filter((s) => s.is_special)
+        .sort((a, b) => a.order - b.order);
+
+    const normalStickers = earnedStickers
+        .filter((s) => !s.is_special)
+        .sort((a, b) => a.order - b.order);
 
     const unlockedStickers = earnedStickers.length;
 
@@ -30,6 +62,39 @@ const StickerGalleryScreen = ({ navigation }) => {
             />
         </View>
     );
+
+    if (loading) {
+        return (
+            <ImageBackground
+                source={require("../../assets/imagem_fundo.png")}
+                style={styles.background}
+                resizeMode="cover"
+            >
+                <SafeAreaView style={styles.container}>
+                    <ActivityIndicator size="large" color={COLORS.textBrown} />
+                    <Text style={styles.emptyGalleryText}>Carregando galeria...</Text>
+                </SafeAreaView>
+            </ImageBackground>
+        );
+    }
+
+    if (error) {
+        return (
+            <ImageBackground
+                source={require("../../assets/imagem_fundo.png")}
+                style={styles.background}
+                resizeMode="cover"
+            >
+                <SafeAreaView style={styles.container}>
+                    <Text style={styles.emptyGalleryText}>{error}</Text>
+
+                    <TouchableOpacity style={styles.retryButton} onPress={loadStickerGallery}>
+                        <Text style={styles.retryButtonText}>Tentar novamente</Text>
+                    </TouchableOpacity>
+                </SafeAreaView>
+            </ImageBackground>
+        );
+    }
 
     return (
         <ImageBackground
@@ -117,6 +182,23 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         height: '100%'
+    },
+    retryButton: {
+        marginTop: 16,
+        backgroundColor: COLORS.progressFill,
+        paddingHorizontal: 20,
+        paddingVertical: 12,
+        borderRadius: 16,
+    },
+
+    retryButtonText: {
+        color: "#FFF",
+        fontWeight: "700",
+        fontSize: 15,
+    },
+    stickerImage: {
+        width: 80,
+        height: 80 ,
     },
     emptyGallery: {
         alignItems: "center",
