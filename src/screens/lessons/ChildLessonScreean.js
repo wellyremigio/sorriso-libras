@@ -4,9 +4,9 @@ import { useState, useEffect, useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { VideoView, useVideoPlayer } from "expo-video";
-import { getVideosByModule } from '../../services/videoServices';
+import { getVideosByModule, completeVideo, getCompletedVideos } from '../../services/videoServices';
 import { useEventListener } from 'expo';
-import { completeVideo } from '../../services/videoServices';
+
 
 const LessonVideoPlayer = ({ videoUrl, onVideoEnd }) => {
   const player = useVideoPlayer(videoUrl, (player) => {
@@ -59,19 +59,34 @@ const ChildLessonScreen = ({ navigation, route }) => {
   const [showFinishPopup, setShowFinishPopup] = useState(false);
   const [hasFinishedCurrentVideo, setHasFinishedCurrentVideo] = useState(false);
   const [savingProgress, setSavingProgress] = useState(false);
+  const [completedVideoIds, setCompletedVideoIds] = useState([]);
 
   const contentOpacity = useRef(new Animated.Value(0)).current;
   const contentTranslateY = useRef(new Animated.Value(14)).current;
 
-  useEffect(() => {
-    if (videosFromMenu.length > 0) {
-      setVideos(videosFromMenu);
-      setLoading(false);
-      return;
-    }
+  const loadVideos = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
+      const [videosData, completedData] = await Promise.all([
+        videosFromMenu.length > 0 ? Promise.resolve(videosFromMenu) : getVideosByModule(module),
+        getCompletedVideos(),
+      ]);
+
+      setVideos(videosData);
+      setCompletedVideoIds((completedData || []).map((item) => item.id));
+    } catch (error) {
+      console.error("Erro ao carregar vídeos:", error);
+      setError("Não foi possível carregar os vídeos.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     loadVideos();
-  }, []);
+  }, [module, videosFromMenu]);
 
   useEffect(() => {
     if (loading || error) {
@@ -103,12 +118,26 @@ const ChildLessonScreen = ({ navigation, route }) => {
     if (savingProgress) return;
 
     const isLastStep = currentIndex === totalSteps - 1;
+    const alreadyCompleted = completedVideoIds.includes(currentItem.id);
+
+    if (alreadyCompleted) {
+      if (isLastStep) {
+        navigation.navigate("Home");
+        return;
+      }
+
+      setCurrentIndex((prev) => prev + 1);
+      return;
+    }
 
     try {
       setSavingProgress(true);
 
       const completionResult = await completeVideo(currentItem.id);
-      const earnedStickers = completionResult?.earned_stickers || [];
+
+      setCompletedVideoIds((prev) =>
+        prev.includes(currentItem.id) ? prev : [...prev, currentItem.id]
+      );
 
       navigation.navigate("StickerAchievementScreen", {
         earnedStickers: completionResult?.earned_stickers || [],
@@ -118,10 +147,14 @@ const ChildLessonScreen = ({ navigation, route }) => {
       });
 
       if (!isLastStep) {
-        setTimeout(() => {
-          setCurrentIndex(currentIndex + 1);
-        }, 500);
+        setCurrentIndex((prev) => prev + 1);
       }
+
+      // if (!isLastStep) {
+      //   setTimeout(() => {
+      //     setCurrentIndex(currentIndex + 1);
+      //   }, 500);
+      // }
     } catch (error) {
       console.error("Erro ao concluir vídeo:", error);
 
