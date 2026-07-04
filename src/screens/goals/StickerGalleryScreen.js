@@ -14,29 +14,22 @@ const COLORS = {
 };
 
 const StickerGalleryScreen = ({ navigation }) => {
-    const stickersData = Array.from({ length: 24 }).map((_, index) => ({
-        id: String(index + 1),
-        unlocked: index < 12
-    }));
+    const earnedStickers = [];
 
-    const totalStickers = stickersData.length;
-    const unlockedStickers = stickersData.filter(s => s.unlocked).length;
+    const specialStickers = earnedStickers.filter((s) => s.is_special);
+    const normalStickers = earnedStickers.filter((s) => !s.is_special);
 
-    const renderStickerCard = ({ item }) => {
-        if (item.unlocked) {
-            return (
-                <View style={[styles.card, styles.cardUnlocked]}>
-                    <Text style={styles.placeholderText}>Img</Text>
-                </View>
-            );
-        } else {
-            return (
-                <View style={[styles.card, styles.cardLocked]}>
-                    <FontAwesome5 name="lock" size={20} color={COLORS.cardLockedBorder} />
-                </View>
-            );
-        }
-    };
+    const unlockedStickers = earnedStickers.length;
+
+    const renderStickerCard = ({ item }) => (
+        <View style={[styles.card, styles.cardUnlocked]}>
+            <Image
+                source={{ uri: item.image_url }}
+                style={styles.stickerImage}
+                resizeMode="contain"
+            />
+        </View>
+    );
 
     return (
         <ImageBackground
@@ -67,33 +60,42 @@ const StickerGalleryScreen = ({ navigation }) => {
                         <View
                             style={[
                                 styles.progressBarFill,
-                                { width: `${(unlockedStickers / totalStickers) * 100}%` }
+                                { width: unlockedStickers > 0 ? "100%" : "0%" }
                             ]}
                         />
                         <Text style={styles.progressText}>
-                            {unlockedStickers} de {totalStickers} desbloqueados
+                            {unlockedStickers} adesivos conquistados
                         </Text>
                     </View>
                 </View>
 
-                {/* Seção de Adesivos Especiais em Destaque */}
-                <View style={styles.specialStickersWrapper}>
-                    <View style={[styles.card, styles.specialCard]}>
-                        <Text style={styles.placeholderText}>Especial 1</Text>
-                        {/* <Image source={require('../../assets/especial1.png')} style={styles.stickerImage} /> */}
+                {specialStickers.length > 0 && (
+                    <View style={styles.specialStickersWrapper}>
+                        {specialStickers.map((sticker) => (
+                            <View key={sticker.id} style={[styles.card, styles.specialCard]}>
+                                <Image
+                                    source={{ uri: sticker.image_url }}
+                                    style={styles.stickerImage}
+                                    resizeMode="contain"
+                                />
+                            </View>
+                        ))}
                     </View>
+                )}
 
-                    <View style={[styles.card, styles.specialCard]}>
-                        <Text style={styles.placeholderText}>Especial 2</Text>
-                        {/* <Image source={require('../../assets/especial2.png')} style={styles.stickerImage} /> */}
+                {unlockedStickers === 0 && (
+                    <View style={styles.emptyGallery}>
+                        <Text style={styles.emptyGalleryText}>
+                            Você ainda não conquistou adesivos.
+                        </Text>
                     </View>
-                </View>
+                )}
 
                 <FlatList
-                    data={stickersData}
+                    data={normalStickers}
                     keyExtractor={(item) => item.id}
                     renderItem={renderStickerCard}
-                    numColumns={4} // Wireframe possui 4 colunas
+                    numColumns={4}
                     columnWrapperStyle={styles.row}
                     contentContainerStyle={styles.gridContainer}
                     showsVerticalScrollIndicator={false}
@@ -101,7 +103,7 @@ const StickerGalleryScreen = ({ navigation }) => {
 
                 <View style={styles.footerSection}>
                     <Text style={styles.footerText}>
-                        {unlockedStickers}/{totalStickers}
+                        {unlockedStickers} adesivos
                     </Text>
                 </View>
 
@@ -115,6 +117,18 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         height: '100%'
+    },
+    emptyGallery: {
+        alignItems: "center",
+        justifyContent: "center",
+        paddingVertical: 28,
+    },
+
+    emptyGalleryText: {
+        color: COLORS.textBrown,
+        fontSize: 16,
+        textAlign: "center",
+        fontWeight: "600",
     },
     container: {
         flex: 1,
@@ -214,17 +228,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 2
     },
-    cardLocked: {
-        backgroundColor: COLORS.cardLockedBg,
-        borderWidth: 2,
-        borderColor: COLORS.cardLockedBorder,
-        borderStyle: 'dashed'
-    },
-    placeholderText: {
-        fontSize: 12,
-        color: COLORS.cardUnlockedBorder,
-        fontWeight: 'bold'
-    },
     footerSection: {
         alignItems: 'center',
         paddingVertical: 15
@@ -237,28 +240,22 @@ const styles = StyleSheet.create({
     specialStickersWrapper: {
         flexDirection: 'row',
         justifyContent: 'center',
-        gap: 25,               
-        marginBottom: 30,       
+        gap: 25,
+        marginBottom: 30,
         paddingHorizontal: 20,
     },
     specialCard: {
-        width: '40%',          
-        aspectRatio: 1,        
+        width: '40%',
+        aspectRatio: 1,
         backgroundColor: '#FFF9E6',
-        borderColor: '#ECA852',    
+        borderColor: '#ECA852',
         borderWidth: 3,
         borderRadius: 20,
-        elevation: 5,          
+        elevation: 5,
         shadowColor: '#ECA852',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 5,
-    },
-    placeholderText: {
-        fontSize: 14,
-        color: '#D2A679',
-        fontWeight: 'bold',
-        textAlign: 'center'
     },
 });
 

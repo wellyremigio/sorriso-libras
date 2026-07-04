@@ -21,7 +21,6 @@ const COLORS = {
 const StickerAchievementScreen = ({ navigation, route }) => {
     const { height } = useWindowDimensions();
     const isCompactHeight = height < 800;
-    const { isFinalAchievement = false } = route.params || {};
 
     const {
         isFinalAchievement = false,
@@ -36,7 +35,7 @@ const StickerAchievementScreen = ({ navigation, route }) => {
         ? { uri: earnedSticker.image_url }
         : isFinalAchievement
             ? require('../../assets/stickers/trofeu_dourado_1.png')
-            : require('../../assets/stickers/sticker1.png');
+            : null;
 
     const handleContinue = () => {
         if (isFinalAchievement) {
@@ -115,11 +114,14 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                             <Ionicons name="star" size={12} color="#FFF" style={{ position: 'absolute', top: 30, right: 30 }} />
                         </View>
 
-                        <Image
-                            source={stickerImageSource}
-                            style={styles.adesivoImage}
-                            resizeMode="contain"
-                        />
+                        {stickerImageSource && (
+                            <Image
+                                source={stickerImageSource}
+                                style={styles.adesivoImage}
+                                resizeMode="contain"
+                            />
+                        )}
+                            
                     </View>
                     <TouchableOpacity
                         style={styles.actionButton}
