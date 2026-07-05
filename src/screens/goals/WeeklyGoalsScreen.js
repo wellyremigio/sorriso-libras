@@ -1,8 +1,7 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ImageBackground } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ImageBackground, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
-import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FloatingBalloons from '../../components/animation/FloatingBalloons';
 
@@ -59,19 +58,6 @@ const WeeklyGoalsScreen = ({ navigation }) => {
         loadData();
     }, []);
 
-    useFocusEffect(
-        useCallback(() => {
-            setCompleteBrush((prevState) => {
-                const currentTotal = Object.values(prevState).filter(Boolean).length;
-                if (currentTotal >= totalGoal) {
-                    AsyncStorage.removeItem('@stickers_progress');
-                    return {};
-                }
-                return prevState;
-            });
-        }, [])
-    );
-
     const toggleCheck = async (day, shiftId) => {
         const key = `${day}-${shiftId}`;
         setCompleteBrush((prevState) => {
@@ -89,7 +75,31 @@ const WeeklyGoalsScreen = ({ navigation }) => {
     ].filter(Boolean).length;
 
     const brushesLeftToday = 3 - brushesToday;
+    const isWeeklyGoalCompleted = totalCompleted >= totalGoal;
+    const isLastDayOfWeek = currentDayIndex === 6;
+    const isTodayGoalCompleted = brushesLeftToday === 0;
 
+
+    const handleFinishBrushing = () => {
+        if (isWeeklyGoalCompleted) {
+            navigation.navigate("StickerAchievementScreen", {
+                isFinalAchievement: false,
+                achievementType: "weekly_brushing_goal",
+                earnedStickers: [],
+            });
+            return;
+        }
+
+        if (isLastDayOfWeek && isTodayGoalCompleted) {
+            Alert.alert(
+                "Você está quase lá!",
+                "A semana terminou, mas tudo bem! Na próxima semana você pode tentar de novo e conquistar seu adesivo."
+            );
+            return;
+        }
+
+        setIsCelebrating(true);
+    };
     return (
         <ImageBackground
             source={require("../../assets/imagem_fundo.png")}
@@ -125,8 +135,6 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                 </View>
 
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-
-                    {/* 3. Indicador de Meta do Dia Atual */}
                     <View style={styles.todayGoalBanner}>
                         <FontAwesome5
                             name="tooth"
@@ -142,9 +150,20 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                         </Text>
                     </View>
 
+                    <View style={styles.flossReminderCard}>
+                        <FontAwesome5
+                            name="grin-stars"
+                            size={20}
+                            color={COLORS.textDark}
+                            style={styles.flossReminderIcon}
+                        />
+
+                        <Text style={styles.flossReminderText}>
+                            Não se esqueça de usar o fio dental para deixar os seus dentes limpinhos!
+                        </Text>
+                    </View>
+
                     <View style={styles.calendarWrapper}>
-
-
                         <View style={styles.iconColumn}>
                             <View style={styles.iconHeaderSpace} />
                             {brushingShifts.map((shift) => (
@@ -213,8 +232,19 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                         </View>
                     </View>
 
-                    <TouchableOpacity style={styles.actionButton} onPress={() => setIsCelebrating(true)} activeOpacity={0.8}>
+                    {/* <TouchableOpacity style={styles.actionButton} onPress={() => setIsCelebrating(true)} activeOpacity={0.8}>
                         <Text style={styles.actionButtonText}>Concluir Escovação</Text>
+                    </TouchableOpacity> */}
+                    <TouchableOpacity
+                        style={styles.actionButton}
+                        onPress={handleFinishBrushing}
+                        activeOpacity={0.8}
+                    >
+                        <Text style={styles.actionButtonText}>
+                            {isLastDayOfWeek
+                                ? (isWeeklyGoalCompleted ? "Receber Adesivo" : "Completar escovação")
+                                : "Concluir Escovação"}
+                        </Text>
                     </TouchableOpacity>
                 </ScrollView>
 
@@ -234,6 +264,29 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "transparent",
+    },
+    flossReminderCard: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#FFFDFC",
+        borderWidth: 2,
+        borderColor: "#DCEEEF",
+        borderRadius: 18,
+        paddingHorizontal: 14,
+        paddingVertical: 12,
+        marginBottom: 16,
+    },
+
+    flossReminderIcon: {
+        marginRight: 10,
+    },
+
+    flossReminderText: {
+        flex: 1,
+        color: COLORS.textDark,
+        fontSize: 14,
+        lineHeight: 20,
+        fontWeight: "600",
     },
     background: {
         flex: 1,

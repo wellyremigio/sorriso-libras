@@ -25,6 +25,7 @@ const StickerAchievementScreen = ({ navigation, route }) => {
     const {
         isFinalAchievement = false,
         earnedStickers = [],
+        achievementType = null,
     } = route.params || {};
 
     const earnedSticker = earnedStickers[0];
@@ -33,9 +34,11 @@ const StickerAchievementScreen = ({ navigation, route }) => {
 
     const stickerImageSource = hasEarnedSticker
         ? { uri: earnedSticker.image_url }
-        : isFinalAchievement
-            ? require('../../assets/stickers/trofeu_dourado_1.png')
-            : null;
+        : achievementType === 'weekly_brushing_goal'
+            ? require('../../assets/sticker_pop.png')
+            : isFinalAchievement
+                ? require('../../assets/stickers/trofeu_dourado_1.png')
+                : null;
 
     const handleContinue = () => {
         if (isFinalAchievement) {
@@ -96,6 +99,8 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                     <Text style={styles.descriptionText}>
                         {isFinalAchievement
                             ? "Você completou todas as lições. Continue cuidando bem do seu sorriso!"
+                            : achievementType === 'weekly_brushing_goal'
+                                ? "Você completou a meta da semana!"
                             : hasEarnedSticker
                                 ? `Você conquistou um adesivo!`
                                 : "Você concluiu esta lição!"}
