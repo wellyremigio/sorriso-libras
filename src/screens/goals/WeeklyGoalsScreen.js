@@ -1,9 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ImageBackground, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import FloatingBalloons from '../../components/animation/FloatingBalloons';
+import { useFocusEffect } from '@react-navigation/native';
+import { ActivityIndicator } from 'react-native';
+import {
+    completeCurrentBrushingGoal,
+    getCurrentBrushingGoal,
+    updateBrushingGoalCheck,
+} from '../../services/brushingGoalService';
 
 const COLORS = {
     background: '#FFF5F7',
@@ -42,12 +48,39 @@ const WeeklyGoalsScreen = ({ navigation }) => {
     ];
 
     const [completedBrush, setCompleteBrush] = useState({});
+    const [weeklyGoal, setWeeklyGoal] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [savingCheck, setSavingCheck] = useState(false);
     const [isCelebrating, setIsCelebrating] = useState(false);
+
+    const loadWeeklyGoal = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const data = await getCurrentBrushingGoal();
+
+            setWeeklyGoal(data);
+            setCompleteBrush(data.checks || {});
+        } catch (error) {
+            console.error("Erro ao carregar meta semanal:", error);
+            setError("Não foi possível carregar suas metas agora.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useFocusEffect(
+        useCallback(() => {
+            loadWeeklyGoal();
+        }, [])
+    );
 
     const currentDayIndex = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
     const currentDayName = daysOfWeek[currentDayIndex];
 
-    const totalGoal = 21;
+    const totalGoal = weeklyGoal?.total_goal || 21;
     useEffect(() => {
         const loadData = async () => {
             try {
@@ -59,12 +92,32 @@ const WeeklyGoalsScreen = ({ navigation }) => {
     }, []);
 
     const toggleCheck = async (day, shiftId) => {
+        if (savingCheck) return;
+
         const key = `${day}-${shiftId}`;
-        setCompleteBrush((prevState) => {
-            const newState = { ...prevState, [key]: !prevState[key] };
-            AsyncStorage.setItem('@stickers_progress', JSON.stringify(newState)).catch(e => console.error(e));
-            return newState;
-        });
+        const newCheckedValue = !completedBrush[key];
+
+        try {
+            setSavingCheck(true);
+
+            const updatedGoal = await updateBrushingGoalCheck({
+                day,
+                shift: shiftId,
+                checked: newCheckedValue,
+            });
+
+            setWeeklyGoal(updatedGoal);
+            setCompleteBrush(updatedGoal.checks || {});
+        } catch (error) {
+            console.error("Erro ao atualizar check:", error);
+
+            Alert.alert(
+                "Ops!",
+                "Não conseguimos salvar essa escovação agora. Tente novamente."
+            );
+        } finally {
+            setSavingCheck(false);
+        }
     };
 
     const totalCompleted = Object.values(completedBrush).filter(Boolean).length;
@@ -80,13 +133,33 @@ const WeeklyGoalsScreen = ({ navigation }) => {
     const isTodayGoalCompleted = brushesLeftToday === 0;
 
 
-    const handleFinishBrushing = () => {
+    const handleFinishBrushing = async () => {
         if (isWeeklyGoalCompleted) {
-            navigation.navigate("StickerAchievementScreen", {
-                isFinalAchievement: false,
-                achievementType: "weekly_brushing_goal",
-                earnedStickers: [],
-            });
+            try {
+                const result = await completeCurrentBrushingGoal();
+
+                if (result.completed) {
+                    navigation.navigate("StickerAchievementScreen", {
+                        isFinalAchievement: false,
+                        achievementType: "weekly_brushing_goal",
+                        earnedStickers: result.earned_stickers || [],
+                    });
+                    return;
+                }
+
+                Alert.alert(
+                    "Você está quase lá!",
+                    result.message || "Continue tentando para conquistar seu adesivo."
+                );
+            } catch (error) {
+                console.error("Erro ao concluir meta semanal:", error);
+
+                Alert.alert(
+                    "Ops!",
+                    "Não conseguimos finalizar sua meta agora. Tente novamente."
+                );
+            }
+
             return;
         }
 
@@ -100,6 +173,40 @@ const WeeklyGoalsScreen = ({ navigation }) => {
 
         setIsCelebrating(true);
     };
+
+    if (loading) {
+        return (
+            <ImageBackground
+                source={require("../../assets/imagem_fundo.png")}
+                style={styles.background}
+                resizeMethod="cover"
+            >
+                <SafeAreaView style={styles.container}>
+                    <ActivityIndicator size="large" color={COLORS.textDark} />
+                    <Text style={styles.progressText}>Carregando metas...</Text>
+                </SafeAreaView>
+            </ImageBackground>
+        );
+    }
+
+    if (error) {
+        return (
+            <ImageBackground
+                source={require("../../assets/imagem_fundo.png")}
+                style={styles.background}
+                resizeMethod="cover"
+            >
+                <SafeAreaView style={styles.container}>
+                    <Text style={styles.progressText}>{error}</Text>
+
+                    <TouchableOpacity style={styles.actionButton} onPress={loadWeeklyGoal}>
+                        <Text style={styles.actionButtonText}>Tentar novamente</Text>
+                    </TouchableOpacity>
+                </SafeAreaView>
+            </ImageBackground>
+        );
+    }
+
     return (
         <ImageBackground
             source={require("../../assets/imagem_fundo.png")}
@@ -203,7 +310,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                                                     ]}
                                                     onPress={() => toggleCheck(day, shift.id)}
                                                     activeOpacity={0.7}
-                                                    disabled={isFutureDay}
+                                                    disabled={isFutureDay || savingCheck}
                                                 >
                                                     {isChecked ? <Ionicons name="checkmark" size={16} color={COLORS.greenShadow} /> : null}
                                                 </TouchableOpacity>
