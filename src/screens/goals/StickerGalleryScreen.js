@@ -71,8 +71,10 @@ const StickerGalleryScreen = ({ navigation }) => {
                 resizeMode="cover"
             >
                 <SafeAreaView style={styles.container}>
-                    <ActivityIndicator size="large" color={COLORS.textBrown} />
+                    <View style={styles.loadingContent}>
+                        <ActivityIndicator size="large" color={COLORS.textBrown} />
                     <Text style={styles.emptyGalleryText}>Carregando galeria...</Text>
+                    </View>
                 </SafeAreaView>
             </ImageBackground>
         );
@@ -198,7 +200,7 @@ const styles = StyleSheet.create({
     },
     stickerImage: {
         width: 80,
-        height: 80 ,
+        height: 80,
     },
     emptyGallery: {
         alignItems: "center",
@@ -338,6 +340,12 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 5,
+    },
+    loadingContent: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
     },
 });
 

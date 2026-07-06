@@ -170,12 +170,20 @@ const ChildMenuScreen = ({ navigation }) => {
   };
 
   if (loading) {
-    return renderStatusScreen({
-      title: "Carregando vídeos",
-      message: "Estamos preparando as aulas para você. Só um instante.",
-      iconName: "play-circle",
-      showSpinner: true,
-    });
+    return (
+      <ImageBackground
+        source={require("../../assets/imagem_fundo.png")}
+        style={styles.background}
+        resizeMode="cover"
+      >
+        <SafeAreaView style={styles.container}>
+          <View style={styles.simpleLoadingContent}>
+            <ActivityIndicator size="large" color="#5D4037" />
+            <Text style={styles.loadingSimpleText}>Carregando...</Text>
+          </View>
+        </SafeAreaView>
+      </ImageBackground>
+    );
   }
 
   if (error) {
@@ -304,6 +312,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 18,
+  },
+    simpleLoadingContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+  },
+  loadingSimpleText: {
+    marginTop: 14,
+    color: '#4E342E',
+    fontSize: 16,
+    fontWeight: '600',
   },
   statusSpinner: {
     position: 'absolute',

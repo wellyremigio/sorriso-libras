@@ -222,6 +222,24 @@ const ChildLessonScreen = ({ navigation, route }) => {
   );
 
   if (loading) {
+    return (
+      <ImageBackground
+        source={require("../../assets/imagem_fundo.png")}
+        style={styles.background}
+        resizeMode="cover"
+      >
+        <SafeAreaView style={styles.container}>
+          <View style={styles.simpleLoadingContent}>
+            <ActivityIndicator size="large" color="#5D4037" />
+            <Text style={styles.loadingSimpleText}>Carregando vídeo...</Text>
+          </View>
+        </SafeAreaView>
+      </ImageBackground>
+    );
+  }
+
+  /*
+  if (loading) {
     return renderStatusScreen({
       title: 'Carregando vídeos',
       message: 'Estamos preparando as aulas para você. Um instante, por favor.',
@@ -231,6 +249,7 @@ const ChildLessonScreen = ({ navigation, route }) => {
       showLoader: true,
     });
   }
+  */
 
   if (error) {
     return renderStatusScreen({
@@ -380,6 +399,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 24,
+  },
+  simpleLoadingContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+  },
+  loadingSimpleText: {
+    marginTop: 14,
+    color: '#4E342E',
+    fontSize: 16,
+    fontWeight: '600',
   },
   statusCard: {
     width: '100%',

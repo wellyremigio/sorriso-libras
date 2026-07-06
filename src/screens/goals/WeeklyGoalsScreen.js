@@ -244,16 +244,16 @@ const WeeklyGoalsScreen = ({ navigation }) => {
             return;
         }
 
-        if (isLastDayOfWeek) {
-            showInfoModal({
-                title: "Você está quase lá!",
-                message: "A semana terminou, mas tudo bem! Na próxima semana você pode tentar de novo e conquistar seu adesivo.",
-                buttonLabel: "Tudo bem",
-                iconName: "happy-outline",
-                iconColor: "#A9DFBF",
-            });
-            return;
-        }
+        // if (isLastDayOfWeek) {
+        //     showInfoModal({
+        //         title: "Você está quase lá!",
+        //         message: "A semana terminou, mas tudo bem! Na próxima semana você pode tentar de novo e conquistar seu adesivo.",
+        //         buttonLabel: "Tudo bem",
+        //         iconName: "happy-outline",
+        //         iconColor: "#A9DFBF",
+        //     });
+        //     return;
+        // }
 
         setIsCelebrating(true);
     };
@@ -266,8 +266,10 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                 resizeMethod="cover"
             >
                 <SafeAreaView style={styles.container}>
-                    <ActivityIndicator size="large" color={COLORS.textDark} />
-                    <Text style={styles.progressText}>Carregando metas...</Text>
+                    <View style={styles.loadingContent}>
+                        <ActivityIndicator size="large" color={COLORS.textDark} />
+                        <Text style={styles.progressText}>Carregando metas...</Text>
+                    </View>
                 </SafeAreaView>
             </ImageBackground>
         );
@@ -462,6 +464,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "transparent",
+    },
+    loadingContent: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
     },
     flossReminderCard: {
         position: 'relative',
