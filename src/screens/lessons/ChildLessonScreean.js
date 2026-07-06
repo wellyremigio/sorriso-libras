@@ -141,7 +141,8 @@ const ChildLessonScreen = ({ navigation, route }) => {
 
       navigation.navigate("StickerAchievementScreen", {
         earnedStickers: completionResult?.earned_stickers || [],
-        isFinalAchievement: isLastStep,
+        isFinalAchievement: false,
+        showModuleFinalAchievement: isLastStep,
         completeVideo: currentItem,
         module,
       });

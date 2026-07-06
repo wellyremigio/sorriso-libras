@@ -26,6 +26,7 @@ const StickerAchievementScreen = ({ navigation, route }) => {
         isFinalAchievement = false,
         earnedStickers = [],
         achievementType = null,
+        showModuleFinalAchievement = false,
     } = route.params || {};
 
     const earnedSticker = earnedStickers[0];
@@ -41,6 +42,16 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                 : null;
 
     const handleContinue = () => {
+        if (showModuleFinalAchievement && !isFinalAchievement) {
+            navigation.replace('StickerAchievementScreen', {
+                isFinalAchievement: true,
+                earnedStickers: [],
+                achievementType: null,
+                showModuleFinalAchievement: false,
+            });
+            return;
+        }
+
         if (isFinalAchievement) {
             navigation.navigate('Home');
         } else {
@@ -134,7 +145,11 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                         activeOpacity={0.8}
                     >
                         <Text style={styles.actionButtonText}>
-                            {isFinalAchievement ? "Voltar à Tela Inicial" : "Continuar"}
+                            {isFinalAchievement
+                                ? "Voltar à Tela Inicial"
+                                : showModuleFinalAchievement
+                                    ? "Ver adesivo especial"
+                                    : "Continuar"}
                         </Text>
                     </TouchableOpacity>
 
