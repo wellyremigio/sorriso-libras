@@ -21,12 +21,12 @@ const COLORS = {
     textLightPink: '#FFF',
     grayBorder: '#E8D4D8',
     textDark: '#4A2C2A',
-    primaryPink: '#F3A1B5',
+    primaryPink: '#f3aec0',
     pinkShadow: '#D67C92',
-    pastelBlue: '#A2C4C9',
+    pastelBlue: '#2f97a7',
     blueShadow: '#74AEB6',
     pastelGreen: '#A9DFBF',
-    greenShadow: '#7FBF95',
+    greenShadow: '#4dc075',
     cream: '#FFFDFC',
     creamBorder: '#DCEEEF',
     disabledBg: '#F5ECEF',
@@ -37,8 +37,8 @@ const COLORS = {
     lightPink: '#F4D1D9',
     finishButton: '#78dda0',
     finishButtonShadow: '#33b962',
-    progressColor: '#5bbce9',
-    progressColorBar: '#50A2AC',
+    progressColor: '#a1d3eb',
+    progressColorBar: '#5a70ad',
 };
 
 const WEEKLY_REWARD_STORAGE_PREFIX = '@weekly_brushing_goal_claimed_';
@@ -330,7 +330,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                         <FontAwesome5
                             name="tooth"
                             size={20}
-                            color={'#e7dbdb'}
+                            color={'#fffefe'}
                             style={{ marginRight: 10 }}
                         />
                         <Text style={styles.todayGoalText}>
@@ -342,15 +342,14 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                     </View>
 
                     <View style={styles.flossReminderCard}>
-                        <FontAwesome5
-                            name="grin-stars"
-                            size={20}
-                            color={COLORS.textDark}
-                            style={styles.flossReminderIcon}
-                        />
+
+                        <View style={styles.stickerImagePlaceholderDental}>
+                            <Image source={require('../../assets/dental-floss.png')} style={styles.stickerImage} />
+
+                        </View>
 
                         <Text style={styles.flossReminderText}>
-                            Não se esqueça de usar o fio dental para deixar os seus dentes limpinhos!
+                            Não se esqueça de usar o fio dental<br />para deixar os seus dentes limpinhos!
                         </Text>
                     </View>
 
@@ -359,7 +358,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                             <View style={styles.iconHeaderSpace} />
                             {brushingShifts.map((shift) => (
                                 <View key={`icon-${shift.id}`} style={styles.iconCell}>
-                                    <FontAwesome5 name={shift.icon} size={18} color="#74AEB6" />
+                                    <FontAwesome5 name={shift.icon} size={18} color={COLORS.pastelBlue}/>
                                 </View>
                             ))}
                         </View>
@@ -414,7 +413,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                     </View>
 
                     <View style={styles.incentiveCard}>
-                        <Text style={styles.incentiveMainText}>Continue assim! Você está indo muito bem! ✨</Text>
+                        <Text style={styles.incentiveMainText}>Continue assim! Você está indo muito bem!</Text>
                         <Text style={styles.incentiveSubText}>Ganhe um adesivo se completar sua meta semanal!</Text>
 
                         <View style={styles.stickerImagePlaceholder}>
@@ -465,21 +464,17 @@ const styles = StyleSheet.create({
         backgroundColor: "transparent",
     },
     flossReminderCard: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#FFFDFC",
+        position: 'relative',
+        backgroundColor: COLORS.cream,
         borderWidth: 2,
-        borderColor: "#DCEEEF",
-        borderRadius: 18,
-        paddingHorizontal: 14,
-        paddingVertical: 12,
+        borderColor: "#8ccdf8",
+        borderRadius: 20,
+        padding: 20,
         marginBottom: 16,
     },
-
     flossReminderIcon: {
         marginRight: 10,
     },
-
     flossReminderText: {
         flex: 1,
         color: COLORS.textDark,
@@ -703,6 +698,20 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.cream,
         borderWidth: 2,
         borderColor: COLORS.lightPink,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 4,
+    },
+    stickerImagePlaceholderDental: {
+        position: 'absolute',
+        bottom: -15,
+        right: -10,
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        backgroundColor: COLORS.cream,
+        borderWidth: 2,
+        borderColor: "#8ccdf8",
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 4,
