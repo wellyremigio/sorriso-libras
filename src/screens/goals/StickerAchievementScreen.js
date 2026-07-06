@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
     },
     brilhoStars: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: '#C5D6DA',
+        backgroundColor: '#EFB63F',
         borderRadius: 19,
         overflow: 'hidden'
     },

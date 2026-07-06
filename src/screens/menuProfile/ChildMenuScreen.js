@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 15,
-    paddingTop: 10,
+    paddingTop: 30,
     paddingBottom: 20,
     zIndex: 10,
   },
@@ -467,7 +467,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   containerLogo: {
-    marginTop: -50,
+    marginTop: -35,
     alignItems: 'center',
     width: '100%',
     height: 170,

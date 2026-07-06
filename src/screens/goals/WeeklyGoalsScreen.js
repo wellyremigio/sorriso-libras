@@ -351,7 +351,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                         </View>
 
                         <Text style={styles.flossReminderText}>
-                            Não se esqueça de usar o fio dental<br />para deixar os seus dentes limpinhos!
+                            Não se esqueça de usar o fio dental{"\n"}para deixar os seus dentes limpinhos!
                         </Text>
                     </View>
 
@@ -500,7 +500,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: 15,
-        paddingTop: 10,
+        paddingTop: 30,
         paddingBottom: 10,
         zIndex: 10,
         elevation: 10,

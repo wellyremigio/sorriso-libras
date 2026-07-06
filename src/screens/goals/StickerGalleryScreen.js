@@ -142,7 +142,7 @@ const StickerGalleryScreen = ({ navigation }) => {
                             <View key={sticker.id} style={[styles.card, styles.specialCard]}>
                                 <Image
                                     source={{ uri: sticker.image_url }}
-                                    style={styles.stickerImage}
+                                    style={styles.specialStickerImage}
                                     resizeMode="contain"
                                 />
                             </View>
@@ -199,8 +199,12 @@ const styles = StyleSheet.create({
         fontSize: 15,
     },
     stickerImage: {
-        width: 80,
-        height: 80,
+        width: 85,
+        height: 85,
+    },
+    specialStickerImage: {
+        width: 125,
+        height: 125,
     },
     emptyGallery: {
         alignItems: "center",
