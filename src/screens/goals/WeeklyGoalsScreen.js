@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ImageBackground, Alert } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import FloatingBalloons from '../../components/animation/FloatingBalloons';
 import { useFocusEffect } from '@react-navigation/native';
 import { ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import LudicInfoModal from '../../components/goals/LudicInfoModal';
 import {
     completeCurrentBrushingGoal,
     getCurrentBrushingGoal,
@@ -39,6 +41,20 @@ const COLORS = {
     progressColorBar: '#50A2AC',
 };
 
+const WEEKLY_REWARD_STORAGE_PREFIX = '@weekly_brushing_goal_claimed_';
+
+const getCurrentWeekKey = () => {
+    const now = new Date();
+    const dayIndex = now.getDay() === 0 ? 6 : now.getDay() - 1;
+    const monday = new Date(now);
+    monday.setHours(0, 0, 0, 0);
+    monday.setDate(monday.getDate() - dayIndex);
+    const year = monday.getFullYear();
+    const month = String(monday.getMonth() + 1).padStart(2, '0');
+    const day = String(monday.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
 const WeeklyGoalsScreen = ({ navigation }) => {
     const daysOfWeek = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
     const brushingShifts = [
@@ -53,16 +69,59 @@ const WeeklyGoalsScreen = ({ navigation }) => {
     const [error, setError] = useState(null);
     const [savingCheck, setSavingCheck] = useState(false);
     const [isCelebrating, setIsCelebrating] = useState(false);
+    const [hasClaimedWeeklyReward, setHasClaimedWeeklyReward] = useState(false);
+    const [infoModal, setInfoModal] = useState({
+        visible: false,
+        title: '',
+        message: '',
+        buttonLabel: 'Entendi',
+        iconName: 'sparkles',
+        iconColor: '#F3A1B5',
+        onConfirm: null,
+    });
+
+    const hideInfoModal = useCallback(() => {
+        setInfoModal((prevState) => ({
+            ...prevState,
+            visible: false,
+            onConfirm: null,
+        }));
+    }, []);
+
+    const showInfoModal = useCallback(({ title, message, buttonLabel, iconName, iconColor, onConfirm }) => {
+        setInfoModal({
+            visible: true,
+            title,
+            message,
+            buttonLabel: buttonLabel || 'Entendi',
+            iconName: iconName || 'sparkles',
+            iconColor: iconColor || '#F3A1B5',
+            onConfirm: onConfirm || null,
+        });
+    }, []);
+
+    const handleInfoModalPress = useCallback(() => {
+        const action = infoModal.onConfirm;
+        hideInfoModal();
+
+        if (action) {
+            action();
+        }
+    }, [hideInfoModal, infoModal.onConfirm]);
 
     const loadWeeklyGoal = async () => {
         try {
             setLoading(true);
             setError(null);
 
-            const data = await getCurrentBrushingGoal();
+            const [data, claimedReward] = await Promise.all([
+                getCurrentBrushingGoal(),
+                AsyncStorage.getItem(`${WEEKLY_REWARD_STORAGE_PREFIX}${getCurrentWeekKey()}`),
+            ]);
 
             setWeeklyGoal(data);
             setCompleteBrush(data.checks || {});
+            setHasClaimedWeeklyReward(claimedReward === 'true');
         } catch (error) {
             console.error("Erro ao carregar meta semanal:", error);
             setError("Não foi possível carregar suas metas agora.");
@@ -81,15 +140,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
     const currentDayName = daysOfWeek[currentDayIndex];
 
     const totalGoal = weeklyGoal?.total_goal || 21;
-    // useEffect(() => {
-    //     const loadData = async () => {
-    //         try {
-    //             const savedData = await AsyncStorage.getItem('@stickers_progress');
-    //             if (savedData !== null) setCompleteBrush(JSON.parse(savedData));
-    //         } catch (e) { console.error(e); }
-    //     };
-    //     loadData();
-    // }, []);
+
 
     const toggleCheck = async (day, shiftId) => {
         if (savingCheck) return;
@@ -111,10 +162,14 @@ const WeeklyGoalsScreen = ({ navigation }) => {
         } catch (error) {
             console.error("Erro ao atualizar check:", error);
 
-            Alert.alert(
-                "Ops!",
-                "Não conseguimos salvar essa escovação agora. Tente novamente."
-            );
+            showInfoModal({
+                title: "Ops!",
+                message: "Não conseguimos salvar essa escovação agora. Tente novamente.",
+                buttonLabel: "Tentar de novo",
+                iconName: "warning",
+                iconColor: "#E58B9D",
+                onConfirm: loadWeeklyGoal,
+            });
         } finally {
             setSavingCheck(false);
         }
@@ -130,10 +185,20 @@ const WeeklyGoalsScreen = ({ navigation }) => {
     const brushesLeftToday = 3 - brushesToday;
     const isWeeklyGoalCompleted = totalCompleted >= totalGoal;
     const isLastDayOfWeek = currentDayIndex === 6;
-    const isTodayGoalCompleted = brushesLeftToday === 0;
 
     const handleFinishBrushing = async () => {
         if (isWeeklyGoalCompleted) {
+            if (hasClaimedWeeklyReward) {
+                showInfoModal({
+                    title: "Você já recebeu seu adesivo!",
+                    message: "Esse adesivo da semana já foi conquistado e guardado com carinho. Na próxima semana tem outro esperando por você!",
+                    buttonLabel: "Concluir!",
+                    iconName: "gift",
+                    iconColor: "#ECA852",
+                });
+                return;
+            }
+
             try {
                 const result = await completeCurrentBrushingGoal();
 
@@ -143,6 +208,12 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                 }
 
                 if (result.completed) {
+                    await AsyncStorage.setItem(
+                        `${WEEKLY_REWARD_STORAGE_PREFIX}${getCurrentWeekKey()}`,
+                        'true'
+                    );
+                    setHasClaimedWeeklyReward(true);
+
                     navigation.navigate("StickerAchievementScreen", {
                         isFinalAchievement: false,
                         achievementType: "weekly_brushing_goal",
@@ -151,27 +222,36 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                     return;
                 }
 
-                Alert.alert(
-                    "Você está quase lá!",
-                    result.message || "Continue tentando para conquistar seu adesivo."
-                );
+                showInfoModal({
+                    title: "Você está quase lá!",
+                    message: result.message || "Continue tentando para conquistar seu adesivo.",
+                    buttonLabel: "Vou tentar",
+                    iconName: "sparkles",
+                    iconColor: "#F3A1B5",
+                });
             } catch (error) {
                 console.error("Erro ao concluir meta semanal:", error);
 
-                Alert.alert(
-                    "Ops!",
-                    "Não conseguimos finalizar sua meta agora. Tente novamente."
-                );
+                showInfoModal({
+                    title: "Ops!",
+                    message: "Não conseguimos finalizar sua meta agora. Tente novamente.",
+                    buttonLabel: "Tentar de novo",
+                    iconName: "warning",
+                    iconColor: "#E58B9D",
+                });
             }
 
             return;
         }
 
-        if (isLastDayOfWeek && isTodayGoalCompleted) {
-            Alert.alert(
-                "Você está quase lá!",
-                "A semana terminou, mas tudo bem! Na próxima semana você pode tentar de novo e conquistar seu adesivo."
-            );
+        if (isLastDayOfWeek) {
+            showInfoModal({
+                title: "Você está quase lá!",
+                message: "A semana terminou, mas tudo bem! Na próxima semana você pode tentar de novo e conquistar seu adesivo.",
+                buttonLabel: "Tudo bem",
+                iconName: "happy-outline",
+                iconColor: "#A9DFBF",
+            });
             return;
         }
 
@@ -342,10 +422,6 @@ const WeeklyGoalsScreen = ({ navigation }) => {
 
                         </View>
                     </View>
-
-                    {/* <TouchableOpacity style={styles.actionButton} onPress={() => setIsCelebrating(true)} activeOpacity={0.8}>
-                        <Text style={styles.actionButtonText}>Concluir Escovação</Text>
-                    </TouchableOpacity> */}
                     <TouchableOpacity
                         style={styles.actionButton}
                         onPress={handleFinishBrushing}
@@ -353,7 +429,9 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                     >
                         <Text style={styles.actionButtonText}>
                             {isLastDayOfWeek
-                                ? (isWeeklyGoalCompleted ? "Receber Adesivo" : "Completar escovação")
+                                ? (isWeeklyGoalCompleted
+                                    ? (hasClaimedWeeklyReward ? "Adesivo já recebido" : "Receber Adesivo")
+                                    : "Completar escovação")
                                 : "Concluir Escovação"}
                         </Text>
                     </TouchableOpacity>
@@ -365,6 +443,16 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                         setIsCelebrating(false);
                         navigation.navigate('Home');
                     }}
+                />
+
+                <LudicInfoModal
+                    visible={infoModal.visible}
+                    title={infoModal.title}
+                    message={infoModal.message}
+                    buttonLabel={infoModal.buttonLabel}
+                    iconName={infoModal.iconName}
+                    iconColor={infoModal.iconColor}
+                    onPress={handleInfoModalPress}
                 />
             </SafeAreaView>
         </ImageBackground>
