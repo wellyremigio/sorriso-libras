@@ -81,15 +81,15 @@ const WeeklyGoalsScreen = ({ navigation }) => {
     const currentDayName = daysOfWeek[currentDayIndex];
 
     const totalGoal = weeklyGoal?.total_goal || 21;
-    useEffect(() => {
-        const loadData = async () => {
-            try {
-                const savedData = await AsyncStorage.getItem('@stickers_progress');
-                if (savedData !== null) setCompleteBrush(JSON.parse(savedData));
-            } catch (e) { console.error(e); }
-        };
-        loadData();
-    }, []);
+    // useEffect(() => {
+    //     const loadData = async () => {
+    //         try {
+    //             const savedData = await AsyncStorage.getItem('@stickers_progress');
+    //             if (savedData !== null) setCompleteBrush(JSON.parse(savedData));
+    //         } catch (e) { console.error(e); }
+    //     };
+    //     loadData();
+    // }, []);
 
     const toggleCheck = async (day, shiftId) => {
         if (savingCheck) return;
@@ -132,11 +132,15 @@ const WeeklyGoalsScreen = ({ navigation }) => {
     const isLastDayOfWeek = currentDayIndex === 6;
     const isTodayGoalCompleted = brushesLeftToday === 0;
 
-
     const handleFinishBrushing = async () => {
         if (isWeeklyGoalCompleted) {
             try {
                 const result = await completeCurrentBrushingGoal();
+
+                if (result.goal) {
+                    setWeeklyGoal(result.goal);
+                    setCompleteBrush(result.goal.checks || {});
+                }
 
                 if (result.completed) {
                     navigation.navigate("StickerAchievementScreen", {
