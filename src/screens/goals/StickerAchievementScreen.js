@@ -30,7 +30,13 @@ const StickerAchievementScreen = ({ navigation, route }) => {
         showModuleFinalAchievement = false,
     } = route.params || {};
 
-    const earnedSticker = earnedStickers[0];
+    const specialStickers = earnedStickers
+        .filter((sticker) => sticker.is_special)
+        .sort((a, b) => a.order - b.order);
+
+    const earnedSticker = isFinalAchievement
+        ? specialStickers[0] || earnedStickers[0]
+        : earnedStickers[0];
 
     const hasEarnedSticker = !!earnedSticker;
 
@@ -38,16 +44,14 @@ const StickerAchievementScreen = ({ navigation, route }) => {
         ? { uri: earnedSticker.image_url }
         : achievementType === 'weekly_brushing_goal'
             ? require('../../assets/sticker_pop.png')
-            : isFinalAchievement
-                ? require('../../assets/stickers/trofeu_dourado_1.png')
-                : null;
+            : null;
 
     const handleContinue = () => {
         if (showModuleFinalAchievement && !isFinalAchievement) {
             navigation.replace('StickerAchievementScreen', {
                 isFinalAchievement: true,
-                earnedStickers: [],
-                achievementType: null,
+                earnedStickers,
+                achievementType,
                 showModuleFinalAchievement: false,
             });
             return;
