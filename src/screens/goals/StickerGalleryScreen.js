@@ -199,8 +199,8 @@ const styles = StyleSheet.create({
         fontSize: 15,
     },
     stickerImage: {
-        width: 85,
-        height: 85,
+        width: 75,
+        height: 75,
     },
     specialStickerImage: {
         width: 125,
