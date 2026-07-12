@@ -636,7 +636,7 @@ const styles = StyleSheet.create({
         borderColor: '#E8C5CC',
         justifyContent: 'center',
         alignItems: 'center',
-        elevation: 1
+        elevation: 0
     },
     checkboxActive: {
         borderColor: COLORS.greenShadow,
