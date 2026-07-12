@@ -534,8 +534,8 @@ const styles = StyleSheet.create({
     },
     // Ajuste de largura leve aplicado só em tablet.
     logoImageTablet: {
-        width: 290,
-        height: 290,
+        width: 420,
+        height: 300,
     },
     logoText: {
         color: '#A08B8B',

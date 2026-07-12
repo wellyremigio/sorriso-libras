@@ -123,6 +123,8 @@ const StickerGalleryScreen = ({ navigation }) => {
                             resizeMode="contain"
                         />
                     </View>
+
+                    <View style={styles.headerSpacer} />
                 </View>
 
                 <View style={[styles.titleSection, isTablet && styles.sectionTablet]}>
@@ -266,6 +268,10 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    headerSpacer: {
+        width: 74,
+        height: 62,
     },
     logoImage: {
         width: 300,

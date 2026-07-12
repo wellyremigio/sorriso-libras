@@ -244,6 +244,7 @@ const styles = StyleSheet.create({
     logoWrapperTablet: {
         width: '100%',
         alignItems: 'center',
+        justifyContent: 'center',
         marginTop: -250,
     },
     logoImageTablet: {

@@ -541,9 +541,15 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 16,
   },
-  logoImage: { width: 300, height: 200 },
+  logoImage: {
+    width: 300,
+    height: 200
+  },
   // Ajuste de largura leve aplicado só em tablet.
-  logoImageTablet: { width: 390 },
+  logoImageTablet: {
+    width: 420,
+    height: 300,
+  },
   titleBanner: {
     backgroundColor: '#F0E4E7',
     flexDirection: 'row',

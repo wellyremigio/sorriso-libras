@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 18,
   },
-    simpleLoadingContent: {
+  simpleLoadingContent: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -490,15 +490,6 @@ const styles = StyleSheet.create({
     width: '130%',
     height: '130%',
   },
-  goalsActionBtn: {
-    backgroundColor: '#ecd83f',
-    paddingVertical: 8,
-    borderRadius: 20,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#b4a31d',
-    borderBottomWidth: 6,
-  },
   goalsBtn: {
     backgroundColor: '#FDE8A8',
     borderColor: 'rgba(255, 255, 255, 0.6)',
@@ -506,14 +497,15 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 17,
     borderBottomWidth: 6,
-    paddingHorizontal: 6,
-    paddingVertical: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    marginTop: 15,
     alignItems: 'center',
     justifyContent: 'center',
   },
   goalsButtonText: {
     color: '#4A2C2A',
-    fontSize: 24,
+    fontSize: 27,
     fontWeight: 'bold',
   }
 });
