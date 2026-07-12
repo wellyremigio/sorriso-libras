@@ -1,4 +1,4 @@
-import { View, Alert, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ImageBackground, ActivityIndicator, Animated, Easing } from 'react-native';
+import { View, Alert, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ImageBackground, ActivityIndicator, Animated, Easing, useWindowDimensions } from 'react-native';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { useState, useEffect, useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -8,7 +8,7 @@ import { getVideosByModule, completeVideo, getCompletedVideos } from '../../serv
 import { useEventListener } from 'expo';
 
 
-const LessonVideoPlayer = ({ videoUrl, onVideoEnd }) => {
+const LessonVideoPlayer = ({ videoUrl, onVideoEnd, isTablet = false }) => {
   const player = useVideoPlayer(videoUrl, (player) => {
     player.loop = false;
     player.muted = false;
@@ -30,7 +30,7 @@ const LessonVideoPlayer = ({ videoUrl, onVideoEnd }) => {
   return (
     <VideoView
       player={player}
-      style={styles.realVideo}
+      style={[styles.realVideo, isTablet && styles.realVideoTablet]}
       allowsFullscreen
       allowsPictureInPicture
       nativeControls
@@ -52,6 +52,8 @@ const COLORS = {
 
 const ChildLessonScreen = ({ navigation, route }) => {
   const { initialIndex = 0, module = "children", videosFromMenu = [] } = route.params || {};
+  const { width } = useWindowDimensions();
+  const isTablet = width >= 768;
   const [videos, setVideos] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [loading, setLoading] = useState(true);
@@ -150,12 +152,6 @@ const ChildLessonScreen = ({ navigation, route }) => {
       if (!isLastStep) {
         setCurrentIndex((prev) => prev + 1);
       }
-
-      // if (!isLastStep) {
-      //   setTimeout(() => {
-      //     setCurrentIndex(currentIndex + 1);
-      //   }, 500);
-      // }
     } catch (error) {
       console.error("Erro ao concluir vídeo:", error);
 
@@ -273,13 +269,14 @@ const ChildLessonScreen = ({ navigation, route }) => {
         <Animated.View
           style={[
             styles.mainContent,
+            isTablet && styles.mainContentTablet,
             {
               opacity: contentOpacity,
               transform: [{ translateY: contentTranslateY }],
             },
           ]}
         >
-          <View style={styles.topHeader}>
+          <View style={[styles.topHeader, isTablet && styles.topHeaderTablet]}>
             <TouchableOpacity onPress={handleGoBack} style={styles.iconButton}>
               <Ionicons name="arrow-back" size={28} color="#5D4037" />
             </TouchableOpacity>
@@ -293,24 +290,31 @@ const ChildLessonScreen = ({ navigation, route }) => {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.titleBanner}>
+          <View style={[styles.titleBanner, isTablet && styles.titleBannerTablet]}>
             <Text style={styles.titleText}>{currentItem.title}</Text>
           </View>
 
-          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-            <View style={styles.videoCard}>
+          <ScrollView
+            contentContainerStyle={[
+              styles.scrollContent,
+              isTablet && styles.scrollContentTablet,
+            ]}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={[styles.videoCard, isTablet && styles.videoCardTablet]}>
               <LessonVideoPlayer
                 videoUrl={currentItem.video_url}
+                isTablet={isTablet}
                 onVideoEnd={() => setHasFinishedCurrentVideo(true)}
               />
             </View>
 
-            <View style={styles.stepIndicatorContainer}>
+            <View style={[styles.stepIndicatorContainer, isTablet && styles.stepIndicatorContainerTablet]}>
               <Text style={styles.stepText}>Passo {currentIndex + 1}  {currentItem.title}</Text>
               <Text style={styles.stepTextRight}>{currentIndex + 1}/{totalSteps}</Text>
             </View>
 
-            <View style={styles.explanationBox}>
+            <View style={[styles.explanationBox, isTablet && styles.explanationBoxTablet]}>
               <Text style={styles.explanationText}>
                 {currentItem.description || "Assista ao vídeo com atenção."}
               </Text>
@@ -319,6 +323,7 @@ const ChildLessonScreen = ({ navigation, route }) => {
             <TouchableOpacity
               style={[
                 styles.nextButton,
+                isTablet && styles.nextButtonTablet,
                 (!hasFinishedCurrentVideo || savingProgress) && styles.nextButtonDisabled,
               ]}
               onPress={handleNextStep}
@@ -391,6 +396,9 @@ const styles = StyleSheet.create({
   },
   mainContent: {
     flex: 1,
+  },
+  mainContentTablet: {
+    paddingTop: 18,
   },
   nextButtonDisabled: {
     opacity: 0.5,
@@ -501,6 +509,10 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10
   },
+  topHeaderTablet: {
+    paddingTop: 24,
+    paddingBottom: 18,
+  },
   iconButton: { padding: 5 },
   logoPlaceholder: {
     flex: 1,
@@ -513,6 +525,9 @@ const styles = StyleSheet.create({
     height: 220,
     backgroundColor: "#000",
     borderRadius: 20,
+  },
+  realVideoTablet: {
+    height: 385,
   },
   videoFallbackText: {
     color: '#4E342E',
@@ -528,6 +543,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 20,
   },
+  titleBannerTablet: {
+    marginBottom: 28,
+  },
   titleArrow: { marginRight: 15 },
   titleText: {
     flex: 1,
@@ -538,6 +556,10 @@ const styles = StyleSheet.create({
     marginRight: 35,
   },
   scrollContent: { paddingBottom: 30 },
+  scrollContentTablet: {
+    paddingTop: 10,
+    paddingBottom: 50,
+  },
   videoCard: {
     marginHorizontal: 20,
     height: 220,
@@ -547,6 +569,12 @@ const styles = StyleSheet.create({
     position: 'relative',
     borderWidth: 3,
     borderColor: '#8CAAB0'
+  },
+  videoCardTablet: {
+    width: '82%',
+    alignSelf: 'center',
+    height: 380,
+    marginHorizontal: 0,
   },
   videoMainArea: {
     flex: 1,
@@ -564,6 +592,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 25
   },
+  stepIndicatorContainerTablet: {
+    width: '82%',
+    alignSelf: 'center',
+    marginHorizontal: 0,
+  },
   stepText: { fontWeight: 'bold', color: '#FFF', fontSize: 16, flex: 1 },
   stepTextRight: { fontWeight: 'bold', color: '#FFF', fontSize: 16 },
   explanationBox: {
@@ -575,6 +608,11 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 2,
     justifyContent: 'center'
+  },
+  explanationBoxTablet: {
+    width: '82%',
+    alignSelf: 'center',
+    marginHorizontal: 0,
   },
   explanationText: {
     fontSize: 16,
@@ -593,6 +631,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'rgba(255, 255, 255, 0.5)',
     borderBottomWidth: 6,
+  },
+  nextButtonTablet: {
+    width: '50%',
+    alignSelf: 'center',
+    marginHorizontal: 0,
   },
   nextButtonText: {
     color: '#FFF',
