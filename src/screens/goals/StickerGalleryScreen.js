@@ -113,7 +113,7 @@ const StickerGalleryScreen = ({ navigation }) => {
             <SafeAreaView style={styles.container}>
                 <View style={[styles.topHeader, isTablet && styles.topHeaderTablet]}>
                     <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
-                        <Ionicons name="arrow-back" size={28} color={COLORS.textBrown} />
+                        <Ionicons name="chevron-back" size={34} color={COLORS.textBrown} />
                     </TouchableOpacity>
 
                     <View style={styles.logoPlaceholder}>
@@ -123,8 +123,6 @@ const StickerGalleryScreen = ({ navigation }) => {
                             resizeMode="contain"
                         />
                     </View>
-
-                    <View style={styles.iconButton} />
                 </View>
 
                 <View style={[styles.titleSection, isTablet && styles.sectionTablet]}>
@@ -245,18 +243,22 @@ const styles = StyleSheet.create({
         paddingBottom: 15
     },
     topHeaderTablet: {
-        width: '82%',
-        alignSelf: 'center',
-        paddingHorizontal: 0,
+        paddingTop: 24,
+        paddingBottom: 18,
     },
     sectionTablet: {
         width: '82%',
         alignSelf: 'center',
     },
     iconButton: {
-        width: 40,
+        width: 74,
+        height: 62,
+        borderRadius: 26,
+        backgroundColor: 'rgba(255, 255, 255, 0.6)',
+        justifyContent: 'center',
         alignItems: 'center',
-        justifyContent: 'center'
+        borderWidth: 1.5,
+        borderColor: '#E8D4D8',
     },
     logoPlaceholder: {
         flex: 1,
@@ -266,11 +268,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     logoImage: {
-        // Logo um pouco mais larga para melhorar a presença visual no topo.
         width: 300,
         height: 200,
     },
-    // Ajuste de largura leve aplicado só em tablet.
     logoImageTablet: {
         width: 390,
         height: 290,
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },
     progressWrapperTablet: {
-        width: '50%',
+        width: '60%',
         alignSelf: 'center',
         paddingHorizontal: 0,
     },
@@ -305,6 +305,7 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         overflow: 'hidden',
         justifyContent: 'center',
+        alignItems: 'center',
         position: 'relative'
     },
     progressBarFill: {
@@ -319,8 +320,8 @@ const styles = StyleSheet.create({
         color: '#FFF',
         fontWeight: 'bold',
         fontSize: 14,
-        marginLeft: 15,
         zIndex: 1,
+        textAlign: 'center',
         textShadowColor: 'rgba(0, 0, 0, 0.2)',
         textShadowOffset: { width: 0, height: 1 },
         textShadowRadius: 2
@@ -329,9 +330,9 @@ const styles = StyleSheet.create({
         color: '#FFF',
         fontWeight: 'bold',
         fontSize: 14,
-        width: "40%",
-        marginLeft: 15,
+        width: "100%",
         zIndex: 1,
+        textAlign: 'center',
         textShadowColor: 'rgba(0, 0, 0, 0.2)',
         textShadowOffset: { width: 0, height: 1 },
         textShadowRadius: 2

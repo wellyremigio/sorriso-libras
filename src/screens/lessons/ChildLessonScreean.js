@@ -265,7 +265,7 @@ const ChildLessonScreen = ({ navigation, route }) => {
         >
           <View style={[styles.topHeader, isTablet && styles.topHeaderTablet]}>
             <TouchableOpacity onPress={handleGoBack} style={styles.iconButton}>
-              <Ionicons name="arrow-back" size={28} color="#5D4037" />
+              <Ionicons name="chevron-back" size={34} color="#5D4037" />
             </TouchableOpacity>
 
             <View style={[styles.logoPlaceholder, isTablet && styles.logoPlaceholderTablet]}>
@@ -277,7 +277,7 @@ const ChildLessonScreen = ({ navigation, route }) => {
             </View>
 
             <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
-              <Ionicons name="home" size={26} color="#5D4037" />
+              <Ionicons name="home" size={34} color="#5D4037" />
             </TouchableOpacity>
           </View>
 
@@ -504,14 +504,23 @@ const styles = StyleSheet.create({
     paddingTop: 24,
     paddingBottom: 18,
   },
-  iconButton: { padding: 5 },
+  iconButton: {
+    width: 74,
+    height: 62,
+    borderRadius: 26,
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: '#E8D4D8',
+  },
   logoPlaceholder: {
     flex: 1,
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
   },
-    logoPlaceholderTablet: {
+  logoPlaceholderTablet: {
     flex: 1,
     height: 50,
     width: 50,

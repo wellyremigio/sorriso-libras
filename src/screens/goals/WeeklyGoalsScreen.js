@@ -245,18 +245,6 @@ const WeeklyGoalsScreen = ({ navigation }) => {
 
             return;
         }
-
-        // if (isLastDayOfWeek) {
-        //     showInfoModal({
-        //         title: "Você está quase lá!",
-        //         message: "A semana terminou, mas tudo bem! Na próxima semana você pode tentar de novo e conquistar seu adesivo.",
-        //         buttonLabel: "Tudo bem",
-        //         iconName: "happy-outline",
-        //         iconColor: "#A9DFBF",
-        //     });
-        //     return;
-        // }
-
         setIsCelebrating(true);
     };
 
@@ -302,13 +290,13 @@ const WeeklyGoalsScreen = ({ navigation }) => {
             resizeMethod="cover"
         >
             <SafeAreaView style={styles.container}>
-                <View style={[styles.topHeader, isTablet && styles.sectionTablet]}>
+                <View style={[styles.topHeader, isTablet && styles.topHeaderTablet]}>
                     <TouchableOpacity
                         onPress={() => navigation.goBack()}
                         style={styles.iconButton}
                         hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
                     >
-                        <Ionicons name="chevron-back" size={28} color={COLORS.textDark} />
+                        <Ionicons name="chevron-back" size={34} color={COLORS.textDark} />
                     </TouchableOpacity>
                     <View style={styles.logoPlaceholder}>
                         <Image
@@ -320,11 +308,11 @@ const WeeklyGoalsScreen = ({ navigation }) => {
 
                     <View style={styles.rightIconsGroup}>
                         <TouchableOpacity onPress={() => navigation.navigate('StickerGallery')} style={styles.iconButton}>
-                            <MaterialCommunityIcons name="sticker-emoji" size={22} color={COLORS.textDark} />
+                            <MaterialCommunityIcons name="sticker-emoji" size={34} color={COLORS.textDark} />
                         </TouchableOpacity>
 
                         <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
-                            <Ionicons name="home" size={26} color={COLORS.textDark} />
+                            <Ionicons name="home" size={34} color={COLORS.textDark} />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -366,7 +354,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                             <View style={styles.iconHeaderSpace} />
                             {brushingShifts.map((shift) => (
                                 <View key={`icon-${shift.id}`} style={styles.iconCell}>
-                                    <FontAwesome5 name={shift.icon} size={18} color={COLORS.pastelBlue}/>
+                                    <FontAwesome5 name={shift.icon} size={18} color={COLORS.pastelBlue} />
                                 </View>
                             ))}
                         </View>
@@ -501,12 +489,16 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "100%",
     },
+    topHeaderTablet: {
+        paddingTop: 24,
+        paddingBottom: 18,
+    },
     topHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 15,
-        paddingTop: 30,
+        paddingHorizontal: 8,
+        paddingTop: 18,
         paddingBottom: 10,
         zIndex: 10,
         elevation: 10,
@@ -518,12 +510,12 @@ const styles = StyleSheet.create({
     rightIconsGroup: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 12,
+        gap: 5,
     },
     iconButton: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
+        width: 74,
+        height: 62,
+        borderRadius: 26,
         backgroundColor: 'rgba(255, 255, 255, 0.6)',
         justifyContent: 'center',
         alignItems: 'center',

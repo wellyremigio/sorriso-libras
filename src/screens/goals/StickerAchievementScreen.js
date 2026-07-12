@@ -93,8 +93,24 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                     ]}
                     showsVerticalScrollIndicator={false}
                 >
+                    {isTablet && (
+                        <View style={styles.logoWrapperTablet}>
+                            <Image
+                                source={require('../../assets/upper_logo.png')}
+                                style={styles.logoImageTablet}
+                                resizeMode="contain"
+                            />
+                        </View>
+                    )}
 
-                    <Text style={[styles.mainTitle, isFinalAchievement && styles.goldTitle]}>
+                    <Text
+                        style={[
+                            styles.mainTitle,
+                            isTablet && styles.mainTitleTablet,
+                            isFinalAchievement && styles.goldTitle,
+                            isTablet && isFinalAchievement && styles.goldTitleTablet,
+                        ]}
+                    >
                         {isFinalAchievement ? "PARABÉNS!".toUpperCase() : "Parabéns!"}
                     </Text>
 
@@ -108,7 +124,7 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                         </View>
                     )}
 
-                    <Text style={styles.descriptionText}>
+                    <Text style={[styles.descriptionText, isTablet && styles.descriptionTextTablet]}>
                         {isFinalAchievement
                             ? "Você completou todas as lições. Continue cuidando bem do seu sorriso!"
                             : achievementType === 'weekly_brushing_goal'
@@ -121,7 +137,9 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                     <View
                         style={[
                             styles.adesivoHighlight,
+                            isTablet && styles.adesivoHighlightTablet,
                             isCompactHeight && styles.adesivoHighlightCompact,
+                            isTablet && isCompactHeight && styles.adesivoHighlightTabletCompact,
                             isFinalAchievement && { borderColor: COLORS.specialBorder },
                         ]}
                     >
@@ -134,7 +152,7 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                         {stickerImageSource && (
                             <Image
                                 source={stickerImageSource}
-                                style={styles.adesivoImage}
+                                style={[styles.adesivoImage, isTablet && styles.adesivoImageTablet]}
                                 resizeMode="contain"
                             />
                         )}
@@ -223,7 +241,15 @@ const styles = StyleSheet.create({
         paddingTop: 58,
         paddingBottom: 18
     },
-    // Ajuste da fonte do título principal.
+    logoWrapperTablet: {
+        width: '100%',
+        alignItems: 'center',
+        marginTop: -250,
+    },
+    logoImageTablet: {
+        width: 420,
+        height: 300,
+    },
     mainTitle: {
         fontSize: 52,
         fontWeight: '700',
@@ -234,7 +260,10 @@ const styles = StyleSheet.create({
         textShadowOffset: { width: 0, height: 2 },
         textShadowRadius: 4
     },
-    // Ajuste do bloco da imagem central.
+    mainTitleTablet: {
+        fontSize: 62,
+        marginBottom: 18,
+    },
     avatarContainer: {
         width: '85%',
         height: 130,
@@ -254,6 +283,10 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 32
     },
+    descriptionTextTablet: {
+        fontSize: 24,
+        marginBottom: 36,
+    },
     // Ajuste do tamanho do bloco do adesivo.
     adesivoHighlight: {
         width: 190,
@@ -272,10 +305,21 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.15,
         shadowRadius: 5
     },
+    adesivoHighlightTablet: {
+        width: 250,
+        height: 250,
+        marginBottom: 48,
+        borderRadius: 30,
+    },
     adesivoHighlightCompact: {
         width: 170,
         height: 170,
         marginBottom: 24
+    },
+    adesivoHighlightTabletCompact: {
+        width: 220,
+        height: 220,
+        marginBottom: 30,
     },
     brilhoStars: {
         ...StyleSheet.absoluteFillObject,
@@ -288,6 +332,10 @@ const styles = StyleSheet.create({
         width: '82%',
         height: '82%',
         zIndex: 2
+    },
+    adesivoImageTablet: {
+        width: '88%',
+        height: '88%',
     },
     // Ajuste do botão de continuar.
     actionButton: {
@@ -348,6 +396,10 @@ const styles = StyleSheet.create({
         textShadowOffset: { width: 0, height: 5 },
         textShadowRadius: 2,
         marginBottom: 30,
+    },
+    goldTitleTablet: {
+        fontSize: 70,
+        marginBottom: 34,
     },
 });
 

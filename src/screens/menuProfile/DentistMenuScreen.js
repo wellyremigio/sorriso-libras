@@ -179,14 +179,6 @@ const DentistMenuScreen = ({ navigation }) => {
     );
   };
 
-  // if (loading) {
-  //   return renderStatusScreen({
-  //     title: "Carregando vídeos",
-  //     message: "Estamos preparando as aulas para você. Só um instante.",
-  //     iconName: "play-circle",
-  //     showSpinner: true,
-  //   });
-  // }
   if (loading) {
     return (
       <ImageBackground
@@ -240,7 +232,7 @@ const DentistMenuScreen = ({ navigation }) => {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={handleGoBack} style={styles.iconCircle}>
-            <Ionicons name="chevron-back" size={28} color="#2C3E50" />
+            <Ionicons name="chevron-back" size={34} color="#2C3E50" />
           </TouchableOpacity>
         </View>
 
@@ -420,9 +412,9 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   iconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 74,
+    height: 62,
+    borderRadius: 26,
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',

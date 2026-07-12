@@ -218,7 +218,7 @@ const ChildMenuScreen = ({ navigation }) => {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconCircle}>
-            <Ionicons name="chevron-back" size={28} color="#2C3E50" />
+            <Ionicons name="chevron-back" size={34} color="#2C3E50" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.goalsBtn} onPress={() => navigation.navigate('WeeklyGoals')}>
@@ -402,9 +402,9 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   iconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 74,
+    height: 62,
+    borderRadius: 26,
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
