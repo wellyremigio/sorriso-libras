@@ -12,6 +12,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  useWindowDimensions,
 } from "react-native";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -27,6 +28,8 @@ const CHILD_MENU_IMAGES = [
 ];
 
 const ChildMenuScreen = ({ navigation }) => {
+  const { width } = useWindowDimensions();
+  const isTablet = width >= 768 && width < 1024;
   const [videos, setVideos] = useState([]);
   const [completedVideoIds, setCompletedVideoIds] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -226,7 +229,7 @@ const ChildMenuScreen = ({ navigation }) => {
         <View style={styles.containerLogo}>
           <Image
             source={require('../../assets/logo_menu_child.png')}
-            style={styles.imageLogo}
+            style={[styles.imageLogo, isTablet && styles.imageLogoTablet]}
             resizeMode="contain"
           />
         </View>
@@ -241,6 +244,7 @@ const ChildMenuScreen = ({ navigation }) => {
                 key={item.id}
                 style={[
                   styles.menuItem,
+                  isTablet && styles.menuItemSmallTablet,
                   index % 2 === 0 ? styles.btnPink : styles.btnBlue,
                   !unlocked && styles.lockedMenuItem,
                 ]}
@@ -434,6 +438,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderColor: 'rgba(255, 255, 255, 0.4)',
   },
+  menuItemSmallTablet: {
+    width: '96%',
+    alignSelf: 'center',
+  },
   imageContainer: {
     width: 80,
     height: 80,
@@ -477,6 +485,10 @@ const styles = StyleSheet.create({
   imageLogo: {
     width: '100%',
     height: '100%',
+  },
+  imageLogoTablet: {
+    width: '130%',
+    height: '130%',
   },
   goalsActionBtn: {
     backgroundColor: '#ecd83f',

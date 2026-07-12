@@ -12,6 +12,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
+  useWindowDimensions,
 } from "react-native";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -27,6 +28,8 @@ const DENTIST_MENU_IMAGES = [
 ];
 
 const DentistMenuScreen = ({ navigation }) => {
+  const { width } = useWindowDimensions();
+  const isTablet = width >= 768 && width < 1024;
   const [videos, setVideos] = useState([]);
   const [completedVideoIds, setCompletedVideoIds] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -244,7 +247,7 @@ const DentistMenuScreen = ({ navigation }) => {
         <View style={styles.containerLogo}>
           <Image
             source={require('../../assets/logo_menu_dentist.png')}
-            style={styles.imageLogo}
+            style={[styles.imageLogo, isTablet && styles.imageLogoTablet]}
             resizeMode="contain"
           />
         </View>
@@ -259,6 +262,7 @@ const DentistMenuScreen = ({ navigation }) => {
                 key={item.id}
                 style={[
                   styles.menuItem,
+                  isTablet && styles.menuItemSmallTablet,
                   index % 2 === 0 ? styles.btnPink : styles.btnBlue,
                   !unlocked && styles.lockedMenuItem,
                 ]}
@@ -452,6 +456,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderColor: 'rgba(255, 255, 255, 0.4)', // Reflexo claro na borda superior
   },
+  menuItemSmallTablet: {
+    width: '96%',
+    alignSelf: 'center',
+  },
   imageContainer: {
     width: 80,
     height: 80,
@@ -496,6 +504,10 @@ const styles = StyleSheet.create({
   imageLogo: {
     width: '100%',
     height: '100%',
+  },
+  imageLogoTablet: {
+    width: '110%',
+    height: '110%',
   },
 });
 

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ImageBackground, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome5 } from '@expo/vector-icons';
 import ProfileButton from '../components/profilePage/ProfileButton';
@@ -7,6 +7,8 @@ import { getOrCreateChildId } from '../services/anonymousUserService';
 import { getVideosByModule } from '../services/videoServices';
 
 const Home = ({ navigation }) => {
+  const { width } = useWindowDimensions();
+  const isTablet = width >= 768;
 
   useEffect(() => {
     const loadChild = async () => {
@@ -48,7 +50,7 @@ const Home = ({ navigation }) => {
 
         <View style={styles.containerButton}>
           <TouchableOpacity
-            style={[styles.button, styles.btnDentist]}
+            style={[styles.button, styles.btnDentist, isTablet && styles.buttonTablet]}
             activeOpacity={0.8}
             onPress={() => navigation.navigate('DentistMenu')}
           >
@@ -63,7 +65,7 @@ const Home = ({ navigation }) => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.button, styles.btnChild]}
+            style={[styles.button, styles.btnChild, isTablet && styles.buttonTablet]}
             activeOpacity={0.8}
             onPress={() => navigation.navigate('ChildMenu')}
           >
@@ -144,6 +146,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'rgba(255, 255, 255, 0.4)', // Reflexo claro na borda superior
     borderBottomWidth: 6, // Sombra inferior para dar profundidade (Pílula 3D)
+  },
+  // Botões um pouco mais estreitos apenas no tablet.
+  buttonTablet: {
+    width: '92%',
+    alignSelf: 'center',
   },
 
   // Cores Específicas de cada Botão

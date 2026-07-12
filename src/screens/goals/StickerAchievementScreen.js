@@ -19,7 +19,8 @@ const COLORS = {
 };
 
 const StickerAchievementScreen = ({ navigation, route }) => {
-    const { height } = useWindowDimensions();
+    const { width, height } = useWindowDimensions();
+    const isTablet = width >= 768;
     const isCompactHeight = height < 800;
 
     const {
@@ -140,7 +141,7 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                             
                     </View>
                     <TouchableOpacity
-                        style={styles.actionButton}
+                        style={[styles.actionButton, isTablet && styles.actionButtonTablet]}
                         onPress={handleContinue}
                         activeOpacity={0.8}
                     >
@@ -213,17 +214,18 @@ const styles = StyleSheet.create({
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
-        paddingHorizontal: 40,
-        paddingTop: 70,
-        paddingBottom: 28
+        paddingHorizontal: 42,
+        paddingTop: 74,
+        paddingBottom: 30
     },
     contentCompact: {
         paddingHorizontal: 28,
         paddingTop: 58,
         paddingBottom: 18
     },
+    // Ajuste da fonte do título principal.
     mainTitle: {
-        fontSize: 48,
+        fontSize: 52,
         fontWeight: '700',
         color: COLORS.titleBlue,
         textAlign: 'center',
@@ -232,9 +234,10 @@ const styles = StyleSheet.create({
         textShadowOffset: { width: 0, height: 2 },
         textShadowRadius: 4
     },
+    // Ajuste do bloco da imagem central.
     avatarContainer: {
-        width: '80%',
-        height: 120,
+        width: '85%',
+        height: 130,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 20
@@ -243,16 +246,18 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%'
     },
+    // Ajuste da fonte da descrição.
     descriptionText: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
         color: COLORS.textGrey,
         textAlign: 'center',
-        marginBottom: 30
+        marginBottom: 32
     },
+    // Ajuste do tamanho do bloco do adesivo.
     adesivoHighlight: {
-        width: 180,
-        height: 180,
+        width: 190,
+        height: 190,
         backgroundColor: 'transparent',
         borderRadius: 25,
         justifyContent: 'center',
@@ -268,8 +273,8 @@ const styles = StyleSheet.create({
         shadowRadius: 5
     },
     adesivoHighlightCompact: {
-        width: 160,
-        height: 160,
+        width: 170,
+        height: 170,
         marginBottom: 24
     },
     brilhoStars: {
@@ -278,11 +283,13 @@ const styles = StyleSheet.create({
         borderRadius: 19,
         overflow: 'hidden'
     },
+    // Ajuste da imagem do adesivo dentro do destaque.
     adesivoImage: {
-        width: '80%',
-        height: '80%',
+        width: '82%',
+        height: '82%',
         zIndex: 2
     },
+    // Ajuste do botão de continuar.
     actionButton: {
         backgroundColor: COLORS.nextButton,
         borderBottomColor: COLORS.nextButtonShadow,
@@ -301,9 +308,14 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 4
     },
+    actionButtonTablet: {
+        width: '50%',
+        alignSelf: 'center',
+    },
+    // Ajuste da fonte do texto do botão.
     actionButtonText: {
         color: COLORS.white,
-        fontSize: 22,
+        fontSize: 24,
         fontWeight: 'bold',
         textShadowColor: 'rgba(0, 0, 0, 0.1)',
         textShadowOffset: { width: 0, height: 1 },
@@ -327,8 +339,9 @@ const styles = StyleSheet.create({
     pageActive: {
         backgroundColor: COLORS.paginationActive
     },
+    // Ajuste do título especial final.
     goldTitle: {
-        fontSize: 56,
+        fontSize: 60,
         color: '#FFD700',
         letterSpacing: 2,
         textShadowColor: '#D35400',

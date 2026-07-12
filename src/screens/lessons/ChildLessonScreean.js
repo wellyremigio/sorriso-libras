@@ -235,19 +235,6 @@ const ChildLessonScreen = ({ navigation, route }) => {
     );
   }
 
-  /*
-  if (loading) {
-    return renderStatusScreen({
-      title: 'Carregando vídeos',
-      message: 'Estamos preparando as aulas para você. Um instante, por favor.',
-      actionLabel: 'Voltar',
-      onAction: handleGoBack,
-      iconName: 'play-circle',
-      showLoader: true,
-    });
-  }
-  */
-
   if (error) {
     return renderStatusScreen({
       title: 'Ops, algo deu errado',
@@ -281,8 +268,12 @@ const ChildLessonScreen = ({ navigation, route }) => {
               <Ionicons name="arrow-back" size={28} color="#5D4037" />
             </TouchableOpacity>
 
-            <View style={styles.logoPlaceholder}>
-              <Image source={require('../../assets/upper_logo.png')} style={styles.logoImage} resizeMode="contain" />
+            <View style={[styles.logoPlaceholder, isTablet && styles.logoPlaceholderTablet]}>
+              <Image
+                source={require('../../assets/upper_logo.png')}
+                style={[styles.logoImage, isTablet && styles.logoImageTablet]}
+                resizeMode="contain"
+              />
             </View>
 
             <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
@@ -520,6 +511,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+    logoPlaceholderTablet: {
+    flex: 1,
+    height: 50,
+    width: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   realVideo: {
     width: "100%",
     height: 220,
@@ -535,6 +533,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   logoImage: { width: 300, height: 200 },
+  // Ajuste de largura leve aplicado só em tablet.
+  logoImageTablet: { width: 390 },
   titleBanner: {
     backgroundColor: '#F0E4E7',
     flexDirection: 'row',

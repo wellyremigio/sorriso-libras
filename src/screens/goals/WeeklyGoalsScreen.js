@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ImageBackground, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import FloatingBalloons from '../../components/animation/FloatingBalloons';
@@ -56,6 +56,8 @@ const getCurrentWeekKey = () => {
 };
 
 const WeeklyGoalsScreen = ({ navigation }) => {
+    const { width } = useWindowDimensions();
+    const isTablet = width >= 768;
     const daysOfWeek = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
     const brushingShifts = [
         { id: 'morning', title: 'Manhã', icon: 'sun' },
@@ -300,7 +302,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
             resizeMethod="cover"
         >
             <SafeAreaView style={styles.container}>
-                <View style={styles.topHeader}>
+                <View style={[styles.topHeader, isTablet && styles.sectionTablet]}>
                     <TouchableOpacity
                         onPress={() => navigation.goBack()}
                         style={styles.iconButton}
@@ -309,7 +311,11 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                         <Ionicons name="chevron-back" size={28} color={COLORS.textDark} />
                     </TouchableOpacity>
                     <View style={styles.logoPlaceholder}>
-                        <Image source={require('../../assets/upper_logo.png')} style={styles.logoImage} resizeMode="contain" />
+                        <Image
+                            source={require('../../assets/upper_logo.png')}
+                            style={[styles.logoImage, isTablet && styles.logoImageTablet]}
+                            resizeMode="contain"
+                        />
                     </View>
 
                     <View style={styles.rightIconsGroup}>
@@ -323,12 +329,12 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                     </View>
                 </View>
 
-                <View style={styles.titleBanner}>
+                <View style={[styles.titleBanner, isTablet && styles.sectionTablet]}>
                     <Text style={styles.titleText}>Minhas Metas da Semana</Text>
                 </View>
 
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                    <View style={styles.todayGoalBanner}>
+                    <View style={[styles.todayGoalBanner, isTablet && styles.sectionTablet]}>
                         <FontAwesome5
                             name="tooth"
                             size={20}
@@ -343,7 +349,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                         </Text>
                     </View>
 
-                    <View style={styles.flossReminderCard}>
+                    <View style={[styles.flossReminderCard, isTablet && styles.sectionTablet]}>
 
                         <View style={styles.stickerImagePlaceholderDental}>
                             <Image source={require('../../assets/dental-floss.png')} style={styles.stickerImage} />
@@ -355,7 +361,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                         </Text>
                     </View>
 
-                    <View style={styles.calendarWrapper}>
+                    <View style={[styles.calendarWrapper, isTablet && styles.sectionTablet]}>
                         <View style={styles.iconColumn}>
                             <View style={styles.iconHeaderSpace} />
                             {brushingShifts.map((shift) => (
@@ -407,14 +413,14 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                         </View>
                     </View>
 
-                    <View style={styles.progressSection}>
+                    <View style={[styles.progressSection, isTablet && styles.sectionTablet]}>
                         <Text style={styles.progressText}>{totalCompleted}/{totalGoal} escovações concluídas</Text>
                         <View style={styles.progressBarBackground}>
                             <View style={[styles.progressBarFill, { width: `${(totalCompleted / totalGoal) * 100}%` }]} />
                         </View>
                     </View>
 
-                    <View style={styles.incentiveCard}>
+                    <View style={[styles.incentiveCard, isTablet && styles.sectionTablet]}>
                         <Text style={styles.incentiveMainText}>Continue assim! Você está indo muito bem!</Text>
                         <Text style={styles.incentiveSubText}>Ganhe um adesivo se completar sua meta semanal!</Text>
 
@@ -424,7 +430,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                         </View>
                     </View>
                     <TouchableOpacity
-                        style={styles.actionButton}
+                        style={[styles.actionButton, isTablet && styles.actionButtonTablet]}
                         onPress={handleFinishBrushing}
                         activeOpacity={0.8}
                     >
@@ -505,6 +511,10 @@ const styles = StyleSheet.create({
         zIndex: 10,
         elevation: 10,
     },
+    sectionTablet: {
+        width: '82%',
+        alignSelf: 'center',
+    },
     rightIconsGroup: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -529,6 +539,11 @@ const styles = StyleSheet.create({
     logoImage: {
         width: 230,
         height: 230,
+    },
+    // Ajuste de largura leve aplicado só em tablet.
+    logoImageTablet: {
+        width: 290,
+        height: 290,
     },
     logoText: {
         color: '#A08B8B',
@@ -738,6 +753,10 @@ const styles = StyleSheet.create({
         borderColor: 'rgba(255, 255, 255, 0.5)',
         borderBottomWidth: 6,
         borderBottomColor: COLORS.finishButtonShadow,
+    },
+    actionButtonTablet: {
+        width: '50%',
+        alignSelf: 'center',
     },
     actionButtonText: {
         color: '#2C3E50',
