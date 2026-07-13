@@ -232,7 +232,7 @@ const DentistMenuScreen = ({ navigation }) => {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={handleGoBack} style={styles.iconCircle}>
-            <Ionicons name="chevron-back" size={34} color="#2C3E50" />
+            <Ionicons name="chevron-back" size={30} color="#2C3E50" />
           </TouchableOpacity>
         </View>
 
@@ -412,9 +412,9 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   iconCircle: {
-    width: 74,
-    height: 62,
-    borderRadius: 26,
+    width: 50,
+    height: 50,
+    borderRadius: 20,
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
