@@ -113,7 +113,7 @@ const StickerGalleryScreen = ({ navigation }) => {
             <SafeAreaView style={styles.container}>
                 <View style={[styles.topHeader, isTablet && styles.topHeaderTablet]}>
                     <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
-                        <Ionicons name="chevron-back" size={34} color={COLORS.textBrown} />
+                        <Ionicons name="chevron-back" size={30} color={COLORS.textBrown} />
                     </TouchableOpacity>
 
                     <View style={styles.logoPlaceholder}>
@@ -253,9 +253,9 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     iconButton: {
-        width: 74,
-        height: 62,
-        borderRadius: 26,
+        width: 50,
+        height: 50,
+        borderRadius: 20,
         backgroundColor: 'rgba(255, 255, 255, 0.6)',
         justifyContent: 'center',
         alignItems: 'center',
@@ -274,8 +274,8 @@ const styles = StyleSheet.create({
         height: 62,
     },
     logoImage: {
-        width: 300,
-        height: 200,
+        width: 250,
+        height: 250,
     },
     logoImageTablet: {
         width: 390,

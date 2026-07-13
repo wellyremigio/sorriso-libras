@@ -296,7 +296,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                         style={styles.iconButton}
                         hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
                     >
-                        <Ionicons name="chevron-back" size={34} color={COLORS.textDark} />
+                        <Ionicons name="chevron-back" size={30} color={COLORS.textDark} />
                     </TouchableOpacity>
                     <View style={styles.logoPlaceholder}>
                         <Image
@@ -308,11 +308,11 @@ const WeeklyGoalsScreen = ({ navigation }) => {
 
                     <View style={styles.rightIconsGroup}>
                         <TouchableOpacity onPress={() => navigation.navigate('StickerGallery')} style={styles.iconButton}>
-                            <MaterialCommunityIcons name="sticker-emoji" size={34} color={COLORS.textDark} />
+                            <MaterialCommunityIcons name="sticker-emoji" size={30} color={COLORS.textDark} />
                         </TouchableOpacity>
 
                         <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
-                            <Ionicons name="home" size={34} color={COLORS.textDark} />
+                            <Ionicons name="home" size={30} color={COLORS.textDark} />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -513,9 +513,9 @@ const styles = StyleSheet.create({
         gap: 5,
     },
     iconButton: {
-        width: 74,
-        height: 62,
-        borderRadius: 26,
+        width: 50,
+        height: 50,
+        borderRadius: 20,
         backgroundColor: 'rgba(255, 255, 255, 0.6)',
         justifyContent: 'center',
         alignItems: 'center',
@@ -529,10 +529,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     logoImage: {
-        width: 230,
-        height: 230,
+        width: 250,
+        height: 250,
     },
-    // Ajuste de largura leve aplicado só em tablet.
     logoImageTablet: {
         width: 420,
         height: 300,

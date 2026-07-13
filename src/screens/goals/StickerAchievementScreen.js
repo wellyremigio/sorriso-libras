@@ -203,7 +203,10 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         flex: 1,
-        width: '100%'
+        width: '100%',
+        position: 'relative',
+        zIndex: 2,
+        elevation: 2,
     },
     headerDecoration: {
         position: 'absolute',
@@ -211,7 +214,8 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 150,
         overflow: 'visible',
-        zIndex: 5
+        zIndex: 0,
+        elevation: 0
     },
     balaoWrapper: {
         position: 'absolute',
@@ -233,16 +237,17 @@ const styles = StyleSheet.create({
     },
     content: {
         flexGrow: 1,
+        position: 'relative',
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 42,
-        paddingTop: 74,
+        paddingTop: 118,
         paddingBottom: 30
     },
     contentCompact: {
         paddingHorizontal: 28,
-        paddingTop: 58,
+        paddingTop: 96,
         paddingBottom: 18
     },
     logoWrapperTablet: {
@@ -263,11 +268,15 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         textShadowColor: 'rgba(255, 255, 255, 0.8)',
         textShadowOffset: { width: 0, height: 2 },
-        textShadowRadius: 4
+        textShadowRadius: 4,
+        zIndex: 100,
+        elevation: 100,
     },
     mainTitleTablet: {
         fontSize: 62,
         marginBottom: 18,
+        zIndex: 100,
+        elevation: 100,
     },
     avatarContainer: {
         width: '85%',
