@@ -400,7 +400,7 @@ const styles = StyleSheet.create({
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 80,
+    minHeight: 80,
     borderRadius: 25,
     paddingHorizontal: 10,
     borderWidth: 2,
@@ -414,8 +414,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   imageContainer: {
-    width: 80,
-    height: 80,
+    width: 72,
+    minHeight: 64,
     marginRight: 6,
     justifyContent: 'center',
     alignItems: 'center',
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
   },
   itemImage: {
     width: '100%',
-    height: '100%',
+    height: 64,
     borderRadius: 25,
     resizeMode: 'contain',
   },
@@ -445,6 +445,8 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: '#4E342E',
     fontWeight: '700',
+    flexShrink: 1,
+    lineHeight: 22,
   },
   containerLogo: {
     marginTop: -35,
