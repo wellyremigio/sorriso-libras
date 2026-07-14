@@ -2,7 +2,6 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import {
   ActivityIndicator,
   Image,
-  Alert,
   Animated,
   Easing,
   ImageBackground,
@@ -89,27 +88,7 @@ const DentistMenuScreen = ({ navigation }) => {
     return () => loop.stop();
   }, [loading, pulse]);
 
-  const isModuleCompleted =
-    videos.length > 0 && videos.every((video) => completedVideoIds.includes(video.id));
-
-  const isVideoUnlocked = (index) => {
-    if (isModuleCompleted) return true;
-    if (index === 0) return true;
-    const previousVideo = videos[index - 1];
-    return completedVideoIds.includes(previousVideo?.id);
-  };
-
   const handleOpenVideo = (index) => {
-    const unlocked = isVideoUnlocked(index);
-
-    if (!unlocked) {
-      Alert.alert(
-        "Aula bloqueada",
-        "Assista à aula anterior para liberar este vídeo."
-      );
-      return;
-    }
-
     navigation.navigate("ChildLesson", {
       initialIndex: index,
       module: "dentist",
@@ -246,7 +225,6 @@ const DentistMenuScreen = ({ navigation }) => {
 
         <ScrollView style={styles.listContainer} showsVerticalScrollIndicator={false}>
           {videos.map((item, index) => {
-            const unlocked = isVideoUnlocked(index);
             const completed = completedVideoIds.includes(item.id);
 
             return (
@@ -256,10 +234,9 @@ const DentistMenuScreen = ({ navigation }) => {
                   styles.menuItem,
                   isTablet && styles.menuItemSmallTablet,
                   index % 2 === 0 ? styles.btnPink : styles.btnBlue,
-                  !unlocked && styles.lockedMenuItem,
                 ]}
                 onPress={() => handleOpenVideo(index)}
-                activeOpacity={unlocked ? 0.8 : 1}
+                activeOpacity={0.8}
               >
                 <View style={styles.imageContainer}>
                   <Image
@@ -275,10 +252,8 @@ const DentistMenuScreen = ({ navigation }) => {
 
                 {completed ? (
                   <Ionicons name="checkmark-circle" size={24} color="#FFF" />
-                ) : unlocked ? (
-                  <Ionicons name="chevron-forward" size={24} color="#FFF" />
                 ) : (
-                  <Ionicons name="lock-closed" size={22} color="#FFF" />
+                  <Ionicons name="chevron-forward" size={24} color="#FFF" />
                 )}
               </TouchableOpacity>
             );
@@ -398,9 +373,6 @@ const styles = StyleSheet.create({
     color: '#5D4037',
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  lockedMenuItem: {
-    opacity: 0.55,
   },
   header: {
     flexDirection: 'row',

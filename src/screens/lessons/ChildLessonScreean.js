@@ -356,7 +356,7 @@ const ChildLessonScreen = ({ navigation, route }) => {
 
                 <Text style={styles.finishTitle}>Parabéns!</Text>
                 <Text style={styles.finishText}>
-                  Você completou todas as lições. Continue cuidando bem do seu sorriso!
+                  Você assistiu ao vídeo final. Continue cuidando bem do seu sorriso!
                 </Text>
 
                 <TouchableOpacity

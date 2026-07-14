@@ -130,7 +130,7 @@ const StickerAchievementScreen = ({ navigation, route }) => {
 
                     <Text style={[styles.descriptionText, isTablet && styles.descriptionTextTablet]}>
                         {isFinalAchievement
-                            ? "Você completou todas as lições. Continue cuidando bem do seu sorriso!"
+                            ? "Você assistiu ao vídeo final e conquistou um adesivo especial!"
                             : achievementType === 'weekly_brushing_goal'
                                 ? "Você completou a meta da semana!"
                             : hasEarnedSticker
