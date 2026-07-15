@@ -32,7 +32,7 @@ const COLORS = {
     disabledBg: '#F5ECEF',
     disabledBorder: '#E8D7DD',
     mutedText: '#7F8C8D',
-    bgCheckbox: 'E9F8EF',
+    bgCheckbox: '#E9F8EF',
     progressBarText: '2C3E50',
     lightPink: '#F4D1D9',
     finishButton: '#78dda0',
@@ -69,7 +69,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
     const [weeklyGoal, setWeeklyGoal] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [savingCheck, setSavingCheck] = useState(false);
+    const [savingChecks, setSavingChecks] = useState({});
     const [isCelebrating, setIsCelebrating] = useState(false);
     const [hasClaimedWeeklyReward, setHasClaimedWeeklyReward] = useState(false);
     const [infoModal, setInfoModal] = useState({
@@ -145,13 +145,18 @@ const WeeklyGoalsScreen = ({ navigation }) => {
 
 
     const toggleCheck = async (day, shiftId) => {
-        if (savingCheck) return;
-
         const key = `${day}-${shiftId}`;
+        if (savingChecks[key]) return;
+
         const newCheckedValue = !completedBrush[key];
+        const previousChecks = completedBrush;
 
         try {
-            setSavingCheck(true);
+            setSavingChecks((prev) => ({ ...prev, [key]: true }));
+            setCompleteBrush((prev) => ({
+                ...prev,
+                [key]: newCheckedValue,
+            }));
 
             const updatedGoal = await updateBrushingGoalCheck({
                 day,
@@ -163,6 +168,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
             setCompleteBrush(updatedGoal.checks || {});
         } catch (error) {
             console.error("Erro ao atualizar check:", error);
+            setCompleteBrush(previousChecks);
 
             showInfoModal({
                 title: "Ops!",
@@ -173,7 +179,11 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                 onConfirm: loadWeeklyGoal,
             });
         } finally {
-            setSavingCheck(false);
+            setSavingChecks((prev) => {
+                const next = { ...prev };
+                delete next[key];
+                return next;
+            });
         }
     };
 
@@ -378,6 +388,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                                         const key = `${day}-${shift.id}`;
                                         const isChecked = !!completedBrush[key];
                                         const isFutureDay = index > currentDayIndex;
+                                        const isSavingCell = !!savingChecks[key];
 
                                         return (
                                             <View key={key} style={styles.tableCell}>
@@ -385,13 +396,15 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                                                     style={[
                                                         styles.checkbox,
                                                         isChecked && styles.checkboxActive,
-                                                        isFutureDay && styles.checkboxDisabled
+                                                        isFutureDay && styles.checkboxDisabled,
+                                                        isSavingCell && styles.checkboxSaving,
                                                     ]}
                                                     onPress={() => toggleCheck(day, shift.id)}
                                                     activeOpacity={0.7}
-                                                    disabled={isFutureDay || savingCheck}
+                                                    disabled={isFutureDay || isSavingCell}
+                                                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                                                 >
-                                                    {isChecked ? <Ionicons name="checkmark" size={16} color={COLORS.greenShadow} /> : null}
+                                                    {isChecked ? <Ionicons name="checkmark" size={22} color={COLORS.greenShadow} /> : null}
                                                 </TouchableOpacity>
                                             </View>
                                         );
@@ -634,9 +647,9 @@ const styles = StyleSheet.create({
         borderRightColor: COLORS.creamBorder
     },
     checkbox: {
-        width: 24,
-        height: 24,
-        borderRadius: 6,
+        width: 36,
+        height: 36,
+        borderRadius: 10,
         backgroundColor: '#FFF',
         borderWidth: 2,
         borderColor: '#E8C5CC',
@@ -652,6 +665,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5ECEF',
         borderColor: '#E8D7DD',
         opacity: 0.5
+    },
+    checkboxSaving: {
+        opacity: 0.7,
     },
     progressSection: {
         backgroundColor: COLORS.progressColor,

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground, ScrollView, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -22,6 +23,7 @@ const StickerAchievementScreen = ({ navigation, route }) => {
     const { width, height } = useWindowDimensions();
     const isTablet = width >= 768;
     const isCompactHeight = height < 800;
+    const [stickerLoaded, setStickerLoaded] = useState(false);
 
     const {
         isFinalAchievement = false,
@@ -40,13 +42,25 @@ const StickerAchievementScreen = ({ navigation, route }) => {
 
     const hasEarnedSticker = !!earnedSticker;
 
-    const stickerImageSource = hasEarnedSticker
+    const stickerImageSource = hasEarnedSticker && earnedSticker.image_url
         ? { uri: earnedSticker.image_url }
         : achievementType === 'weekly_brushing_goal'
             ? require('../../assets/sticker_pop.png')
             : null;
+    const stickerImageKey = hasEarnedSticker
+        ? earnedSticker.image_url
+        : achievementType === 'weekly_brushing_goal'
+            ? 'weekly_brushing_goal'
+            : null;
+    const canContinue = !stickerImageSource || stickerLoaded;
+
+    useEffect(() => {
+        setStickerLoaded(!stickerImageSource);
+    }, [stickerImageKey]);
 
     const handleContinue = () => {
+        if (!canContinue) return;
+
         if (showModuleFinalAchievement && !isFinalAchievement) {
             navigation.replace('StickerAchievementScreen', {
                 isFinalAchievement: true,
@@ -158,18 +172,27 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                                 source={stickerImageSource}
                                 style={[styles.adesivoImage, isTablet && styles.adesivoImageTablet]}
                                 resizeMode="contain"
+                                onLoadEnd={() => setStickerLoaded(true)}
+                                onError={() => setStickerLoaded(true)}
                             />
                         )}
                             
                     </View>
                     <TouchableOpacity
-                        style={[styles.actionButton, isTablet && styles.actionButtonTablet]}
+                        style={[
+                            styles.actionButton,
+                            isTablet && styles.actionButtonTablet,
+                            !canContinue && styles.actionButtonDisabled,
+                        ]}
                         onPress={handleContinue}
-                        activeOpacity={0.8}
+                        activeOpacity={canContinue ? 0.8 : 1}
+                        disabled={!canContinue}
                     >
                         <Text style={styles.actionButtonText}>
-                            {isFinalAchievement
-                                ? "Voltar à Tela Inicial"
+                            {!canContinue
+                                ? "Carregando..."
+                                : isFinalAchievement
+                                ? "Voltar à tela inicial"
                                 : showModuleFinalAchievement
                                     ? "Ver adesivo especial"
                                     : "Continuar"}
@@ -373,6 +396,9 @@ const styles = StyleSheet.create({
     actionButtonTablet: {
         width: '50%',
         alignSelf: 'center',
+    },
+    actionButtonDisabled: {
+        opacity: 0.55,
     },
     // Ajuste da fonte do texto do botão.
     actionButtonText: {

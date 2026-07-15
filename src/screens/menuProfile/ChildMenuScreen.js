@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Animated,
   Easing,
   Image,
@@ -89,35 +88,13 @@ const ChildMenuScreen = ({ navigation }) => {
     return () => loop.stop();
   }, [loading, pulse]);
 
-  const isModuleCompleted =
-    videos.length > 0 && videos.every((video) => completedVideoIds.includes(video.id));
-
-  const isVideoUnlocked = (index) => {
-    if (isModuleCompleted) return true;
-    if (index === 0) return true;
-
-    const previousVideo = videos[index - 1];
-    return completedVideoIds.includes(previousVideo?.id);
-  };
-
   const handleOpenVideo = (index) => {
-    const unlocked = isVideoUnlocked(index);
-
-    if (!unlocked) {
-      Alert.alert(
-        "Aula bloqueada",
-        "Assista à aula anterior para liberar este vídeo."
-      );
-      return;
-    }
-
     navigation.navigate("ChildLesson", {
       initialIndex: index,
       module: "children",
       videosFromMenu: videos,
     });
   };
-
   const handleGoBack = () => {
     if (navigation.canGoBack()) {
       navigation.goBack();
@@ -236,7 +213,6 @@ const ChildMenuScreen = ({ navigation }) => {
 
         <ScrollView style={styles.listContainer} showsVerticalScrollIndicator={false}>
           {videos.map((item, index) => {
-            const unlocked = isVideoUnlocked(index);
             const completed = completedVideoIds.includes(item.id);
 
             return (
@@ -246,10 +222,9 @@ const ChildMenuScreen = ({ navigation }) => {
                   styles.menuItem,
                   isTablet && styles.menuItemSmallTablet,
                   index % 2 === 0 ? styles.btnPink : styles.btnBlue,
-                  !unlocked && styles.lockedMenuItem,
                 ]}
                 onPress={() => handleOpenVideo(index)}
-                activeOpacity={unlocked ? 0.8 : 1}
+                activeOpacity={0.8}
               >
                 <View style={styles.imageContainer}>
                   <Image
@@ -265,10 +240,8 @@ const ChildMenuScreen = ({ navigation }) => {
 
                 {completed ? (
                   <Ionicons name="checkmark-circle" size={24} color="#FFF" />
-                ) : unlocked ? (
-                  <Ionicons name="chevron-forward" size={24} color="#FFF" />
                 ) : (
-                  <Ionicons name="lock-closed" size={22} color="#FFF" />
+                  <Ionicons name="chevron-forward" size={24} color="#FFF" />
                 )}
               </TouchableOpacity>
             );
@@ -389,9 +362,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  lockedMenuItem: {
-    opacity: 0.55,
-  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -429,7 +399,7 @@ const styles = StyleSheet.create({
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 80,
+    minHeight: 80,
     borderRadius: 25,
     paddingHorizontal: 10,
     borderWidth: 2,
@@ -443,8 +413,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   imageContainer: {
-    width: 80,
-    height: 80,
+    width: 72,
+    minHeight: 64,
     marginRight: 6,
     justifyContent: 'center',
     alignItems: 'center',
@@ -459,7 +429,7 @@ const styles = StyleSheet.create({
   },
   itemImage: {
     width: '100%',
-    height: '100%',
+    height: 64,
     borderRadius: 25,
     resizeMode: 'contain',
   },
@@ -474,6 +444,8 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: '#4E342E',
     fontWeight: '700',
+    flexShrink: 1,
+    lineHeight: 22,
   },
   containerLogo: {
     marginTop: -35,
