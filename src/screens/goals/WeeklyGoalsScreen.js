@@ -359,7 +359,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                         </Text>
                     </View>
 
-                    <View style={[styles.calendarWrapper, isTablet && styles.sectionTablet]}>
+                    <View style={[styles.calendarWrapper, isTablet && styles.calendarWrapperTablet]}>
                         <View style={styles.iconColumn}>
                             <View style={styles.iconHeaderSpace} />
                             {brushingShifts.map((shift) => (
@@ -520,6 +520,10 @@ const styles = StyleSheet.create({
         width: '82%',
         alignSelf: 'center',
     },
+    calendarWrapperTablet: {
+        width: '92%',
+        alignSelf: 'center',
+    },
     rightIconsGroup: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -573,7 +577,7 @@ const styles = StyleSheet.create({
         marginRight: 35,
     },
     scrollContent: {
-        paddingHorizontal: 20,
+        paddingHorizontal: 12,
         paddingBottom: 30,
     },
     todayGoalBanner: {
@@ -595,23 +599,25 @@ const styles = StyleSheet.create({
     calendarWrapper: {
         flexDirection: 'row',
         marginBottom: 20,
-        alignItems: 'stretch'
+        alignItems: 'stretch',
+        width: '100%',
     },
     iconColumn: {
-        width: 26,
-        marginRight: 8,
+        width: 32,
+        marginRight: 6,
         justifyContent: 'flex-start'
     },
     iconHeaderSpace: {
-        height: 36
+        height: 44
     },
     iconCell: {
-        height: 44,
+        height: 58,
         justifyContent: 'center',
         alignItems: 'center'
     },
     tableContainer: {
         flex: 1,
+        minHeight: 218,
         backgroundColor: COLORS.cream,
         borderRadius: 15,
         borderWidth: 2,
@@ -621,7 +627,7 @@ const styles = StyleSheet.create({
     tableHeaderRow: {
         flexDirection: 'row',
         backgroundColor: COLORS.pastelBlue,
-        height: 36,
+        height: 44,
         alignItems: 'center'
     },
     tableHeaderCell: {
@@ -631,11 +637,11 @@ const styles = StyleSheet.create({
     tableHeaderText: {
         color: '#FFF',
         fontWeight: 'bold',
-        fontSize: 12
+        fontSize: 13
     },
     tableRow: {
         flexDirection: 'row',
-        height: 44,
+        height: 58,
         borderBottomWidth: 1,
         borderBottomColor: COLORS.creamBorder
     },
@@ -647,8 +653,8 @@ const styles = StyleSheet.create({
         borderRightColor: COLORS.creamBorder
     },
     checkbox: {
-        width: 36,
-        height: 36,
+        width: isTablet ? 40 : 36,
+        height: isTablet ? 40 : 36,
         borderRadius: 10,
         backgroundColor: '#FFF',
         borderWidth: 2,

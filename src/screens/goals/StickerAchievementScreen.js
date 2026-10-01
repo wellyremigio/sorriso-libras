@@ -144,7 +144,7 @@ const StickerAchievementScreen = ({ navigation, route }) => {
 
                     <Text style={[styles.descriptionText, isTablet && styles.descriptionTextTablet]}>
                         {isFinalAchievement
-                            ? "Você completou todas as lições. Continue cuidando bem do seu sorriso!"
+                            ? "Você assistiu ao vídeo final e conquistou um adesivo especial!"
                             : achievementType === 'weekly_brushing_goal'
                                 ? "Você completou a meta da semana!"
                             : hasEarnedSticker
@@ -192,7 +192,7 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                             {!canContinue
                                 ? "Carregando..."
                                 : isFinalAchievement
-                                ? "Voltar à tela inicial"
+                                ? "Voltar à Tela Inicial"
                                 : showModuleFinalAchievement
                                     ? "Ver adesivo especial"
                                     : "Continuar"}
@@ -228,8 +228,8 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         position: 'relative',
-        zIndex: 2,
-        elevation: 2,
+        zIndex: isTablet ? 10 : 2,
+        elevation: isTablet ? 10 : 2,
     },
     headerDecoration: {
         position: 'absolute',
@@ -237,8 +237,8 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 150,
         overflow: 'visible',
-        zIndex: 0,
-        elevation: 0
+        zIndex: isTablet ? 1 : 0,
+        elevation: isTablet ? 1 : 0
     },
     balaoWrapper: {
         position: 'absolute',
@@ -292,8 +292,8 @@ const styles = StyleSheet.create({
         textShadowColor: 'rgba(255, 255, 255, 0.8)',
         textShadowOffset: { width: 0, height: 2 },
         textShadowRadius: 4,
-        zIndex: 100,
-        elevation: 100,
+        zIndex: isTablet ? 20 : 100,
+        elevation: isTablet ? 20 : 100,
     },
     mainTitleTablet: {
         fontSize: 62,
@@ -312,7 +312,6 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%'
     },
-    // Ajuste da fonte da descrição.
     descriptionText: {
         fontSize: 20,
         fontWeight: 'bold',
@@ -324,7 +323,6 @@ const styles = StyleSheet.create({
         fontSize: 24,
         marginBottom: 36,
     },
-    // Ajuste do tamanho do bloco do adesivo.
     adesivoHighlight: {
         width: 190,
         height: 190,
@@ -364,7 +362,6 @@ const styles = StyleSheet.create({
         borderRadius: 19,
         overflow: 'hidden'
     },
-    // Ajuste da imagem do adesivo dentro do destaque.
     adesivoImage: {
         width: '82%',
         height: '82%',
@@ -374,7 +371,6 @@ const styles = StyleSheet.create({
         width: '88%',
         height: '88%',
     },
-    // Ajuste do botão de continuar.
     actionButton: {
         backgroundColor: COLORS.nextButton,
         borderBottomColor: COLORS.nextButtonShadow,
@@ -400,7 +396,6 @@ const styles = StyleSheet.create({
     actionButtonDisabled: {
         opacity: 0.55,
     },
-    // Ajuste da fonte do texto do botão.
     actionButtonText: {
         color: COLORS.white,
         fontSize: 24,
@@ -427,7 +422,6 @@ const styles = StyleSheet.create({
     pageActive: {
         backgroundColor: COLORS.paginationActive
     },
-    // Ajuste do título especial final.
     goldTitle: {
         fontSize: 60,
         color: '#FFD700',
