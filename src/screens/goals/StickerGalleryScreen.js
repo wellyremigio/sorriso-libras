@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, ImageBackgro
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { useCallback, useState } from 'react';
+import { useWindowDimensions } from 'react-native';
 import { ActivityIndicator } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { getChildStickerGallery } from '../../services/stickerService';
@@ -18,6 +19,8 @@ const COLORS = {
 };
 
 const StickerGalleryScreen = ({ navigation }) => {
+    const { width } = useWindowDimensions();
+    const isTablet = width >= 768;
     const [earnedStickers, setEarnedStickers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -57,7 +60,7 @@ const StickerGalleryScreen = ({ navigation }) => {
         <View style={[styles.card, styles.cardUnlocked]}>
             <Image
                 source={{ uri: item.image_url }}
-                style={styles.stickerImage}
+                style={[styles.stickerImage, isTablet && styles.stickerImageTablet]}
                 resizeMode="contain"
             />
         </View>
@@ -73,7 +76,7 @@ const StickerGalleryScreen = ({ navigation }) => {
                 <SafeAreaView style={styles.container}>
                     <View style={styles.loadingContent}>
                         <ActivityIndicator size="large" color={COLORS.textBrown} />
-                    <Text style={styles.emptyGalleryText}>Carregando galeria...</Text>
+                        <Text style={styles.emptyGalleryText}>Carregando galeria...</Text>
                     </View>
                 </SafeAreaView>
             </ImageBackground>
@@ -90,7 +93,10 @@ const StickerGalleryScreen = ({ navigation }) => {
                 <SafeAreaView style={styles.container}>
                     <Text style={styles.emptyGalleryText}>{error}</Text>
 
-                    <TouchableOpacity style={styles.retryButton} onPress={loadStickerGallery}>
+                    <TouchableOpacity
+                        style={[styles.retryButton, isTablet && styles.retryButtonTablet]}
+                        onPress={loadStickerGallery}
+                    >
                         <Text style={styles.retryButtonText}>Tentar novamente</Text>
                     </TouchableOpacity>
                 </SafeAreaView>
@@ -105,24 +111,28 @@ const StickerGalleryScreen = ({ navigation }) => {
             resizeMode="cover"
         >
             <SafeAreaView style={styles.container}>
-                <View style={styles.topHeader}>
+                <View style={[styles.topHeader, isTablet && styles.topHeaderTablet]}>
                     <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
-                        <Ionicons name="arrow-back" size={28} color={COLORS.textBrown} />
+                        <Ionicons name="chevron-back" size={30} color={COLORS.textBrown} />
                     </TouchableOpacity>
 
                     <View style={styles.logoPlaceholder}>
-                        <Image source={require('../../assets/upper_logo.png')} style={styles.logoImage} resizeMode="contain" />
+                        <Image
+                            source={require('../../assets/upper_logo.png')}
+                            style={[styles.logoImage, isTablet && styles.logoImageTablet]}
+                            resizeMode="contain"
+                        />
                     </View>
 
-                    <View style={styles.iconButton} />
+                    <View style={styles.headerSpacer} />
                 </View>
 
-                <View style={styles.titleSection}>
+                <View style={[styles.titleSection, isTablet && styles.sectionTablet]}>
                     <Text style={styles.mainTitle}>Galeria de Adesivos</Text>
                     <Text style={styles.subTitle}>Colecione todos os adesivos!</Text>
                 </View>
 
-                <View style={styles.progressWrapper}>
+                <View style={[styles.progressWrapper, isTablet && styles.progressWrapperTablet]}>
                     <View style={styles.progressBarContainer}>
                         <View
                             style={[
@@ -130,19 +140,19 @@ const StickerGalleryScreen = ({ navigation }) => {
                                 { width: unlockedStickers > 0 ? "100%" : "0%" }
                             ]}
                         />
-                        <Text style={styles.progressText}>
+                        <Text style={[styles.progressText, isTablet && styles.progressTextTablet]}>
                             {unlockedStickers} adesivos conquistados
                         </Text>
                     </View>
                 </View>
 
                 {specialStickers.length > 0 && (
-                    <View style={styles.specialStickersWrapper}>
+                    <View style={[styles.specialStickersWrapper, isTablet && styles.sectionTablet]}>
                         {specialStickers.map((sticker) => (
                             <View key={sticker.id} style={[styles.card, styles.specialCard]}>
                                 <Image
                                     source={{ uri: sticker.image_url }}
-                                    style={styles.specialStickerImage}
+                                    style={[styles.specialStickerImage, isTablet && styles.specialStickerImageTablet]}
                                     resizeMode="contain"
                                 />
                             </View>
@@ -151,7 +161,7 @@ const StickerGalleryScreen = ({ navigation }) => {
                 )}
 
                 {unlockedStickers === 0 && (
-                    <View style={styles.emptyGallery}>
+                    <View style={[styles.emptyGallery, isTablet && styles.sectionTablet]}>
                         <Text style={styles.emptyGalleryText}>
                             Você ainda não conquistou adesivos.
                         </Text>
@@ -164,16 +174,12 @@ const StickerGalleryScreen = ({ navigation }) => {
                     renderItem={renderStickerCard}
                     numColumns={4}
                     columnWrapperStyle={styles.row}
-                    contentContainerStyle={styles.gridContainer}
+                    contentContainerStyle={[
+                        styles.gridContainer,
+                        isTablet && styles.sectionTablet,
+                    ]}
                     showsVerticalScrollIndicator={false}
                 />
-
-                <View style={styles.footerSection}>
-                    <Text style={styles.footerText}>
-                        {unlockedStickers} adesivos
-                    </Text>
-                </View>
-
             </SafeAreaView>
         </ImageBackground>
     );
@@ -199,12 +205,20 @@ const styles = StyleSheet.create({
         fontSize: 15,
     },
     stickerImage: {
-        width: 85,
-        height: 85,
+        width: 75,
+        height: 75,
+    },
+    stickerImageTablet: {
+        width: 130,
+        height: 130,
     },
     specialStickerImage: {
         width: 125,
         height: 125,
+    },
+    specialStickerImageTablet: {
+        width: 175,
+        height: 175,
     },
     emptyGallery: {
         alignItems: "center",
@@ -230,10 +244,23 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         paddingBottom: 15
     },
+    topHeaderTablet: {
+        paddingTop: 24,
+        paddingBottom: 18,
+    },
+    sectionTablet: {
+        width: '82%',
+        alignSelf: 'center',
+    },
     iconButton: {
-        width: 40,
+        width: 50,
+        height: 50,
+        borderRadius: 20,
+        backgroundColor: 'rgba(255, 255, 255, 0.6)',
+        justifyContent: 'center',
         alignItems: 'center',
-        justifyContent: 'center'
+        borderWidth: 1.5,
+        borderColor: '#E8D4D8',
     },
     logoPlaceholder: {
         flex: 1,
@@ -242,9 +269,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
+    headerSpacer: {
+        width: 74,
+        height: 62,
+    },
     logoImage: {
-        width: 300,
-        height: 200,
+        width: 250,
+        height: 250,
+    },
+    logoImageTablet: {
+        width: 390,
+        height: 290,
     },
     titleSection: {
         alignItems: 'center',
@@ -265,12 +300,18 @@ const styles = StyleSheet.create({
         paddingHorizontal: 40,
         marginBottom: 20
     },
+    progressWrapperTablet: {
+        width: '60%',
+        alignSelf: 'center',
+        paddingHorizontal: 0,
+    },
     progressBarContainer: {
         height: 30,
         backgroundColor: COLORS.progressBg,
         borderRadius: 15,
         overflow: 'hidden',
         justifyContent: 'center',
+        alignItems: 'center',
         position: 'relative'
     },
     progressBarFill: {
@@ -285,8 +326,19 @@ const styles = StyleSheet.create({
         color: '#FFF',
         fontWeight: 'bold',
         fontSize: 14,
-        marginLeft: 15,
         zIndex: 1,
+        textAlign: 'center',
+        textShadowColor: 'rgba(0, 0, 0, 0.2)',
+        textShadowOffset: { width: 0, height: 1 },
+        textShadowRadius: 2
+    },
+    progressTextTablet: {
+        color: '#FFF',
+        fontWeight: 'bold',
+        fontSize: 14,
+        width: "100%",
+        zIndex: 1,
+        textAlign: 'center',
         textShadowColor: 'rgba(0, 0, 0, 0.2)',
         textShadowOffset: { width: 0, height: 1 },
         textShadowRadius: 2
@@ -350,6 +402,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
+    },
+    retryButtonTablet: {
+        width: '50%',
+        alignSelf: 'center',
     },
 });
 

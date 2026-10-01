@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Animated,
   Easing,
   Image,
@@ -12,6 +11,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  useWindowDimensions,
 } from "react-native";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -27,6 +27,8 @@ const CHILD_MENU_IMAGES = [
 ];
 
 const ChildMenuScreen = ({ navigation }) => {
+  const { width } = useWindowDimensions();
+  const isTablet = width >= 768 && width < 1024;
   const [videos, setVideos] = useState([]);
   const [completedVideoIds, setCompletedVideoIds] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -86,35 +88,13 @@ const ChildMenuScreen = ({ navigation }) => {
     return () => loop.stop();
   }, [loading, pulse]);
 
-  const isModuleCompleted =
-    videos.length > 0 && videos.every((video) => completedVideoIds.includes(video.id));
-
-  const isVideoUnlocked = (index) => {
-    if (isModuleCompleted) return true;
-    if (index === 0) return true;
-
-    const previousVideo = videos[index - 1];
-    return completedVideoIds.includes(previousVideo?.id);
-  };
-
   const handleOpenVideo = (index) => {
-    const unlocked = isVideoUnlocked(index);
-
-    if (!unlocked) {
-      Alert.alert(
-        "Aula bloqueada",
-        "Assista à aula anterior para liberar este vídeo."
-      );
-      return;
-    }
-
     navigation.navigate("ChildLesson", {
       initialIndex: index,
       module: "children",
       videosFromMenu: videos,
     });
   };
-
   const handleGoBack = () => {
     if (navigation.canGoBack()) {
       navigation.goBack();
@@ -215,7 +195,7 @@ const ChildMenuScreen = ({ navigation }) => {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconCircle}>
-            <Ionicons name="chevron-back" size={28} color="#2C3E50" />
+            <Ionicons name="chevron-back" size={30} color="#2C3E50" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.goalsBtn} onPress={() => navigation.navigate('WeeklyGoals')}>
@@ -226,14 +206,13 @@ const ChildMenuScreen = ({ navigation }) => {
         <View style={styles.containerLogo}>
           <Image
             source={require('../../assets/logo_menu_child.png')}
-            style={styles.imageLogo}
+            style={[styles.imageLogo, isTablet && styles.imageLogoTablet]}
             resizeMode="contain"
           />
         </View>
 
         <ScrollView style={styles.listContainer} showsVerticalScrollIndicator={false}>
           {videos.map((item, index) => {
-            const unlocked = isVideoUnlocked(index);
             const completed = completedVideoIds.includes(item.id);
 
             return (
@@ -241,11 +220,11 @@ const ChildMenuScreen = ({ navigation }) => {
                 key={item.id}
                 style={[
                   styles.menuItem,
+                  isTablet && styles.menuItemSmallTablet,
                   index % 2 === 0 ? styles.btnPink : styles.btnBlue,
-                  !unlocked && styles.lockedMenuItem,
                 ]}
                 onPress={() => handleOpenVideo(index)}
-                activeOpacity={unlocked ? 0.8 : 1}
+                activeOpacity={0.8}
               >
                 <View style={styles.imageContainer}>
                   <Image
@@ -261,10 +240,8 @@ const ChildMenuScreen = ({ navigation }) => {
 
                 {completed ? (
                   <Ionicons name="checkmark-circle" size={24} color="#FFF" />
-                ) : unlocked ? (
-                  <Ionicons name="chevron-forward" size={24} color="#FFF" />
                 ) : (
-                  <Ionicons name="lock-closed" size={22} color="#FFF" />
+                  <Ionicons name="chevron-forward" size={24} color="#FFF" />
                 )}
               </TouchableOpacity>
             );
@@ -314,7 +291,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 18,
   },
-    simpleLoadingContent: {
+  simpleLoadingContent: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -385,9 +362,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  lockedMenuItem: {
-    opacity: 0.55,
-  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -398,9 +372,9 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   iconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 50,
+    height: 50,
+    borderRadius: 20,
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -425,7 +399,7 @@ const styles = StyleSheet.create({
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 80,
+    minHeight: 80,
     borderRadius: 25,
     paddingHorizontal: 10,
     borderWidth: 2,
@@ -434,9 +408,13 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderColor: 'rgba(255, 255, 255, 0.4)',
   },
+  menuItemSmallTablet: {
+    width: '96%',
+    alignSelf: 'center',
+  },
   imageContainer: {
-    width: 80,
-    height: 80,
+    width: 72,
+    minHeight: 64,
     marginRight: 6,
     justifyContent: 'center',
     alignItems: 'center',
@@ -451,7 +429,7 @@ const styles = StyleSheet.create({
   },
   itemImage: {
     width: '100%',
-    height: '100%',
+    height: 64,
     borderRadius: 25,
     resizeMode: 'contain',
   },
@@ -466,6 +444,8 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: '#4E342E',
     fontWeight: '700',
+    flexShrink: 1,
+    lineHeight: 22,
   },
   containerLogo: {
     marginTop: -35,
@@ -478,14 +458,9 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  goalsActionBtn: {
-    backgroundColor: '#ecd83f',
-    paddingVertical: 8,
-    borderRadius: 20,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#b4a31d',
-    borderBottomWidth: 6,
+  imageLogoTablet: {
+    width: '130%',
+    height: '130%',
   },
   goalsBtn: {
     backgroundColor: '#FDE8A8',
@@ -494,14 +469,15 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 17,
     borderBottomWidth: 6,
-    paddingHorizontal: 6,
-    paddingVertical: 6,
+    paddingHorizontal: 5,
+    paddingVertical: 5,
+    marginTop: 15,
     alignItems: 'center',
     justifyContent: 'center',
   },
   goalsButtonText: {
     color: '#4A2C2A',
-    fontSize: 24,
+    fontSize: 23,
     fontWeight: 'bold',
   }
 });

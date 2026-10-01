@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground, ScrollView, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,8 +20,10 @@ const COLORS = {
 };
 
 const StickerAchievementScreen = ({ navigation, route }) => {
-    const { height } = useWindowDimensions();
+    const { width, height } = useWindowDimensions();
+    const isTablet = width >= 768;
     const isCompactHeight = height < 800;
+    const [stickerLoaded, setStickerLoaded] = useState(false);
 
     const {
         isFinalAchievement = false,
@@ -29,24 +32,40 @@ const StickerAchievementScreen = ({ navigation, route }) => {
         showModuleFinalAchievement = false,
     } = route.params || {};
 
-    const earnedSticker = earnedStickers[0];
+    const specialStickers = earnedStickers
+        .filter((sticker) => sticker.is_special)
+        .sort((a, b) => a.order - b.order);
+
+    const earnedSticker = isFinalAchievement
+        ? specialStickers[0] || earnedStickers[0]
+        : earnedStickers[0];
 
     const hasEarnedSticker = !!earnedSticker;
 
-    const stickerImageSource = hasEarnedSticker
+    const stickerImageSource = hasEarnedSticker && earnedSticker.image_url
         ? { uri: earnedSticker.image_url }
         : achievementType === 'weekly_brushing_goal'
             ? require('../../assets/sticker_pop.png')
-            : isFinalAchievement
-                ? require('../../assets/stickers/trofeu_dourado_1.png')
-                : null;
+            : null;
+    const stickerImageKey = hasEarnedSticker
+        ? earnedSticker.image_url
+        : achievementType === 'weekly_brushing_goal'
+            ? 'weekly_brushing_goal'
+            : null;
+    const canContinue = !stickerImageSource || stickerLoaded;
+
+    useEffect(() => {
+        setStickerLoaded(!stickerImageSource);
+    }, [stickerImageKey]);
 
     const handleContinue = () => {
+        if (!canContinue) return;
+
         if (showModuleFinalAchievement && !isFinalAchievement) {
             navigation.replace('StickerAchievementScreen', {
                 isFinalAchievement: true,
-                earnedStickers: [],
-                achievementType: null,
+                earnedStickers,
+                achievementType,
                 showModuleFinalAchievement: false,
             });
             return;
@@ -92,8 +111,24 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                     ]}
                     showsVerticalScrollIndicator={false}
                 >
+                    {isTablet && (
+                        <View style={styles.logoWrapperTablet}>
+                            <Image
+                                source={require('../../assets/upper_logo.png')}
+                                style={styles.logoImageTablet}
+                                resizeMode="contain"
+                            />
+                        </View>
+                    )}
 
-                    <Text style={[styles.mainTitle, isFinalAchievement && styles.goldTitle]}>
+                    <Text
+                        style={[
+                            styles.mainTitle,
+                            isTablet && styles.mainTitleTablet,
+                            isFinalAchievement && styles.goldTitle,
+                            isTablet && isFinalAchievement && styles.goldTitleTablet,
+                        ]}
+                    >
                         {isFinalAchievement ? "PARABÉNS!".toUpperCase() : "Parabéns!"}
                     </Text>
 
@@ -107,7 +142,7 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                         </View>
                     )}
 
-                    <Text style={styles.descriptionText}>
+                    <Text style={[styles.descriptionText, isTablet && styles.descriptionTextTablet]}>
                         {isFinalAchievement
                             ? "Você completou todas as lições. Continue cuidando bem do seu sorriso!"
                             : achievementType === 'weekly_brushing_goal'
@@ -120,7 +155,9 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                     <View
                         style={[
                             styles.adesivoHighlight,
+                            isTablet && styles.adesivoHighlightTablet,
                             isCompactHeight && styles.adesivoHighlightCompact,
+                            isTablet && isCompactHeight && styles.adesivoHighlightTabletCompact,
                             isFinalAchievement && { borderColor: COLORS.specialBorder },
                         ]}
                     >
@@ -133,20 +170,29 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                         {stickerImageSource && (
                             <Image
                                 source={stickerImageSource}
-                                style={styles.adesivoImage}
+                                style={[styles.adesivoImage, isTablet && styles.adesivoImageTablet]}
                                 resizeMode="contain"
+                                onLoadEnd={() => setStickerLoaded(true)}
+                                onError={() => setStickerLoaded(true)}
                             />
                         )}
                             
                     </View>
                     <TouchableOpacity
-                        style={styles.actionButton}
+                        style={[
+                            styles.actionButton,
+                            isTablet && styles.actionButtonTablet,
+                            !canContinue && styles.actionButtonDisabled,
+                        ]}
                         onPress={handleContinue}
-                        activeOpacity={0.8}
+                        activeOpacity={canContinue ? 0.8 : 1}
+                        disabled={!canContinue}
                     >
                         <Text style={styles.actionButtonText}>
-                            {isFinalAchievement
-                                ? "Voltar à Tela Inicial"
+                            {!canContinue
+                                ? "Carregando..."
+                                : isFinalAchievement
+                                ? "Voltar à tela inicial"
                                 : showModuleFinalAchievement
                                     ? "Ver adesivo especial"
                                     : "Continuar"}
@@ -180,7 +226,10 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         flex: 1,
-        width: '100%'
+        width: '100%',
+        position: 'relative',
+        zIndex: 2,
+        elevation: 2,
     },
     headerDecoration: {
         position: 'absolute',
@@ -188,7 +237,8 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 150,
         overflow: 'visible',
-        zIndex: 5
+        zIndex: 0,
+        elevation: 0
     },
     balaoWrapper: {
         position: 'absolute',
@@ -210,31 +260,50 @@ const styles = StyleSheet.create({
     },
     content: {
         flexGrow: 1,
+        position: 'relative',
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
-        paddingHorizontal: 40,
-        paddingTop: 70,
-        paddingBottom: 28
+        paddingHorizontal: 42,
+        paddingTop: 118,
+        paddingBottom: 30
     },
     contentCompact: {
         paddingHorizontal: 28,
-        paddingTop: 58,
+        paddingTop: 96,
         paddingBottom: 18
     },
+    logoWrapperTablet: {
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: -250,
+    },
+    logoImageTablet: {
+        width: 420,
+        height: 300,
+    },
     mainTitle: {
-        fontSize: 48,
+        fontSize: 52,
         fontWeight: '700',
         color: COLORS.titleBlue,
         textAlign: 'center',
         marginBottom: 20,
         textShadowColor: 'rgba(255, 255, 255, 0.8)',
         textShadowOffset: { width: 0, height: 2 },
-        textShadowRadius: 4
+        textShadowRadius: 4,
+        zIndex: 100,
+        elevation: 100,
+    },
+    mainTitleTablet: {
+        fontSize: 62,
+        marginBottom: 18,
+        zIndex: 100,
+        elevation: 100,
     },
     avatarContainer: {
-        width: '80%',
-        height: 120,
+        width: '85%',
+        height: 130,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 20
@@ -243,16 +312,22 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%'
     },
+    // Ajuste da fonte da descrição.
     descriptionText: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
         color: COLORS.textGrey,
         textAlign: 'center',
-        marginBottom: 30
+        marginBottom: 32
     },
+    descriptionTextTablet: {
+        fontSize: 24,
+        marginBottom: 36,
+    },
+    // Ajuste do tamanho do bloco do adesivo.
     adesivoHighlight: {
-        width: 180,
-        height: 180,
+        width: 190,
+        height: 190,
         backgroundColor: 'transparent',
         borderRadius: 25,
         justifyContent: 'center',
@@ -267,10 +342,21 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.15,
         shadowRadius: 5
     },
+    adesivoHighlightTablet: {
+        width: 250,
+        height: 250,
+        marginBottom: 48,
+        borderRadius: 30,
+    },
     adesivoHighlightCompact: {
-        width: 160,
-        height: 160,
+        width: 170,
+        height: 170,
         marginBottom: 24
+    },
+    adesivoHighlightTabletCompact: {
+        width: 220,
+        height: 220,
+        marginBottom: 30,
     },
     brilhoStars: {
         ...StyleSheet.absoluteFillObject,
@@ -278,11 +364,17 @@ const styles = StyleSheet.create({
         borderRadius: 19,
         overflow: 'hidden'
     },
+    // Ajuste da imagem do adesivo dentro do destaque.
     adesivoImage: {
-        width: '80%',
-        height: '80%',
+        width: '82%',
+        height: '82%',
         zIndex: 2
     },
+    adesivoImageTablet: {
+        width: '88%',
+        height: '88%',
+    },
+    // Ajuste do botão de continuar.
     actionButton: {
         backgroundColor: COLORS.nextButton,
         borderBottomColor: COLORS.nextButtonShadow,
@@ -301,9 +393,17 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 4
     },
+    actionButtonTablet: {
+        width: '50%',
+        alignSelf: 'center',
+    },
+    actionButtonDisabled: {
+        opacity: 0.55,
+    },
+    // Ajuste da fonte do texto do botão.
     actionButtonText: {
         color: COLORS.white,
-        fontSize: 22,
+        fontSize: 24,
         fontWeight: 'bold',
         textShadowColor: 'rgba(0, 0, 0, 0.1)',
         textShadowOffset: { width: 0, height: 1 },
@@ -327,14 +427,19 @@ const styles = StyleSheet.create({
     pageActive: {
         backgroundColor: COLORS.paginationActive
     },
+    // Ajuste do título especial final.
     goldTitle: {
-        fontSize: 56,
+        fontSize: 60,
         color: '#FFD700',
         letterSpacing: 2,
         textShadowColor: '#D35400',
         textShadowOffset: { width: 0, height: 5 },
         textShadowRadius: 2,
         marginBottom: 30,
+    },
+    goldTitleTablet: {
+        fontSize: 70,
+        marginBottom: 34,
     },
 });
 
