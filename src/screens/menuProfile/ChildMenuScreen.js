@@ -95,7 +95,6 @@ const ChildMenuScreen = ({ navigation }) => {
       videosFromMenu: videos,
     });
   };
-
   const handleGoBack = () => {
     if (navigation.canGoBack()) {
       navigation.goBack();
@@ -196,7 +195,7 @@ const ChildMenuScreen = ({ navigation }) => {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconCircle}>
-            <Ionicons name="chevron-back" size={34} color="#2C3E50" />
+            <Ionicons name="chevron-back" size={30} color="#2C3E50" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.goalsBtn} onPress={() => navigation.navigate('WeeklyGoals')}>
@@ -373,9 +372,9 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   iconCircle: {
-    width: 74,
-    height: 62,
-    borderRadius: 26,
+    width: 50,
+    height: 50,
+    borderRadius: 20,
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -470,15 +469,15 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 17,
     borderBottomWidth: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
+    paddingHorizontal: 5,
+    paddingVertical: 5,
     marginTop: 15,
     alignItems: 'center',
     justifyContent: 'center',
   },
   goalsButtonText: {
     color: '#4A2C2A',
-    fontSize: 27,
+    fontSize: 23,
     fontWeight: 'bold',
   }
 });

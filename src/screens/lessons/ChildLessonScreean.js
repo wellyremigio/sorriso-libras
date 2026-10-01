@@ -265,7 +265,7 @@ const ChildLessonScreen = ({ navigation, route }) => {
         >
           <View style={[styles.topHeader, isTablet && styles.topHeaderTablet]}>
             <TouchableOpacity onPress={handleGoBack} style={styles.iconButton}>
-              <Ionicons name="chevron-back" size={34} color="#5D4037" />
+              <Ionicons name="chevron-back" size={30} color="#5D4037" />
             </TouchableOpacity>
 
             <View style={[styles.logoPlaceholder, isTablet && styles.logoPlaceholderTablet]}>
@@ -277,7 +277,7 @@ const ChildLessonScreen = ({ navigation, route }) => {
             </View>
 
             <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
-              <Ionicons name="home" size={34} color="#5D4037" />
+              <Ionicons name="home" size={28} color="#5D4037" />
             </TouchableOpacity>
           </View>
 
@@ -505,9 +505,9 @@ const styles = StyleSheet.create({
     paddingBottom: 18,
   },
   iconButton: {
-    width: 74,
-    height: 62,
-    borderRadius: 26,
+    width: 50,
+    height: 50,
+    borderRadius: 20,
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -542,10 +542,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   logoImage: {
-    width: 300,
-    height: 200
+    width: 250,
+    height: 250
   },
-  // Ajuste de largura leve aplicado só em tablet.
   logoImageTablet: {
     width: 420,
     height: 300,
@@ -561,7 +560,9 @@ const styles = StyleSheet.create({
   titleBannerTablet: {
     marginBottom: 28,
   },
-  titleArrow: { marginRight: 15 },
+  titleArrow: { 
+    marginRight: 15 
+  },
   titleText: {
     flex: 1,
     fontSize: 18,
