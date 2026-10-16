@@ -1,8 +1,10 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 const CaregiverMenuScreen = ({ navigation }) => {
+  const { width } = useWindowDimensions();
+  const isDesktop = width >= 1024;
 
   const menuItems = [
     { id: '1', title: 'IMPORTÂNCIA DA SUPERVISÃO DA ESCOVAÇÃO E FIO DENTAL' },
@@ -15,22 +17,25 @@ const CaregiverMenuScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
 
-      <View style={styles.header}>
+      <View style={[styles.header, isDesktop && styles.sectionDesktop]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="chevron-back" size={28} color="#2C3E50" />
         </TouchableOpacity>
 
       </View>
 
-      <View style={styles.titleContainer}>
+      <View style={[styles.titleContainer, isDesktop && styles.sectionDesktop]}>
         <Text style={styles.mainTitle}>Cuidados com a Saúde Bucal</Text>
       </View>
 
-      <ScrollView style={styles.listContainer}>
+      <ScrollView
+        style={styles.listContainer}
+        contentContainerStyle={[styles.listContent, isDesktop && styles.listContentDesktop]}
+      >
         {menuItems.map((item, index) => (
           <TouchableOpacity
             key={item.id}
-            style={styles.menuItem}
+            style={[styles.menuItem, isDesktop && styles.menuItemDesktop]}
             onPress={() => navigation.navigate('AdultLesson', {
               menuItems: menuItems,
               initialIndex: index,
@@ -62,6 +67,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingTop: 10,
     paddingBottom: 20,
+  },
+  sectionDesktop: {
+    width: '100%',
+    maxWidth: 980,
+    alignSelf: 'center',
   },
   backButton: {
     padding: 5,
@@ -99,6 +109,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingTop: 10,
   },
+  listContent: {
+    paddingBottom: 24,
+  },
+  listContentDesktop: {
+    width: '100%',
+    maxWidth: 980,
+    alignSelf: 'center',
+  },
   menuItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -114,6 +132,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+  },
+  menuItemDesktop: {
+    paddingVertical: 24,
+    paddingHorizontal: 22,
   },
   itemLeftContent: {
     flex: 1, // Impede que o texto expulse a seta do botão

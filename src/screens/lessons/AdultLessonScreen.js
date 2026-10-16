@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import FloatingBalloons from '../../components/animation/FloatingBalloons';
 
 const AdultLessonScreen = ({ navigation, route }) => {
+    const { width } = useWindowDimensions();
+    const isTablet = width >= 768;
+    const isDesktop = width >= 1024;
     // Recebe a lista de vídeos, o índice e o tipo de perfil que clicou
     const { menuItems = [], initialIndex = 0, profileType = 'caregiver' } = route.params || {};
 
@@ -46,7 +49,7 @@ const AdultLessonScreen = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
+            <View style={[styles.header, isDesktop && styles.sectionDesktop]}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
                     <Ionicons name="arrow-back" size={28} color="#7F8C8D" />
                 </TouchableOpacity>
@@ -56,11 +59,11 @@ const AdultLessonScreen = ({ navigation, route }) => {
                 </TouchableOpacity>
             </View>
 
-            <View style={styles.titleContainer}>
-                <Text style={styles.titleText}>{currentItem.title}</Text>
+            <View style={[styles.titleContainer, isDesktop && styles.sectionDesktop]}>
+                <Text style={[styles.titleText, isTablet && styles.titleTextTablet]}>{currentItem.title}</Text>
             </View>
 
-            <View style={styles.videoContainer}>
+            <View style={[styles.videoContainer, isTablet && styles.videoContainerTablet, isDesktop && styles.sectionDesktop]}>
                 <View style={styles.videoPlaceholder}>
                     <FontAwesome5 name="play-circle" size={50} color="#BDC3C7" />
                     <Text style={styles.videoTime}>0:00 / 3:45</Text>
@@ -70,20 +73,20 @@ const AdultLessonScreen = ({ navigation, route }) => {
                 </View>
             </View>
 
-            <View style={styles.stepIndicatorContainer}>
+            <View style={[styles.stepIndicatorContainer, isDesktop && styles.sectionDesktop]}>
                 <Text style={styles.stepText}>Módulo {currentIndex + 1}</Text>
                 <Text style={styles.stepSubtitle} numberOfLines={1}>Conteúdo Atual</Text>
                 <Text style={styles.stepText}>{currentIndex + 1} / {totalSteps}</Text>
             </View>
 
-            <View style={styles.explanationBox}>
+            <View style={[styles.explanationBox, isDesktop && styles.sectionDesktop]}>
                 <Text style={styles.explanationText}>
                     Acompanhe o conteúdo em vídeo com tradução simultânea para Libras.
                 </Text>
             </View>
 
             <TouchableOpacity
-                style={styles.nextButton}
+                style={[styles.nextButton, isTablet && styles.nextButtonTablet]}
                 onPress={handleNextStep}
                 disabled={isCelebrating || showFinishPopup}
             >
@@ -141,6 +144,11 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 15,
   },
+  sectionDesktop: {
+    width: '100%',
+    maxWidth: 980,
+    alignSelf: 'center',
+  },
 
   iconButton: {
     padding: 5,
@@ -159,6 +167,9 @@ const styles = StyleSheet.create({
     color: '#2C3E50',
     textAlign: 'center',
   },
+  titleTextTablet: {
+    fontSize: 20,
+  },
 
   videoContainer: {
     margin: 15,
@@ -171,6 +182,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#BDC3C7',
+  },
+  videoContainerTablet: {
+    height: 360,
+    marginHorizontal: 24,
   },
 
   videoTime: {
@@ -245,6 +260,10 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 25,
     alignItems: 'center',
+  },
+  nextButtonTablet: {
+    width: '50%',
+    alignSelf: 'center',
   },
 
   nextButtonText: {

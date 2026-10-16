@@ -6,11 +6,9 @@ import {
     StyleSheet,
     TouchableOpacity,
     Animated,
-    Dimensions,
+    useWindowDimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
-const { width } = Dimensions.get('window');
 
 const LudicInfoModal = ({
     visible,
@@ -21,6 +19,7 @@ const LudicInfoModal = ({
     iconName = 'sparkles',
     iconColor = '#F3A1B5',
 }) => {
+    const { width } = useWindowDimensions();
     const opacity = useRef(new Animated.Value(0)).current;
     const translateY = useRef(new Animated.Value(18)).current;
     const scale = useRef(new Animated.Value(0.92)).current;
@@ -77,7 +76,7 @@ const LudicInfoModal = ({
                     <Text style={styles.title}>{title}</Text>
                     <Text style={styles.message}>{message}</Text>
 
-                    <TouchableOpacity style={styles.button} onPress={onPress} activeOpacity={0.85}>
+                    <TouchableOpacity style={[styles.button, { minWidth: Math.min(width * 0.5, 260) }]} onPress={onPress} activeOpacity={0.85}>
                         <Text style={styles.buttonText}>{buttonLabel}</Text>
                     </TouchableOpacity>
                 </Animated.View>
@@ -137,7 +136,6 @@ const styles = StyleSheet.create({
         marginBottom: 22,
     },
     button: {
-        minWidth: width * 0.5,
         backgroundColor: '#78DDA0',
         paddingVertical: 14,
         paddingHorizontal: 22,

@@ -58,6 +58,8 @@ const getCurrentWeekKey = () => {
 const WeeklyGoalsScreen = ({ navigation }) => {
     const { width } = useWindowDimensions();
     const isTablet = width >= 768;
+    const isDesktop = width >= 1024;
+    const checkboxSize = isTablet ? 40 : 36;
     const daysOfWeek = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
     const brushingShifts = [
         { id: 'morning', title: 'Manhã', icon: 'sun' },
@@ -263,7 +265,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
             <ImageBackground
                 source={require("../../assets/imagem_fundo.png")}
                 style={styles.background}
-                resizeMethod="cover"
+                resizeMode="cover"
             >
                 <SafeAreaView style={styles.container}>
                     <View style={styles.loadingContent}>
@@ -280,7 +282,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
             <ImageBackground
                 source={require("../../assets/imagem_fundo.png")}
                 style={styles.background}
-                resizeMethod="cover"
+                resizeMode="cover"
             >
                 <SafeAreaView style={styles.container}>
                     <Text style={styles.progressText}>{error}</Text>
@@ -297,10 +299,10 @@ const WeeklyGoalsScreen = ({ navigation }) => {
         <ImageBackground
             source={require("../../assets/imagem_fundo.png")}
             style={styles.background}
-            resizeMethod="cover"
+            resizeMode="cover"
         >
             <SafeAreaView style={styles.container}>
-                <View style={[styles.topHeader, isTablet && styles.topHeaderTablet]}>
+                <View style={[styles.topHeader, isTablet && styles.topHeaderTablet, isDesktop && styles.sectionDesktop]}>
                     <TouchableOpacity
                         onPress={() => navigation.goBack()}
                         style={styles.iconButton}
@@ -327,12 +329,12 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                     </View>
                 </View>
 
-                <View style={[styles.titleBanner, isTablet && styles.sectionTablet]}>
+                <View style={[styles.titleBanner, isTablet && styles.sectionTablet, isDesktop && styles.sectionDesktop]}>
                     <Text style={styles.titleText}>Minhas Metas da Semana</Text>
                 </View>
 
-                <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                    <View style={[styles.todayGoalBanner, isTablet && styles.sectionTablet]}>
+                <ScrollView contentContainerStyle={[styles.scrollContent, isDesktop && styles.scrollContentDesktop]} showsVerticalScrollIndicator={false}>
+                    <View style={[styles.todayGoalBanner, isTablet && styles.sectionTablet, isDesktop && styles.sectionDesktop]}>
                         <FontAwesome5
                             name="tooth"
                             size={20}
@@ -347,7 +349,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                         </Text>
                     </View>
 
-                    <View style={[styles.flossReminderCard, isTablet && styles.sectionTablet]}>
+                    <View style={[styles.flossReminderCard, isTablet && styles.sectionTablet, isDesktop && styles.sectionDesktop]}>
 
                         <View style={styles.stickerImagePlaceholderDental}>
                             <Image source={require('../../assets/dental-floss.png')} style={styles.stickerImage} />
@@ -359,7 +361,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                         </Text>
                     </View>
 
-                    <View style={[styles.calendarWrapper, isTablet && styles.calendarWrapperTablet]}>
+                    <View style={[styles.calendarWrapper, isTablet && styles.calendarWrapperTablet, isDesktop && styles.calendarWrapperDesktop]}>
                         <View style={styles.iconColumn}>
                             <View style={styles.iconHeaderSpace} />
                             {brushingShifts.map((shift) => (
@@ -395,6 +397,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                                                 <TouchableOpacity
                                                     style={[
                                                         styles.checkbox,
+                                                        { width: checkboxSize, height: checkboxSize },
                                                         isChecked && styles.checkboxActive,
                                                         isFutureDay && styles.checkboxDisabled,
                                                         isSavingCell && styles.checkboxSaving,
@@ -414,14 +417,14 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                         </View>
                     </View>
 
-                    <View style={[styles.progressSection, isTablet && styles.sectionTablet]}>
+                    <View style={[styles.progressSection, isTablet && styles.sectionTablet, isDesktop && styles.sectionDesktop]}>
                         <Text style={styles.progressText}>{totalCompleted}/{totalGoal} escovações concluídas</Text>
                         <View style={styles.progressBarBackground}>
                             <View style={[styles.progressBarFill, { width: `${(totalCompleted / totalGoal) * 100}%` }]} />
                         </View>
                     </View>
 
-                    <View style={[styles.incentiveCard, isTablet && styles.sectionTablet]}>
+                    <View style={[styles.incentiveCard, isTablet && styles.sectionTablet, isDesktop && styles.sectionDesktop]}>
                         <Text style={styles.incentiveMainText}>Continue assim! Você está indo muito bem!</Text>
                         <Text style={styles.incentiveSubText}>Ganhe um adesivo se completar sua meta semanal!</Text>
 
@@ -431,7 +434,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                         </View>
                     </View>
                     <TouchableOpacity
-                        style={[styles.actionButton, isTablet && styles.actionButtonTablet]}
+                        style={[styles.actionButton, isTablet && styles.actionButtonTablet, isDesktop && styles.actionButtonDesktop]}
                         onPress={handleFinishBrushing}
                         activeOpacity={0.8}
                     >
@@ -520,8 +523,18 @@ const styles = StyleSheet.create({
         width: '82%',
         alignSelf: 'center',
     },
+    sectionDesktop: {
+        width: '100%',
+        maxWidth: 920,
+        alignSelf: 'center',
+    },
     calendarWrapperTablet: {
         width: '92%',
+        alignSelf: 'center',
+    },
+    calendarWrapperDesktop: {
+        width: '100%',
+        maxWidth: 980,
         alignSelf: 'center',
     },
     rightIconsGroup: {
@@ -579,6 +592,9 @@ const styles = StyleSheet.create({
     scrollContent: {
         paddingHorizontal: 12,
         paddingBottom: 30,
+    },
+    scrollContentDesktop: {
+        alignItems: 'center',
     },
     todayGoalBanner: {
         flexDirection: 'row',
@@ -653,8 +669,6 @@ const styles = StyleSheet.create({
         borderRightColor: COLORS.creamBorder
     },
     checkbox: {
-        width: isTablet ? 40 : 36,
-        height: isTablet ? 40 : 36,
         borderRadius: 10,
         backgroundColor: '#FFF',
         borderWidth: 2,
@@ -770,6 +784,9 @@ const styles = StyleSheet.create({
     actionButtonTablet: {
         width: '50%',
         alignSelf: 'center',
+    },
+    actionButtonDesktop: {
+        maxWidth: 420,
     },
     actionButtonText: {
         color: '#2C3E50',

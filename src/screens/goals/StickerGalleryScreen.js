@@ -6,6 +6,7 @@ import { useWindowDimensions } from 'react-native';
 import { ActivityIndicator } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { getChildStickerGallery } from '../../services/stickerService';
+import StickerPreviewModal from '../../components/goals/StickerPreviewModal';
 
 const COLORS = {
     textBlue: '#2C4A63',
@@ -21,9 +22,13 @@ const COLORS = {
 const StickerGalleryScreen = ({ navigation }) => {
     const { width } = useWindowDimensions();
     const isTablet = width >= 768;
+    const isDesktop = width >= 1024;
+    const gridColumns = isDesktop ? 6 : isTablet ? 5 : 4;
+    const cardWidth = `${100 / gridColumns - 3}%`;
     const [earnedStickers, setEarnedStickers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [selectedSticker, setSelectedSticker] = useState(null);
 
     const loadStickerGallery = async () => {
         try {
@@ -56,14 +61,26 @@ const StickerGalleryScreen = ({ navigation }) => {
 
     const unlockedStickers = earnedStickers.length;
 
+    const openStickerPreview = (sticker) => {
+        setSelectedSticker(sticker);
+    };
+
+    const closeStickerPreview = () => {
+        setSelectedSticker(null);
+    };
+
     const renderStickerCard = ({ item }) => (
-        <View style={[styles.card, styles.cardUnlocked]}>
+        <TouchableOpacity
+            style={[styles.card, styles.cardUnlocked, { width: cardWidth }]}
+            onPress={() => openStickerPreview(item)}
+            activeOpacity={0.85}
+        >
             <Image
                 source={{ uri: item.image_url }}
                 style={[styles.stickerImage, isTablet && styles.stickerImageTablet]}
                 resizeMode="contain"
             />
-        </View>
+        </TouchableOpacity>
     );
 
     if (loading) {
@@ -111,7 +128,7 @@ const StickerGalleryScreen = ({ navigation }) => {
             resizeMode="cover"
         >
             <SafeAreaView style={styles.container}>
-                <View style={[styles.topHeader, isTablet && styles.topHeaderTablet]}>
+                    <View style={[styles.topHeader, isTablet && styles.topHeaderTablet, isDesktop && styles.sectionDesktop]}>
                     <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
                         <Ionicons name="chevron-back" size={30} color={COLORS.textBrown} />
                     </TouchableOpacity>
@@ -127,12 +144,12 @@ const StickerGalleryScreen = ({ navigation }) => {
                     <View style={styles.headerSpacer} />
                 </View>
 
-                <View style={[styles.titleSection, isTablet && styles.sectionTablet]}>
+                <View style={[styles.titleSection, isTablet && styles.sectionTablet, isDesktop && styles.sectionDesktop]}>
                     <Text style={styles.mainTitle}>Galeria de Adesivos</Text>
                     <Text style={styles.subTitle}>Colecione todos os adesivos!</Text>
                 </View>
 
-                <View style={[styles.progressWrapper, isTablet && styles.progressWrapperTablet]}>
+                <View style={[styles.progressWrapper, isTablet && styles.progressWrapperTablet, isDesktop && styles.progressWrapperDesktop]}>
                     <View style={styles.progressBarContainer}>
                         <View
                             style={[
@@ -147,21 +164,26 @@ const StickerGalleryScreen = ({ navigation }) => {
                 </View>
 
                 {specialStickers.length > 0 && (
-                    <View style={[styles.specialStickersWrapper, isTablet && styles.sectionTablet]}>
+                    <View style={[styles.specialStickersWrapper, isTablet && styles.sectionTablet, isDesktop && styles.sectionDesktop]}>
                         {specialStickers.map((sticker) => (
-                            <View key={sticker.id} style={[styles.card, styles.specialCard]}>
+                            <TouchableOpacity
+                                key={sticker.id}
+                                style={[styles.card, styles.specialCard, isDesktop && styles.specialCardDesktop]}
+                                onPress={() => openStickerPreview(sticker)}
+                                activeOpacity={0.85}
+                            >
                                 <Image
                                     source={{ uri: sticker.image_url }}
                                     style={[styles.specialStickerImage, isTablet && styles.specialStickerImageTablet]}
                                     resizeMode="contain"
                                 />
-                            </View>
+                            </TouchableOpacity>
                         ))}
                     </View>
                 )}
 
                 {unlockedStickers === 0 && (
-                    <View style={[styles.emptyGallery, isTablet && styles.sectionTablet]}>
+                    <View style={[styles.emptyGallery, isTablet && styles.sectionTablet, isDesktop && styles.sectionDesktop]}>
                         <Text style={styles.emptyGalleryText}>
                             Você ainda não conquistou adesivos.
                         </Text>
@@ -169,16 +191,24 @@ const StickerGalleryScreen = ({ navigation }) => {
                 )}
 
                 <FlatList
+                    key={gridColumns}
                     data={normalStickers}
                     keyExtractor={(item) => item.id}
                     renderItem={renderStickerCard}
-                    numColumns={4}
+                    numColumns={gridColumns}
                     columnWrapperStyle={styles.row}
                     contentContainerStyle={[
                         styles.gridContainer,
                         isTablet && styles.sectionTablet,
+                        isDesktop && styles.gridContainerDesktop,
                     ]}
                     showsVerticalScrollIndicator={false}
+                />
+
+                <StickerPreviewModal
+                    visible={!!selectedSticker}
+                    sticker={selectedSticker}
+                    onClose={closeStickerPreview}
                 />
             </SafeAreaView>
         </ImageBackground>
@@ -252,6 +282,11 @@ const styles = StyleSheet.create({
         width: '82%',
         alignSelf: 'center',
     },
+    sectionDesktop: {
+        width: '100%',
+        maxWidth: 980,
+        alignSelf: 'center',
+    },
     iconButton: {
         width: 50,
         height: 50,
@@ -305,6 +340,12 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         paddingHorizontal: 0,
     },
+    progressWrapperDesktop: {
+        width: '100%',
+        maxWidth: 560,
+        alignSelf: 'center',
+        paddingHorizontal: 0,
+    },
     progressBarContainer: {
         height: 30,
         backgroundColor: COLORS.progressBg,
@@ -346,6 +387,12 @@ const styles = StyleSheet.create({
     gridContainer: {
         paddingHorizontal: 20,
         paddingBottom: 20
+    },
+    gridContainerDesktop: {
+        width: '100%',
+        maxWidth: 980,
+        alignSelf: 'center',
+        paddingHorizontal: 0,
     },
     row: {
         justifyContent: 'space-between',
@@ -396,6 +443,9 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 5,
+    },
+    specialCardDesktop: {
+        width: 240,
     },
     loadingContent: {
         flex: 1,

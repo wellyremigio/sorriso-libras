@@ -29,6 +29,7 @@ const CHILD_MENU_IMAGES = [
 const ChildMenuScreen = ({ navigation }) => {
   const { width } = useWindowDimensions();
   const isTablet = width >= 768 && width < 1024;
+  const isDesktop = width >= 1024;
   const [videos, setVideos] = useState([]);
   const [completedVideoIds, setCompletedVideoIds] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -193,7 +194,7 @@ const ChildMenuScreen = ({ navigation }) => {
       resizeMode="cover"
     >
       <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
+        <View style={[styles.header, isDesktop && styles.headerDesktop]}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconCircle}>
             <Ionicons name="chevron-back" size={30} color="#2C3E50" />
           </TouchableOpacity>
@@ -203,15 +204,19 @@ const ChildMenuScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.containerLogo}>
+        <View style={[styles.containerLogo, isDesktop && styles.containerLogoDesktop]}>
           <Image
             source={require('../../assets/logo_menu_child.png')}
-            style={[styles.imageLogo, isTablet && styles.imageLogoTablet]}
+            style={[styles.imageLogo, isTablet && styles.imageLogoTablet, isDesktop && styles.imageLogoDesktop]}
             resizeMode="contain"
           />
         </View>
 
-        <ScrollView style={styles.listContainer} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={styles.listContainer}
+          contentContainerStyle={[styles.listContent, isDesktop && styles.listContentDesktop]}
+          showsVerticalScrollIndicator={false}
+        >
           {videos.map((item, index) => {
             const completed = completedVideoIds.includes(item.id);
 
@@ -221,6 +226,7 @@ const ChildMenuScreen = ({ navigation }) => {
                 style={[
                   styles.menuItem,
                   isTablet && styles.menuItemSmallTablet,
+                  isDesktop && styles.menuItemDesktop,
                   index % 2 === 0 ? styles.btnPink : styles.btnBlue,
                 ]}
                 onPress={() => handleOpenVideo(index)}
@@ -371,6 +377,11 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     zIndex: 10,
   },
+  headerDesktop: {
+    width: '100%',
+    maxWidth: 1100,
+    alignSelf: 'center',
+  },
   iconCircle: {
     width: 50,
     height: 50,
@@ -396,6 +407,18 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
   },
+  listContent: {
+    paddingBottom: 24,
+  },
+  listContentDesktop: {
+    width: '100%',
+    maxWidth: 1100,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 18,
+  },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -411,6 +434,12 @@ const styles = StyleSheet.create({
   menuItemSmallTablet: {
     width: '96%',
     alignSelf: 'center',
+  },
+  menuItemDesktop: {
+    width: '48%',
+    minHeight: 104,
+    marginBottom: 0,
+    paddingHorizontal: 18,
   },
   imageContainer: {
     width: 72,
@@ -454,6 +483,10 @@ const styles = StyleSheet.create({
     height: 170,
     marginBotton: 15,
   },
+  containerLogoDesktop: {
+    height: 190,
+    marginTop: -28,
+  },
   imageLogo: {
     width: '100%',
     height: '100%',
@@ -461,6 +494,11 @@ const styles = StyleSheet.create({
   imageLogoTablet: {
     width: '130%',
     height: '130%',
+  },
+  imageLogoDesktop: {
+    width: '100%',
+    height: '100%',
+    maxWidth: 760,
   },
   goalsBtn: {
     backgroundColor: '#FDE8A8',

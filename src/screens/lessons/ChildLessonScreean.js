@@ -54,6 +54,7 @@ const ChildLessonScreen = ({ navigation, route }) => {
   const { initialIndex = 0, module = "children", videosFromMenu = [] } = route.params || {};
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
+  const isDesktop = width >= 1024;
   const [videos, setVideos] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [loading, setLoading] = useState(true);
@@ -257,13 +258,14 @@ const ChildLessonScreen = ({ navigation, route }) => {
           style={[
             styles.mainContent,
             isTablet && styles.mainContentTablet,
+            isDesktop && styles.mainContentDesktop,
             {
               opacity: contentOpacity,
               transform: [{ translateY: contentTranslateY }],
             },
           ]}
         >
-          <View style={[styles.topHeader, isTablet && styles.topHeaderTablet]}>
+          <View style={[styles.topHeader, isTablet && styles.topHeaderTablet, isDesktop && styles.sectionDesktop]}>
             <TouchableOpacity onPress={handleGoBack} style={styles.iconButton}>
               <Ionicons name="chevron-back" size={30} color="#5D4037" />
             </TouchableOpacity>
@@ -281,7 +283,7 @@ const ChildLessonScreen = ({ navigation, route }) => {
             </TouchableOpacity>
           </View>
 
-          <View style={[styles.titleBanner, isTablet && styles.titleBannerTablet]}>
+          <View style={[styles.titleBanner, isTablet && styles.titleBannerTablet, isDesktop && styles.sectionDesktop]}>
             <Text style={styles.titleText}>{currentItem.title}</Text>
           </View>
 
@@ -289,10 +291,11 @@ const ChildLessonScreen = ({ navigation, route }) => {
             contentContainerStyle={[
               styles.scrollContent,
               isTablet && styles.scrollContentTablet,
+              isDesktop && styles.scrollContentDesktop,
             ]}
             showsVerticalScrollIndicator={false}
           >
-            <View style={[styles.videoCard, isTablet && styles.videoCardTablet]}>
+            <View style={[styles.videoCard, isTablet && styles.videoCardTablet, isDesktop && styles.videoCardDesktop]}>
               <LessonVideoPlayer
                 videoUrl={currentItem.video_url}
                 isTablet={isTablet}
@@ -300,12 +303,12 @@ const ChildLessonScreen = ({ navigation, route }) => {
               />
             </View>
 
-            <View style={[styles.stepIndicatorContainer, isTablet && styles.stepIndicatorContainerTablet]}>
+            <View style={[styles.stepIndicatorContainer, isTablet && styles.stepIndicatorContainerTablet, isDesktop && styles.sectionDesktop]}>
               <Text style={styles.stepText}>Passo {currentIndex + 1}  {currentItem.title}</Text>
               <Text style={styles.stepTextRight}>{currentIndex + 1}/{totalSteps}</Text>
             </View>
 
-            <View style={[styles.explanationBox, isTablet && styles.explanationBoxTablet]}>
+            <View style={[styles.explanationBox, isTablet && styles.explanationBoxTablet, isDesktop && styles.sectionDesktop]}>
               <Text style={styles.explanationText}>
                 {currentItem.description || "Assista ao vídeo com atenção."}
               </Text>
@@ -315,6 +318,7 @@ const ChildLessonScreen = ({ navigation, route }) => {
               style={[
                 styles.nextButton,
                 isTablet && styles.nextButtonTablet,
+                isDesktop && styles.nextButtonDesktop,
                 (!hasFinishedCurrentVideo || savingProgress) && styles.nextButtonDisabled,
               ]}
               onPress={handleNextStep}
@@ -390,6 +394,16 @@ const styles = StyleSheet.create({
   },
   mainContentTablet: {
     paddingTop: 18,
+  },
+  mainContentDesktop: {
+    width: '100%',
+    maxWidth: 1120,
+    alignSelf: 'center',
+  },
+  sectionDesktop: {
+    width: '100%',
+    maxWidth: 980,
+    alignSelf: 'center',
   },
   nextButtonDisabled: {
     opacity: 0.5,
@@ -576,6 +590,9 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 50,
   },
+  scrollContentDesktop: {
+    alignItems: 'center',
+  },
   videoCard: {
     marginHorizontal: 20,
     height: 220,
@@ -591,6 +608,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     height: 380,
     marginHorizontal: 0,
+  },
+  videoCardDesktop: {
+    width: '100%',
+    maxWidth: 980,
+    height: 430,
   },
   videoMainArea: {
     flex: 1,
@@ -652,6 +674,9 @@ const styles = StyleSheet.create({
     width: '50%',
     alignSelf: 'center',
     marginHorizontal: 0,
+  },
+  nextButtonDesktop: {
+    maxWidth: 420,
   },
   nextButtonText: {
     color: '#FFF',

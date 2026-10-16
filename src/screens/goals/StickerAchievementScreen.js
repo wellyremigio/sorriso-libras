@@ -22,6 +22,7 @@ const COLORS = {
 const StickerAchievementScreen = ({ navigation, route }) => {
     const { width, height } = useWindowDimensions();
     const isTablet = width >= 768;
+    const isDesktop = width >= 1024;
     const isCompactHeight = height < 800;
     const [stickerLoaded, setStickerLoaded] = useState(false);
 
@@ -104,10 +105,11 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                 </View>
 
                 <ScrollView
-                    style={styles.scrollView}
+                    style={[styles.scrollView, isTablet && styles.scrollViewTablet]}
                     contentContainerStyle={[
                         styles.content,
                         isCompactHeight && styles.contentCompact,
+                        isDesktop && styles.contentDesktop,
                     ]}
                     showsVerticalScrollIndicator={false}
                 >
@@ -125,6 +127,7 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                         style={[
                             styles.mainTitle,
                             isTablet && styles.mainTitleTablet,
+                            isTablet && styles.elevatedTitle,
                             isFinalAchievement && styles.goldTitle,
                             isTablet && isFinalAchievement && styles.goldTitleTablet,
                         ]}
@@ -182,6 +185,7 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                         style={[
                             styles.actionButton,
                             isTablet && styles.actionButtonTablet,
+                            isDesktop && styles.actionButtonDesktop,
                             !canContinue && styles.actionButtonDisabled,
                         ]}
                         onPress={handleContinue}
@@ -228,8 +232,12 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         position: 'relative',
-        zIndex: isTablet ? 10 : 2,
-        elevation: isTablet ? 10 : 2,
+        zIndex: 2,
+        elevation: 2,
+    },
+    scrollViewTablet: {
+        zIndex: 10,
+        elevation: 10,
     },
     headerDecoration: {
         position: 'absolute',
@@ -237,8 +245,8 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 150,
         overflow: 'visible',
-        zIndex: isTablet ? 1 : 0,
-        elevation: isTablet ? 1 : 0
+        zIndex: 0,
+        elevation: 0
     },
     balaoWrapper: {
         position: 'absolute',
@@ -273,6 +281,10 @@ const styles = StyleSheet.create({
         paddingTop: 96,
         paddingBottom: 18
     },
+    contentDesktop: {
+        maxWidth: 760,
+        alignSelf: 'center',
+    },
     logoWrapperTablet: {
         width: '100%',
         alignItems: 'center',
@@ -292,12 +304,14 @@ const styles = StyleSheet.create({
         textShadowColor: 'rgba(255, 255, 255, 0.8)',
         textShadowOffset: { width: 0, height: 2 },
         textShadowRadius: 4,
-        zIndex: isTablet ? 20 : 100,
-        elevation: isTablet ? 20 : 100,
+        zIndex: 100,
+        elevation: 100,
     },
     mainTitleTablet: {
         fontSize: 62,
         marginBottom: 18,
+    },
+    elevatedTitle: {
         zIndex: 100,
         elevation: 100,
     },
@@ -392,6 +406,9 @@ const styles = StyleSheet.create({
     actionButtonTablet: {
         width: '50%',
         alignSelf: 'center',
+    },
+    actionButtonDesktop: {
+        maxWidth: 420,
     },
     actionButtonDisabled: {
         opacity: 0.55,

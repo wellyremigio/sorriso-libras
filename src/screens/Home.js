@@ -7,8 +7,10 @@ import { getOrCreateChildId } from '../services/anonymousUserService';
 import { getVideosByModule } from '../services/videoServices';
 
 const Home = ({ navigation }) => {
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const isTablet = width >= 768;
+  const isDesktop = width >= 1024;
+  const isShortScreen = height < 720;
 
   useEffect(() => {
     const loadChild = async () => {
@@ -37,8 +39,8 @@ const Home = ({ navigation }) => {
       resizeMode="cover"
     >
       <SafeAreaView style={styles.container}>
-        <View style={styles.mainContent}>
-          <View style={styles.containerLogo}>
+        <View style={[styles.mainContent, isDesktop && styles.mainContentDesktop]}>
+          <View style={[styles.containerLogo, isTablet && styles.containerLogoTablet, isShortScreen && styles.containerLogoCompact]}>
             <Image
               source={require('../assets/criancas_sorrindo_logo.png')}
               style={styles.imageLogo}
@@ -46,11 +48,11 @@ const Home = ({ navigation }) => {
             />
           </View>
 
-          <Text style={styles.title}>Quem está usando o aplicativo?</Text>
+          <Text style={[styles.title, isDesktop && styles.titleDesktop]}>Quem está usando o aplicativo?</Text>
 
-          <View style={styles.containerButton}>
+          <View style={[styles.containerButton, isDesktop && styles.containerButtonDesktop]}>
             <TouchableOpacity
-              style={[styles.button, styles.btnDentist, isTablet && styles.buttonTablet]}
+              style={[styles.button, styles.btnDentist, isTablet && styles.buttonTablet, isDesktop && styles.buttonDesktop]}
               activeOpacity={0.8}
               onPress={() => navigation.navigate('DentistMenu')}
             >
@@ -65,7 +67,7 @@ const Home = ({ navigation }) => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.button, styles.btnChild, isTablet && styles.buttonTablet]}
+              style={[styles.button, styles.btnChild, isTablet && styles.buttonTablet, isDesktop && styles.buttonDesktop]}
               activeOpacity={0.8}
               onPress={() => navigation.navigate('ChildMenu')}
             >
@@ -81,7 +83,7 @@ const Home = ({ navigation }) => {
           </View>
         </View>
 
-        <View style={styles.partnerLogos}>
+        <View style={[styles.partnerLogos, isDesktop && styles.partnerLogosDesktop]}>
           <Image
             source={require('../assets/logoufcg1.png')}
             style={[styles.partnerLogo, styles.ufcgLogo]}
@@ -108,16 +110,29 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 24,
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   mainContent: {
     flex: 1,
     justifyContent: 'center',
+    width: '100%',
+    maxWidth: 760,
+  },
+  mainContentDesktop: {
+    maxWidth: 980,
   },
   containerLogo: {
     marginTop: 48,
     alignItems: 'center',
     width: '100%',
     height: 230,
+  },
+  containerLogoTablet: {
+    height: 260,
+  },
+  containerLogoCompact: {
+    height: 170,
+    marginTop: 18,
   },
   imageLogo: {
     width: '100%',
@@ -131,10 +146,20 @@ const styles = StyleSheet.create({
     marginVertical: 16,
     lineHeight: 32,
   },
+  titleDesktop: {
+    fontSize: 30,
+    lineHeight: 38,
+  },
   containerButton: {
     width: '100%',
     gap: 16,
     paddingHorizontal: 8,
+  },
+  containerButtonDesktop: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 24,
+    paddingHorizontal: 0,
   },
   button: {
     flexDirection: 'row',
@@ -149,6 +174,12 @@ const styles = StyleSheet.create({
   buttonTablet: {
     width: '92%',
     alignSelf: 'center',
+  },
+  buttonDesktop: {
+    flex: 1,
+    maxWidth: 360,
+    width: 'auto',
+    alignSelf: 'auto',
   },
   btnDentist: {
     backgroundColor: '#74C4CD',
@@ -185,6 +216,10 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 20,
     marginBottom: 12,
+  },
+  partnerLogosDesktop: {
+    maxWidth: 420,
+    marginTop: 10,
   },
   partnerLogo: {
     height: 180,
