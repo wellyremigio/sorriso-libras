@@ -20,10 +20,20 @@
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
-      }
+      },
+      "package": "com.wellyremigio.appodonto"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-font",
+      "expo-video"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "6ca2d3d4-56b5-424f-9155-80dcfb9bfad3"
+      }
     }
   }
 }
