@@ -5,15 +5,17 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { VideoView, useVideoPlayer } from "expo-video";
 import { getVideosByModule, completeVideo, getCompletedVideos } from '../../services/videoServices';
-import { useEventListener } from 'expo';
+import { useEvent, useEventListener } from 'expo';
 
+const EMPTY_VIDEOS = [];
 
-const LessonVideoPlayer = ({ videoUrl, onVideoEnd, isTablet = false }) => {
+const LessonVideoPlayer = ({ videoUrl, onVideoEnd, onRetry }) => {
   const player = useVideoPlayer(videoUrl, (player) => {
     player.loop = false;
     player.muted = false;
     player.volume = 1;
   });
+  const { status } = useEvent(player, 'statusChange', { status: player.status });
 
   useEventListener(player, "playToEnd", () => {
     onVideoEnd?.();
@@ -28,13 +30,31 @@ const LessonVideoPlayer = ({ videoUrl, onVideoEnd, isTablet = false }) => {
   }
 
   return (
-    <VideoView
-      player={player}
-      style={[styles.realVideo, isTablet && styles.realVideoTablet]}
-      allowsFullscreen
-      allowsPictureInPicture
-      nativeControls
-    />
+    <>
+      <VideoView
+        player={player}
+        style={styles.realVideo}
+        contentFit="contain"
+        playsInline
+        allowsFullscreen
+        allowsPictureInPicture
+        nativeControls
+      />
+      {status === 'loading' && (
+        <View style={styles.playerLoading} pointerEvents="none">
+          <ActivityIndicator size="large" color="#FFFFFF" />
+        </View>
+      )}
+      {status === 'error' && (
+        <View style={styles.playerError}>
+          <Text style={styles.playerErrorTitle}>Não foi possível reproduzir este vídeo.</Text>
+          <Text style={styles.playerErrorText}>Verifique sua conexão ou tente novamente mais tarde.</Text>
+          <TouchableOpacity style={[styles.secondaryStatusButton, styles.playerRetryButton]} onPress={onRetry} activeOpacity={0.85}>
+            <Text style={styles.secondaryStatusButtonText}>Tentar novamente</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </>
   );
 };
 
@@ -51,8 +71,8 @@ const COLORS = {
 };
 
 const ChildLessonScreen = ({ navigation, route }) => {
-  const { initialIndex = 0, module = "children", videosFromMenu = [] } = route.params || {};
-  const { width } = useWindowDimensions();
+  const { initialIndex = 0, module = "children", videosFromMenu = EMPTY_VIDEOS } = route.params || {};
+  const { width, height } = useWindowDimensions();
   const isTablet = width >= 768;
   const isDesktop = width >= 1024;
   const [videos, setVideos] = useState([]);
@@ -63,6 +83,9 @@ const ChildLessonScreen = ({ navigation, route }) => {
   const [hasFinishedCurrentVideo, setHasFinishedCurrentVideo] = useState(false);
   const [savingProgress, setSavingProgress] = useState(false);
   const [completedVideoIds, setCompletedVideoIds] = useState([]);
+  const [videoAttempt, setVideoAttempt] = useState(0);
+  const videoWidth = isDesktop ? Math.min(width - 48, 980) : isTablet ? width * 0.82 : width - 40;
+  const videoHeight = Math.min(videoWidth * 9 / 16, Math.max(160, height * 0.58));
 
   const contentOpacity = useRef(new Animated.Value(0)).current;
   const contentTranslateY = useRef(new Animated.Value(14)).current;
@@ -265,40 +288,40 @@ const ChildLessonScreen = ({ navigation, route }) => {
             },
           ]}
         >
-          <View style={[styles.topHeader, isTablet && styles.topHeaderTablet, isDesktop && styles.sectionDesktop]}>
-            <TouchableOpacity onPress={handleGoBack} style={styles.iconButton}>
-              <Ionicons name="chevron-back" size={30} color="#5D4037" />
-            </TouchableOpacity>
-
-            <View style={[styles.logoPlaceholder, isTablet && styles.logoPlaceholderTablet]}>
-              <Image
-                source={require('../../assets/upper_logo.png')}
-                style={[styles.logoImage, isTablet && styles.logoImageTablet]}
-                resizeMode="contain"
-              />
-            </View>
-
-            <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
-              <Ionicons name="home" size={28} color="#5D4037" />
-            </TouchableOpacity>
-          </View>
-
-          <View style={[styles.titleBanner, isTablet && styles.titleBannerTablet, isDesktop && styles.sectionDesktop]}>
-            <Text style={styles.titleText}>{currentItem.title}</Text>
-          </View>
-
           <ScrollView
+            style={styles.lessonScroll}
             contentContainerStyle={[
               styles.scrollContent,
               isTablet && styles.scrollContentTablet,
-              isDesktop && styles.scrollContentDesktop,
             ]}
-            showsVerticalScrollIndicator={false}
           >
-            <View style={[styles.videoCard, isTablet && styles.videoCardTablet, isDesktop && styles.videoCardDesktop]}>
+            <View style={[styles.topHeader, isTablet && styles.topHeaderTablet, isDesktop && styles.sectionDesktop]}>
+              <TouchableOpacity onPress={handleGoBack} style={styles.iconButton}>
+                <Ionicons name="chevron-back" size={30} color="#5D4037" />
+              </TouchableOpacity>
+
+              <View style={[styles.logoPlaceholder, isTablet && styles.logoPlaceholderTablet]}>
+                <Image
+                  source={require('../../assets/upper_logo.png')}
+                  style={[styles.logoImage, isTablet && styles.logoImageTablet]}
+                  resizeMode="contain"
+                />
+              </View>
+
+              <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
+                <Ionicons name="home" size={28} color="#5D4037" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={[styles.titleBanner, isTablet && styles.titleBannerTablet]}>
+              <Text style={styles.titleText}>{currentItem.title}</Text>
+            </View>
+
+            <View style={[styles.videoCard, { width: videoWidth, height: videoHeight }]}>
               <LessonVideoPlayer
+                key={`${currentItem.id}:${currentItem.video_url}:${videoAttempt}`}
                 videoUrl={currentItem.video_url}
-                isTablet={isTablet}
+                onRetry={() => setVideoAttempt((attempt) => attempt + 1)}
                 onVideoEnd={() => setHasFinishedCurrentVideo(true)}
               />
             </View>
@@ -391,13 +414,13 @@ const styles = StyleSheet.create({
   },
   mainContent: {
     flex: 1,
+    minHeight: 0,
   },
   mainContentTablet: {
     paddingTop: 18,
   },
   mainContentDesktop: {
     width: '100%',
-    maxWidth: 1120,
     alignSelf: 'center',
   },
   sectionDesktop: {
@@ -543,12 +566,38 @@ const styles = StyleSheet.create({
   },
   realVideo: {
     width: "100%",
-    height: 220,
+    height: '100%',
     backgroundColor: "#000",
     borderRadius: 20,
   },
-  realVideoTablet: {
-    height: 385,
+  playerLoading: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  playerError: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#2C2929',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 12,
+    gap: 8,
+  },
+  playerErrorTitle: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  playerErrorText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    textAlign: 'center',
+    maxWidth: 480,
+  },
+  playerRetryButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
   },
   videoFallbackText: {
     color: '#4E342E',
@@ -556,14 +605,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   logoImage: {
-    width: 250,
-    height: 250
+    width: '100%',
+    maxWidth: 250,
+    height: 100,
   },
   logoImageTablet: {
-    width: 420,
-    height: 300,
+    maxWidth: 420,
+    height: 140,
   },
   titleBanner: {
+    width: '100%',
     backgroundColor: '#F0E4E7',
     flexDirection: 'row',
     alignItems: 'center',
@@ -583,36 +634,26 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#4E342E',
     textAlign: 'center',
-    marginRight: 35,
+  },
+  lessonScroll: {
+    flex: 1,
+    minHeight: 0,
+    width: '100%',
   },
   scrollContent: { paddingBottom: 30 },
   scrollContentTablet: {
     paddingTop: 10,
     paddingBottom: 50,
   },
-  scrollContentDesktop: {
-    alignItems: 'center',
-  },
   videoCard: {
-    marginHorizontal: 20,
-    height: 220,
+    alignSelf: 'center',
+    flexShrink: 0,
     backgroundColor: '#A2C4C9',
     borderRadius: 20,
     overflow: 'hidden',
     position: 'relative',
     borderWidth: 3,
     borderColor: '#8CAAB0'
-  },
-  videoCardTablet: {
-    width: '82%',
-    alignSelf: 'center',
-    height: 380,
-    marginHorizontal: 0,
-  },
-  videoCardDesktop: {
-    width: '100%',
-    maxWidth: 980,
-    height: 430,
   },
   videoMainArea: {
     flex: 1,

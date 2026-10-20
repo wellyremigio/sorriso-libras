@@ -32,6 +32,8 @@ const StickerAchievementScreen = ({ navigation, route }) => {
         achievementType = null,
         showModuleFinalAchievement = false,
     } = route.params || {};
+    const maxTitleFontSize = isFinalAchievement ? (isTablet ? 70 : 60) : (isTablet ? 62 : 52);
+    const titleFontSize = Math.min(maxTitleFontSize, (width - (isCompactHeight ? 56 : 84)) / 6.4);
 
     const specialStickers = earnedStickers
         .filter((sticker) => sticker.is_special)
@@ -109,6 +111,7 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                     contentContainerStyle={[
                         styles.content,
                         isCompactHeight && styles.contentCompact,
+                        isTablet && styles.contentTablet,
                         isDesktop && styles.contentDesktop,
                     ]}
                     showsVerticalScrollIndicator={false}
@@ -130,6 +133,7 @@ const StickerAchievementScreen = ({ navigation, route }) => {
                             isTablet && styles.elevatedTitle,
                             isFinalAchievement && styles.goldTitle,
                             isTablet && isFinalAchievement && styles.goldTitleTablet,
+                            { fontSize: titleFontSize },
                         ]}
                     >
                         {isFinalAchievement ? "PARABÉNS!".toUpperCase() : "Parabéns!"}
@@ -244,7 +248,7 @@ const styles = StyleSheet.create({
         top: 0,
         width: '100%',
         height: 150,
-        overflow: 'visible',
+        overflow: 'hidden',
         zIndex: 0,
         elevation: 0
     },
@@ -285,15 +289,20 @@ const styles = StyleSheet.create({
         maxWidth: 760,
         alignSelf: 'center',
     },
+    contentTablet: {
+        paddingTop: 24,
+    },
     logoWrapperTablet: {
         width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: -250,
+        height: 120,
+        marginBottom: 16,
     },
     logoImageTablet: {
-        width: 420,
-        height: 300,
+        width: '100%',
+        maxWidth: 420,
+        height: '100%',
     },
     mainTitle: {
         fontSize: 52,
@@ -404,7 +413,8 @@ const styles = StyleSheet.create({
         shadowRadius: 4
     },
     actionButtonTablet: {
-        width: '50%',
+        width: '100%',
+        maxWidth: 420,
         alignSelf: 'center',
     },
     actionButtonDesktop: {
@@ -414,6 +424,7 @@ const styles = StyleSheet.create({
         opacity: 0.55,
     },
     actionButtonText: {
+        textAlign: 'center',
         color: COLORS.white,
         fontSize: 24,
         fontWeight: 'bold',

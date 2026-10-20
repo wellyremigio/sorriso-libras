@@ -23,7 +23,7 @@ const StickerGalleryScreen = ({ navigation }) => {
     const { width } = useWindowDimensions();
     const isTablet = width >= 768;
     const isDesktop = width >= 1024;
-    const gridColumns = isDesktop ? 6 : isTablet ? 5 : 4;
+    const gridColumns = isDesktop ? 6 : isTablet ? 5 : width < 400 ? 3 : 4;
     const cardWidth = `${100 / gridColumns - 3}%`;
     const [earnedStickers, setEarnedStickers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -128,69 +128,8 @@ const StickerGalleryScreen = ({ navigation }) => {
             resizeMode="cover"
         >
             <SafeAreaView style={styles.container}>
-                    <View style={[styles.topHeader, isTablet && styles.topHeaderTablet, isDesktop && styles.sectionDesktop]}>
-                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
-                        <Ionicons name="chevron-back" size={30} color={COLORS.textBrown} />
-                    </TouchableOpacity>
-
-                    <View style={styles.logoPlaceholder}>
-                        <Image
-                            source={require('../../assets/upper_logo.png')}
-                            style={[styles.logoImage, isTablet && styles.logoImageTablet]}
-                            resizeMode="contain"
-                        />
-                    </View>
-
-                    <View style={styles.headerSpacer} />
-                </View>
-
-                <View style={[styles.titleSection, isTablet && styles.sectionTablet, isDesktop && styles.sectionDesktop]}>
-                    <Text style={styles.mainTitle}>Galeria de Adesivos</Text>
-                    <Text style={styles.subTitle}>Colecione todos os adesivos!</Text>
-                </View>
-
-                <View style={[styles.progressWrapper, isTablet && styles.progressWrapperTablet, isDesktop && styles.progressWrapperDesktop]}>
-                    <View style={styles.progressBarContainer}>
-                        <View
-                            style={[
-                                styles.progressBarFill,
-                                { width: unlockedStickers > 0 ? "100%" : "0%" }
-                            ]}
-                        />
-                        <Text style={[styles.progressText, isTablet && styles.progressTextTablet]}>
-                            {unlockedStickers} adesivos conquistados
-                        </Text>
-                    </View>
-                </View>
-
-                {specialStickers.length > 0 && (
-                    <View style={[styles.specialStickersWrapper, isTablet && styles.sectionTablet, isDesktop && styles.sectionDesktop]}>
-                        {specialStickers.map((sticker) => (
-                            <TouchableOpacity
-                                key={sticker.id}
-                                style={[styles.card, styles.specialCard, isDesktop && styles.specialCardDesktop]}
-                                onPress={() => openStickerPreview(sticker)}
-                                activeOpacity={0.85}
-                            >
-                                <Image
-                                    source={{ uri: sticker.image_url }}
-                                    style={[styles.specialStickerImage, isTablet && styles.specialStickerImageTablet]}
-                                    resizeMode="contain"
-                                />
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                )}
-
-                {unlockedStickers === 0 && (
-                    <View style={[styles.emptyGallery, isTablet && styles.sectionTablet, isDesktop && styles.sectionDesktop]}>
-                        <Text style={styles.emptyGalleryText}>
-                            Você ainda não conquistou adesivos.
-                        </Text>
-                    </View>
-                )}
-
                 <FlatList
+                    style={styles.galleryList}
                     key={gridColumns}
                     data={normalStickers}
                     keyExtractor={(item) => item.id}
@@ -202,7 +141,72 @@ const StickerGalleryScreen = ({ navigation }) => {
                         isTablet && styles.sectionTablet,
                         isDesktop && styles.gridContainerDesktop,
                     ]}
-                    showsVerticalScrollIndicator={false}
+                    ListHeaderComponent={
+                        <>
+                            <View style={[styles.topHeader, isTablet && styles.topHeaderTablet, isDesktop && styles.sectionDesktop]}>
+                                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
+                                    <Ionicons name="chevron-back" size={30} color={COLORS.textBrown} />
+                                </TouchableOpacity>
+
+                                <View style={styles.logoPlaceholder}>
+                                    <Image
+                                        source={require('../../assets/upper_logo.png')}
+                                        style={[styles.logoImage, isTablet && styles.logoImageTablet]}
+                                        resizeMode="contain"
+                                    />
+                                </View>
+
+                                <View style={styles.headerSpacer} />
+                            </View>
+
+                            <View style={[styles.titleSection, isTablet && styles.sectionTablet, isDesktop && styles.sectionDesktop]}>
+                                <Text style={styles.mainTitle}>Galeria de Adesivos</Text>
+                                <Text style={styles.subTitle}>Colecione todos os adesivos!</Text>
+                            </View>
+
+                            <View style={[styles.progressWrapper, isTablet && styles.progressWrapperTablet, isDesktop && styles.progressWrapperDesktop]}>
+                                <View style={styles.progressBarContainer}>
+                                    <View
+                                        style={[
+                                            styles.progressBarFill,
+                                            { width: unlockedStickers > 0 ? "100%" : "0%" }
+                                        ]}
+                                    />
+                                    <Text style={[styles.progressText, isTablet && styles.progressTextTablet]}>
+                                        {unlockedStickers} adesivos conquistados
+                                    </Text>
+                                </View>
+                            </View>
+
+                            {specialStickers.length > 0 && (
+                                <View style={[styles.specialStickersWrapper, isTablet && styles.sectionTablet, isDesktop && styles.sectionDesktop]}>
+                                    {specialStickers.map((sticker) => (
+                                        <TouchableOpacity
+                                            key={sticker.id}
+                                            style={[styles.card, styles.specialCard, isDesktop && styles.specialCardDesktop]}
+                                            onPress={() => openStickerPreview(sticker)}
+                                            activeOpacity={0.85}
+                                        >
+                                            <Image
+                                                source={{ uri: sticker.image_url }}
+                                                style={[styles.specialStickerImage, isTablet && styles.specialStickerImageTablet]}
+                                                resizeMode="contain"
+                                            />
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
+                            )}
+
+                            {unlockedStickers === 0 && (
+                                <View style={[styles.emptyGallery, isTablet && styles.sectionTablet, isDesktop && styles.sectionDesktop]}>
+                                    <Text style={styles.emptyGalleryText}>
+                                        Você ainda não conquistou adesivos.
+                                    </Text>
+                                </View>
+                            )}
+
+                        </>
+                    }
                 />
 
                 <StickerPreviewModal
@@ -235,20 +239,20 @@ const styles = StyleSheet.create({
         fontSize: 15,
     },
     stickerImage: {
-        width: 75,
-        height: 75,
+        width: '85%',
+        height: '85%',
     },
     stickerImageTablet: {
-        width: 130,
-        height: 130,
+        width: '85%',
+        height: '85%',
     },
     specialStickerImage: {
-        width: 125,
-        height: 125,
+        width: '85%',
+        height: '85%',
     },
     specialStickerImageTablet: {
-        width: 175,
-        height: 175,
+        width: '85%',
+        height: '85%',
     },
     emptyGallery: {
         alignItems: "center",
@@ -266,6 +270,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'transparent'
     },
+    galleryList: { flex: 1, minHeight: 0 },
     topHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -305,22 +310,24 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     headerSpacer: {
-        width: 74,
-        height: 62,
+        width: 50,
+        height: 50,
     },
     logoImage: {
-        width: 250,
-        height: 250,
+        width: '100%',
+        maxWidth: 250,
+        height: 100,
     },
     logoImageTablet: {
-        width: 390,
-        height: 290,
+        maxWidth: 390,
+        height: 140,
     },
     titleSection: {
         alignItems: 'center',
         marginBottom: 15
     },
     mainTitle: {
+        textAlign: 'center',
         fontSize: 24,
         fontWeight: 'bold',
         color: COLORS.textBlue,
@@ -426,6 +433,7 @@ const styles = StyleSheet.create({
     },
     specialStickersWrapper: {
         flexDirection: 'row',
+        flexWrap: 'wrap',
         justifyContent: 'center',
         gap: 25,
         marginBottom: 30,

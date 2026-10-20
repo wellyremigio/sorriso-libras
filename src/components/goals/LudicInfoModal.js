@@ -6,6 +6,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     Animated,
+    ScrollView,
     useWindowDimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -69,16 +70,18 @@ const LudicInfoModal = ({
                         },
                     ]}
                 >
-                    <View style={styles.iconBubble}>
-                        <Ionicons name={iconName} size={36} color={iconColor} />
-                    </View>
+                    <ScrollView style={styles.scrollView} contentContainerStyle={styles.cardContent}>
+                        <View style={styles.iconBubble}>
+                            <Ionicons name={iconName} size={36} color={iconColor} />
+                        </View>
 
-                    <Text style={styles.title}>{title}</Text>
-                    <Text style={styles.message}>{message}</Text>
+                        <Text style={styles.title}>{title}</Text>
+                        <Text style={styles.message}>{message}</Text>
 
-                    <TouchableOpacity style={[styles.button, { minWidth: Math.min(width * 0.5, 260) }]} onPress={onPress} activeOpacity={0.85}>
-                        <Text style={styles.buttonText}>{buttonLabel}</Text>
-                    </TouchableOpacity>
+                        <TouchableOpacity style={[styles.button, { minWidth: Math.min(width * 0.5, 260) }]} onPress={onPress} activeOpacity={0.85}>
+                            <Text style={styles.buttonText}>{buttonLabel}</Text>
+                        </TouchableOpacity>
+                    </ScrollView>
                 </Animated.View>
             </View>
         </Modal>
@@ -96,10 +99,8 @@ const styles = StyleSheet.create({
     card: {
         width: '100%',
         maxWidth: 360,
+        maxHeight: '90%',
         borderRadius: 28,
-        paddingHorizontal: 22,
-        paddingTop: 26,
-        paddingBottom: 20,
         backgroundColor: '#FFFDFB',
         borderWidth: 3,
         borderColor: '#F4D1D9',
@@ -109,6 +110,13 @@ const styles = StyleSheet.create({
         shadowRadius: 16,
         shadowOffset: { width: 0, height: 8 },
         elevation: 10,
+    },
+    scrollView: { width: '100%', flexShrink: 1 },
+    cardContent: {
+        alignItems: 'center',
+        paddingHorizontal: 22,
+        paddingTop: 26,
+        paddingBottom: 20,
     },
     iconBubble: {
         width: 76,
@@ -147,6 +155,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     buttonText: {
+        textAlign: 'center',
         fontSize: 16,
         fontWeight: '900',
         color: '#2C3E50',

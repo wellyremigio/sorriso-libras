@@ -11,7 +11,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 
 const StickerPreviewModal = ({ visible, sticker, onClose }) => {
-    const { width } = useWindowDimensions();
+    const { width, height } = useWindowDimensions();
     const opacity = useRef(new Animated.Value(0)).current;
     const translateY = useRef(new Animated.Value(18)).current;
     const scale = useRef(new Animated.Value(0.92)).current;
@@ -49,7 +49,7 @@ const StickerPreviewModal = ({ visible, sticker, onClose }) => {
         return null;
     }
 
-    const imageSize = Math.min(width * 0.62, 260);
+    const imageSize = Math.max(48, Math.min(width - 126, height - 200, 260));
 
     return (
         <Modal visible={visible} transparent animationType="none" statusBarTranslucent onRequestClose={onClose}>
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
         maxWidth: 360,
         borderRadius: 28,
         paddingHorizontal: 22,
-        paddingTop: 48,
+        paddingTop: 68,
         paddingBottom: 28,
         backgroundColor: '#FFFDFB',
         borderWidth: 3,

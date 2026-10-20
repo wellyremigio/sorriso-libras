@@ -16,39 +16,38 @@ const CaregiverMenuScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.screenScroll} contentContainerStyle={styles.screenContent}>
 
-      <View style={[styles.header, isDesktop && styles.sectionDesktop]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="chevron-back" size={28} color="#2C3E50" />
-        </TouchableOpacity>
-
-      </View>
-
-      <View style={[styles.titleContainer, isDesktop && styles.sectionDesktop]}>
-        <Text style={styles.mainTitle}>Cuidados com a Saúde Bucal</Text>
-      </View>
-
-      <ScrollView
-        style={styles.listContainer}
-        contentContainerStyle={[styles.listContent, isDesktop && styles.listContentDesktop]}
-      >
-        {menuItems.map((item, index) => (
-          <TouchableOpacity
-            key={item.id}
-            style={[styles.menuItem, isDesktop && styles.menuItemDesktop]}
-            onPress={() => navigation.navigate('AdultLesson', {
-              menuItems: menuItems,
-              initialIndex: index,
-              profileType: 'caregiver',
-            })}
-          >
-            <View style={styles.itemLeftContent}>
-              <Text style={styles.itemText}>{item.title}</Text>
-            </View>
-
-            <Ionicons name="chevron-forward" size={24} color="#FFF" />
+        <View style={[styles.header, isDesktop && styles.sectionDesktop]}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Ionicons name="chevron-back" size={28} color="#2C3E50" />
           </TouchableOpacity>
-        ))}
+
+        </View>
+
+        <View style={[styles.titleContainer, isDesktop && styles.sectionDesktop]}>
+          <Text style={styles.mainTitle}>Cuidados com a Saúde Bucal</Text>
+        </View>
+
+        <View style={[styles.listContainer, styles.listContent, isDesktop && styles.listContentDesktop]}>
+          {menuItems.map((item, index) => (
+            <TouchableOpacity
+              key={item.id}
+              style={[styles.menuItem, isDesktop && styles.menuItemDesktop]}
+              onPress={() => navigation.navigate('AdultLesson', {
+                menuItems: menuItems,
+                initialIndex: index,
+                profileType: 'caregiver',
+              })}
+            >
+              <View style={styles.itemLeftContent}>
+                <Text style={styles.itemText}>{item.title}</Text>
+              </View>
+
+              <Ionicons name="chevron-forward" size={24} color="#FFF" />
+            </TouchableOpacity>
+          ))}
+        </View>
       </ScrollView>
 
     </SafeAreaView>
@@ -105,10 +104,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   listContainer: {
-    flex: 1,
+    width: '100%',
     paddingHorizontal: 10,
     paddingTop: 10,
   },
+  screenScroll: { flex: 1, minHeight: 0 },
+  screenContent: { paddingBottom: 24 },
   listContent: {
     paddingBottom: 24,
   },

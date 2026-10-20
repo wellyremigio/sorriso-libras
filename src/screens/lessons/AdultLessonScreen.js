@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, useWindowDimensions } from 'react-native';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
@@ -49,79 +49,83 @@ const AdultLessonScreen = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={[styles.header, isDesktop && styles.sectionDesktop]}>
-                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
-                    <Ionicons name="arrow-back" size={28} color="#7F8C8D" />
-                </TouchableOpacity>
+            <ScrollView style={styles.screenScroll} contentContainerStyle={styles.screenContent}>
+                <View style={[styles.header, isDesktop && styles.sectionDesktop]}>
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
+                        <Ionicons name="arrow-back" size={28} color="#7F8C8D" />
+                    </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
-                    <Ionicons name="home" size={26} color="#7F8C8D" />
-                </TouchableOpacity>
-            </View>
-
-            <View style={[styles.titleContainer, isDesktop && styles.sectionDesktop]}>
-                <Text style={[styles.titleText, isTablet && styles.titleTextTablet]}>{currentItem.title}</Text>
-            </View>
-
-            <View style={[styles.videoContainer, isTablet && styles.videoContainerTablet, isDesktop && styles.sectionDesktop]}>
-                <View style={styles.videoPlaceholder}>
-                    <FontAwesome5 name="play-circle" size={50} color="#BDC3C7" />
-                    <Text style={styles.videoTime}>0:00 / 3:45</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconButton}>
+                        <Ionicons name="home" size={26} color="#7F8C8D" />
+                    </TouchableOpacity>
                 </View>
-                <View style={styles.librasContainer}>
-                    <FontAwesome5 name="hands-helping" size={30} color="#7F8C8D" />
+
+                <View style={styles.titleContainer}>
+                    <Text style={[styles.titleText, isTablet && styles.titleTextTablet]}>{currentItem.title}</Text>
                 </View>
-            </View>
 
-            <View style={[styles.stepIndicatorContainer, isDesktop && styles.sectionDesktop]}>
-                <Text style={styles.stepText}>Módulo {currentIndex + 1}</Text>
-                <Text style={styles.stepSubtitle} numberOfLines={1}>Conteúdo Atual</Text>
-                <Text style={styles.stepText}>{currentIndex + 1} / {totalSteps}</Text>
-            </View>
+                <View style={[styles.videoContainer, isTablet && styles.videoContainerTablet, isDesktop && styles.sectionDesktop]}>
+                    <View style={styles.videoPlaceholder}>
+                            <FontAwesome5 name="play-circle" size={50} color="#BDC3C7" />
+                            <Text style={styles.videoTime}>0:00 / 3:45</Text>
+                        </View>
+                        <View style={styles.librasContainer}>
+                            <FontAwesome5 name="hands-helping" size={30} color="#7F8C8D" />
+                        </View>
+                    </View>
 
-            <View style={[styles.explanationBox, isDesktop && styles.sectionDesktop]}>
-                <Text style={styles.explanationText}>
-                    Acompanhe o conteúdo em vídeo com tradução simultânea para Libras.
-                </Text>
-            </View>
+                    <View style={[styles.stepIndicatorContainer, isDesktop && styles.sectionDesktop]}>
+                        <Text style={styles.stepText}>Módulo {currentIndex + 1}</Text>
+                        <Text style={styles.stepSubtitle} numberOfLines={1}>Conteúdo Atual</Text>
+                        <Text style={styles.stepText}>{currentIndex + 1} / {totalSteps}</Text>
+                    </View>
 
-            <TouchableOpacity
-                style={[styles.nextButton, isTablet && styles.nextButtonTablet]}
-                onPress={handleNextStep}
-                disabled={isCelebrating || showFinishPopup}
-            >
-                <Text style={styles.nextButtonText}>
-                    {currentIndex === totalSteps - 1 ? 'FINALIZAR MÓDULO' : 'PRÓXIMO VÍDEO'}
-                </Text>
-            </TouchableOpacity>
+                    <View style={[styles.explanationBox, isDesktop && styles.sectionDesktop]}>
+                        <Text style={styles.explanationText}>
+                            Acompanhe o conteúdo em vídeo com tradução simultânea para Libras.
+                        </Text>
+                    </View>
 
-            <View style={styles.dotsContainer}>
-                {menuItems.map((_, index) => (
-                    <View
-                        key={index}
-                        style={[
-                            styles.dot,
-                            currentIndex === index && styles.activeDot
-                        ]}
-                    />
-                ))}
-            </View>
+                    <TouchableOpacity
+                        style={[styles.nextButton, isTablet && styles.nextButtonTablet]}
+                        onPress={handleNextStep}
+                        disabled={isCelebrating || showFinishPopup}
+                    >
+                        <Text style={styles.nextButtonText}>
+                            {currentIndex === totalSteps - 1 ? 'FINALIZAR MÓDULO' : 'PRÓXIMO VÍDEO'}
+                        </Text>
+                    </TouchableOpacity>
 
-            <FloatingBalloons
-                visible={isCelebrating}
-                onComplete={onAnimationComplete}
-            />
+                    <View style={styles.dotsContainer}>
+                        {menuItems.map((_, index) => (
+                            <View
+                                key={index}
+                                style={[
+                                    styles.dot,
+                                    currentIndex === index && styles.activeDot
+                                ]}
+                            />
+                        ))}
+                    </View>
+                </ScrollView>
 
-            {showFinishPopup && (
-                <BlurView intensity={70} tint="dark" style={styles.overlay}>
-                    <View style={styles.finishPopupBox}>
-                        <FontAwesome5 name="check-circle" size={80} color="#2ECC71" solid />
-                        <Text style={styles.finishTitle}>Módulo Concluído!</Text>
-                        <Text style={styles.finishText}>Você finalizou todos os vídeos desta seção com sucesso.</Text>
+                <FloatingBalloons
+                    visible={isCelebrating}
+                    onComplete={onAnimationComplete}
+                />
 
-                        <TouchableOpacity style={styles.finishButton} onPress={handleFinishModule}>
-                            <Text style={styles.finishButtonText}>VOLTAR AO MENU</Text>
-                        </TouchableOpacity>
+                {showFinishPopup && (
+                    <BlurView intensity={70} tint="dark" style={styles.overlay}>
+                        <View style={styles.finishPopupBox}>
+                            <ScrollView style={styles.popupScroll} contentContainerStyle={styles.finishPopupContent}>
+                            <FontAwesome5 name="check-circle" size={80} color="#2ECC71" solid />
+                            <Text style={styles.finishTitle}>Módulo Concluído!</Text>
+                            <Text style={styles.finishText}>Você finalizou todos os vídeos desta seção com sucesso.</Text>
+
+                            <TouchableOpacity style={styles.finishButton} onPress={handleFinishModule}>
+                                <Text style={styles.finishButtonText}>VOLTAR AO MENU</Text>
+                            </TouchableOpacity>
+                        </ScrollView>
                     </View>
                 </BlurView>
             )}
@@ -135,6 +139,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F7FA',
   },
+  screenScroll: { flex: 1, minHeight: 0 },
+  screenContent: { paddingBottom: 30 },
 
   header: {
     flexDirection: 'row',
@@ -174,6 +180,7 @@ const styles = StyleSheet.create({
   videoContainer: {
     margin: 15,
     height: 200,
+    flexShrink: 0,
     backgroundColor: '#D5D8DC',
     borderRadius: 10,
     overflow: 'hidden',
@@ -263,10 +270,12 @@ const styles = StyleSheet.create({
   },
   nextButtonTablet: {
     width: '50%',
+    maxWidth: 420,
     alignSelf: 'center',
   },
 
   nextButtonText: {
+    textAlign: 'center',
     color: '#FFF',
     fontSize: 20,
     fontWeight: 'bold',
@@ -299,8 +308,9 @@ const styles = StyleSheet.create({
   },
 
   finishPopupBox: {
+    maxWidth: 480,
+    maxHeight: '90%',
     backgroundColor: '#FFF',
-    padding: 30,
     borderRadius: 20,
     alignItems: 'center',
     width: '85%',
@@ -313,6 +323,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
   },
+  popupScroll: { width: '100%', flexShrink: 1 },
+  finishPopupContent: { padding: 30, alignItems: 'center' },
 
   finishTitle: {
     fontSize: 26,

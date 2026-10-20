@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, ImageBackground, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ImageBackground, ScrollView, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome5 } from '@expo/vector-icons';
 import ProfileButton from '../components/profilePage/ProfileButton';
@@ -39,62 +39,68 @@ const Home = ({ navigation }) => {
       resizeMode="cover"
     >
       <SafeAreaView style={styles.container}>
-        <View style={[styles.mainContent, isDesktop && styles.mainContentDesktop]}>
-          <View style={[styles.containerLogo, isTablet && styles.containerLogoTablet, isShortScreen && styles.containerLogoCompact]}>
+        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+          <View style={[styles.mainContent, isDesktop && styles.mainContentDesktop]}>
+            <View style={[styles.containerLogo, isTablet && styles.containerLogoTablet, isShortScreen && styles.containerLogoCompact]}>
+              <Image
+                source={require('../assets/criancas_sorrindo_logo.png')}
+                style={styles.imageLogo}
+                resizeMode="contain"
+              />
+            </View>
+
+            <Text style={[styles.introduction, isTablet && styles.introductionTablet]}>
+              Nosso aplicativo foi criado para ajudar a transformar a relação das crianças com o cuidado odontológico. Aqui, os pequenos podem aprender de forma divertida, enquanto os dentistas encontram apoio para construir uma experiência de confiança e cuidado.
+            </Text>
+
+            <Text style={[styles.title, isDesktop && styles.titleDesktop]}>Quem está usando o aplicativo?</Text>
+
+            <View style={[styles.containerButton, isDesktop && styles.containerButtonDesktop]}>
+              <TouchableOpacity
+                style={[styles.button, styles.btnDentist, isTablet && styles.buttonTablet, isDesktop && styles.buttonDesktop]}
+                activeOpacity={0.8}
+                onPress={() => navigation.navigate('DentistMenu')}
+              >
+                <View style={styles.iconWrapper}>
+                  <Image
+                    source={require('../assets/dentist_menu_dentist.png')}
+                    style={styles.buttonIcon}
+                    resizeMode="contain"
+                  />
+                </View>
+                <Text style={styles.buttonText}>Sou Dentista</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.button, styles.btnChild, isTablet && styles.buttonTablet, isDesktop && styles.buttonDesktop]}
+                activeOpacity={0.8}
+                onPress={() => navigation.navigate('ChildMenu')}
+              >
+                <View style={styles.iconWrapper}>
+                  <Image
+                    source={require('../assets/criancas_img.png')}
+                    style={styles.buttonIcon}
+                    resizeMode="contain"
+                  />
+                </View>
+                <Text style={styles.buttonText}>Sou Criança</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={[styles.partnerLogos, isDesktop && styles.partnerLogosDesktop]}>
             <Image
-              source={require('../assets/criancas_sorrindo_logo.png')}
-              style={styles.imageLogo}
+              source={require('../assets/logoufcg1.png')}
+              style={[styles.partnerLogo, styles.ufcgLogo, !isTablet && styles.partnerLogoMobile]}
+              resizeMode="contain"
+            />
+            <Image
+              source={require('../assets/logouepb.png')}
+              style={[styles.partnerLogo, styles.uepbLogo, !isTablet && styles.partnerLogoMobile]}
               resizeMode="contain"
             />
           </View>
-
-          <Text style={[styles.title, isDesktop && styles.titleDesktop]}>Quem está usando o aplicativo?</Text>
-
-          <View style={[styles.containerButton, isDesktop && styles.containerButtonDesktop]}>
-            <TouchableOpacity
-              style={[styles.button, styles.btnDentist, isTablet && styles.buttonTablet, isDesktop && styles.buttonDesktop]}
-              activeOpacity={0.8}
-              onPress={() => navigation.navigate('DentistMenu')}
-            >
-              <View style={styles.iconWrapper}>
-                <Image
-                  source={require('../assets/dentist_menu_dentist.png')}
-                  style={styles.buttonIcon}
-                  resizeMode="contain"
-                />
-              </View>
-              <Text style={styles.buttonText}>Sou Dentista</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.button, styles.btnChild, isTablet && styles.buttonTablet, isDesktop && styles.buttonDesktop]}
-              activeOpacity={0.8}
-              onPress={() => navigation.navigate('ChildMenu')}
-            >
-              <View style={styles.iconWrapper}>
-                <Image 
-                  source={require('../assets/criancas_img.png')} 
-                  style={styles.buttonIcon}
-                  resizeMode="contain"
-                />
-              </View>
-              <Text style={styles.buttonText}>Sou Criança</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={[styles.partnerLogos, isDesktop && styles.partnerLogosDesktop]}>
-          <Image
-            source={require('../assets/logoufcg1.png')}
-            style={[styles.partnerLogo, styles.ufcgLogo]}
-            resizeMode="contain"
-          />
-          <Image
-            source={require('../assets/logouepb.png')}
-            style={[styles.partnerLogo, styles.uepbLogo]}
-            resizeMode="contain"
-          />
-        </View>
+        </ScrollView>
       </SafeAreaView>
     </ImageBackground>
   );
@@ -108,12 +114,20 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+    width: '100%',
+  },
+  scrollContent: {
+    flexGrow: 1,
     paddingHorizontal: 24,
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   mainContent: {
-    flex: 1,
+    flexGrow: 1,
+    flexShrink: 0,
     justifyContent: 'center',
     width: '100%',
     maxWidth: 760,
@@ -122,21 +136,38 @@ const styles = StyleSheet.create({
     maxWidth: 980,
   },
   containerLogo: {
-    marginTop: 48,
+    marginTop: 24,
     alignItems: 'center',
     width: '100%',
-    height: 230,
+    height: 190,
   },
   containerLogoTablet: {
     height: 260,
   },
   containerLogoCompact: {
-    height: 170,
+    height: 140,
     marginTop: 18,
   },
   imageLogo: {
     width: '100%',
     height: '100%',
+  },
+  introduction: {
+    alignSelf: 'center',
+    width: '100%',
+    maxWidth: 720,
+    marginTop: 16,
+    marginBottom: 8,
+    fontSize: 16,
+    lineHeight: 24,
+    color: '#4A4A4A',
+    textAlign: 'center',
+  },
+  introductionTablet: {
+    fontSize: 18,
+    lineHeight: 28,
+    marginTop: 24,
+    marginBottom: 12,
   },
   title: {
     fontSize: 24,
@@ -223,6 +254,10 @@ const styles = StyleSheet.create({
   },
   partnerLogo: {
     height: 180,
+    flexShrink: 1,
+  },
+  partnerLogoMobile: {
+    height: 100,
   },
   ufcgLogo: {
     width: 140,

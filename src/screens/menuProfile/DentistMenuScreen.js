@@ -209,60 +209,58 @@ const DentistMenuScreen = ({ navigation }) => {
       resizeMode="cover"
     >
       <SafeAreaView style={styles.container}>
-        <View style={[styles.header, isDesktop && styles.headerDesktop]}>
-          <TouchableOpacity onPress={handleGoBack} style={styles.iconCircle}>
-            <Ionicons name="chevron-back" size={30} color="#2C3E50" />
-          </TouchableOpacity>
-        </View>
+        <ScrollView style={styles.screenScroll} contentContainerStyle={styles.screenContent}>
+          <View style={[styles.header, isDesktop && styles.headerDesktop]}>
+            <TouchableOpacity onPress={handleGoBack} style={styles.iconCircle}>
+              <Ionicons name="chevron-back" size={30} color="#2C3E50" />
+            </TouchableOpacity>
+          </View>
 
-        <View style={[styles.containerLogo, isDesktop && styles.containerLogoDesktop]}>
-          <Image
-            source={require('../../assets/logo_menu_dentist.png')}
-            style={[styles.imageLogo, isTablet && styles.imageLogoTablet, isDesktop && styles.imageLogoDesktop]}
-            resizeMode="contain"
-          />
-        </View>
+          <View style={[styles.containerLogo, isDesktop && styles.containerLogoDesktop]}>
+            <Image
+              source={require('../../assets/logo_menu_dentist.png')}
+              style={[styles.imageLogo, isTablet && styles.imageLogoTablet, isDesktop && styles.imageLogoDesktop]}
+              resizeMode="contain"
+            />
+          </View>
 
-        <ScrollView
-          style={styles.listContainer}
-          contentContainerStyle={[styles.listContent, isDesktop && styles.listContentDesktop]}
-          showsVerticalScrollIndicator={false}
-        >
-          {videos.map((item, index) => {
-            const completed = completedVideoIds.includes(item.id);
+          <View style={[styles.listContainer, styles.listContent, isDesktop && styles.listContentDesktop]}>
+            {videos.map((item, index) => {
+              const completed = completedVideoIds.includes(item.id);
 
-            return (
-              <TouchableOpacity
-                key={item.id}
-                style={[
-                  styles.menuItem,
-                  isTablet && styles.menuItemSmallTablet,
-                  isDesktop && styles.menuItemDesktop,
-                  index % 2 === 0 ? styles.btnPink : styles.btnBlue,
-                ]}
-                onPress={() => handleOpenVideo(index)}
-                activeOpacity={0.8}
-              >
-                <View style={styles.imageContainer}>
-                  <Image
-                    source={DENTIST_MENU_IMAGES[index]}
-                    style={styles.itemImage}
-                    resizeMode="contain"
-                  />
-                </View>
+              return (
+                <TouchableOpacity
+                  key={item.id}
+                  style={[
+                    styles.menuItem,
+                    isTablet && styles.menuItemSmallTablet,
+                    isDesktop && styles.menuItemDesktop,
+                    index % 2 === 0 ? styles.btnPink : styles.btnBlue,
+                  ]}
+                  onPress={() => handleOpenVideo(index)}
+                  activeOpacity={0.8}
+                >
+                  <View style={styles.imageContainer}>
+                    <Image
+                      source={DENTIST_MENU_IMAGES[index]}
+                      style={styles.itemImage}
+                      resizeMode="contain"
+                    />
+                  </View>
 
-                <View style={styles.textContainer}>
-                  <Text style={styles.itemText}>{item.title}</Text>
-                </View>
+                  <View style={styles.textContainer}>
+                    <Text style={styles.itemText}>{item.title}</Text>
+                  </View>
 
-                {completed ? (
-                  <Ionicons name="checkmark-circle" size={24} color="#FFF" />
-                ) : (
-                  <Ionicons name="chevron-forward" size={24} color="#FFF" />
-                )}
-              </TouchableOpacity>
-            );
-          })}
+                  {completed ? (
+                    <Ionicons name="checkmark-circle" size={24} color="#FFF" />
+                  ) : (
+                    <Ionicons name="chevron-forward" size={24} color="#FFF" />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
         </ScrollView>
       </SafeAreaView>
     </ImageBackground>
@@ -415,9 +413,11 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   listContainer: {
-    flex: 1,
+    width: '100%',
     paddingHorizontal: 20,
   },
+  screenScroll: { flex: 1, minHeight: 0 },
+  screenContent: { paddingBottom: 24 },
   listContent: {
     paddingBottom: 24,
   },
@@ -493,7 +493,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: 170,
-    marginBotton: 15,
+    marginBottom: 15,
   },
   containerLogoDesktop: {
     height: 190,
@@ -504,8 +504,8 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   imageLogoTablet: {
-    width: '110%',
-    height: '110%',
+    width: '100%',
+    height: '100%',
   },
   imageLogoDesktop: {
     width: '100%',
