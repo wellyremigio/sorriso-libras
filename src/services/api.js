@@ -6,7 +6,7 @@ const getApiBaseUrl = () => {
   }
 
   if (Platform.OS === "web") {
-    return "http://127.0.0.1:8000";
+    return "https://sorriso-libras-backend.onrender.com";
   }
 
   return "https://sorriso-libras-backend.onrender.com";
