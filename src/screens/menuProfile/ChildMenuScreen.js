@@ -24,6 +24,7 @@ const CHILD_MENU_IMAGES = [
   require("../../assets/dental_pasta_menu_child.png"),
   require("../../assets/toothbrush_menu_child.png"),
   require("../../assets/menu_alimentos.png"),
+  require("../../assets/doces_carie2.png"),
 ];
 
 const ChildMenuScreen = ({ navigation }) => {
