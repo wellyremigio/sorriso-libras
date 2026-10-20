@@ -258,6 +258,18 @@ const WeeklyGoalsScreen = ({ navigation }) => {
 
             return;
         }
+
+        if (isLastDayOfWeek) {
+            showInfoModal({
+                title: "Você está quase lá!",
+                message: "Você ainda não completou a meta semanal. Continue tentando!",
+                buttonLabel: "Vou tentar",
+                iconName: "sparkles",
+                iconColor: "#F3A1B5",
+            });
+            return;
+        }
+
         setIsCelebrating(true);
     };
 
@@ -397,6 +409,9 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                                             return (
                                                 <View key={key} style={styles.tableCell}>
                                                     <TouchableOpacity
+                                                        accessibilityRole="checkbox"
+                                                        accessibilityLabel={`${day}, ${shift.title}`}
+                                                        aria-checked={isChecked}
                                                         style={[
                                                             styles.checkbox,
                                                             { width: checkboxSize, height: checkboxSize },
