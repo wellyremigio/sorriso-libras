@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ImageBackground, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -73,6 +73,8 @@ const WeeklyGoalsScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [savingChecks, setSavingChecks] = useState({});
+    const pendingChecks = useRef(new Set());
+    const checkSaveQueue = useRef(Promise.resolve());
     const [isCelebrating, setIsCelebrating] = useState(false);
     const [hasClaimedWeeklyReward, setHasClaimedWeeklyReward] = useState(false);
     const [infoModal, setInfoModal] = useState({
@@ -119,6 +121,8 @@ const WeeklyGoalsScreen = ({ navigation }) => {
             setLoading(true);
             setError(null);
 
+            await checkSaveQueue.current;
+
             const [data, claimedReward] = await Promise.all([
                 getCurrentBrushingGoal(),
                 AsyncStorage.getItem(`${WEEKLY_REWARD_STORAGE_PREFIX}${getCurrentWeekKey()}`),
@@ -149,10 +153,11 @@ const WeeklyGoalsScreen = ({ navigation }) => {
 
     const toggleCheck = async (day, shiftId) => {
         const key = `${day}-${shiftId}`;
-        if (savingChecks[key]) return;
+        if (pendingChecks.current.has(key)) return;
 
-        const newCheckedValue = !completedBrush[key];
-        const previousChecks = completedBrush;
+        const previousCheckedValue = !!completedBrush[key];
+        const newCheckedValue = !previousCheckedValue;
+        pendingChecks.current.add(key);
 
         try {
             setSavingChecks((prev) => ({ ...prev, [key]: true }));
@@ -161,17 +166,24 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                 [key]: newCheckedValue,
             }));
 
-            const updatedGoal = await updateBrushingGoalCheck({
+            // The API saves the whole weekly goal, so avoid overlapping writes.
+            const saveRequest = checkSaveQueue.current.then(() => updateBrushingGoalCheck({
                 day,
                 shift: shiftId,
                 checked: newCheckedValue,
-            });
+            }));
+            checkSaveQueue.current = saveRequest.catch(() => {});
+            const updatedGoal = await saveRequest;
 
             setWeeklyGoal(updatedGoal);
-            setCompleteBrush(updatedGoal.checks || {});
+            // A response for one cell must not overwrite other pending selections.
+            setCompleteBrush((prev) => ({
+                ...prev,
+                [key]: updatedGoal.checks?.[key] ?? newCheckedValue,
+            }));
         } catch (error) {
             console.error("Erro ao atualizar check:", error);
-            setCompleteBrush(previousChecks);
+            setCompleteBrush((prev) => ({ ...prev, [key]: previousCheckedValue }));
 
             showInfoModal({
                 title: "Ops!",
@@ -182,6 +194,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                 onConfirm: loadWeeklyGoal,
             });
         } finally {
+            pendingChecks.current.delete(key);
             setSavingChecks((prev) => {
                 const next = { ...prev };
                 delete next[key];
@@ -200,8 +213,10 @@ const WeeklyGoalsScreen = ({ navigation }) => {
     const brushesLeftToday = 3 - brushesToday;
     const isWeeklyGoalCompleted = totalCompleted >= totalGoal;
     const isLastDayOfWeek = currentDayIndex === 6;
+    const hasSavingChecks = Object.keys(savingChecks).length > 0;
 
     const handleFinishBrushing = async () => {
+        if (pendingChecks.current.size > 0) return;
         if (isWeeklyGoalCompleted) {
             if (hasClaimedWeeklyReward) {
                 showInfoModal({
@@ -417,10 +432,9 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                                                             { width: checkboxSize, height: checkboxSize },
                                                             isChecked && styles.checkboxActive,
                                                             isFutureDay && styles.checkboxDisabled,
-                                                            isSavingCell && styles.checkboxSaving,
                                                         ]}
                                                         onPress={() => toggleCheck(day, shift.id)}
-                                                        activeOpacity={0.7}
+                                                        activeOpacity={1}
                                                         disabled={isFutureDay || isSavingCell}
                                                         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                                                     >
@@ -453,6 +467,7 @@ const WeeklyGoalsScreen = ({ navigation }) => {
                         <TouchableOpacity
                             style={[styles.actionButton, isTablet && styles.actionButtonTablet, isDesktop && styles.actionButtonDesktop]}
                             onPress={handleFinishBrushing}
+                            disabled={hasSavingChecks}
                             activeOpacity={0.8}
                         >
                             <Text style={styles.actionButtonText}>
@@ -707,9 +722,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5ECEF',
         borderColor: '#E8D7DD',
         opacity: 0.5
-    },
-    checkboxSaving: {
-        opacity: 0.7,
     },
     progressSection: {
         backgroundColor: COLORS.progressColor,
