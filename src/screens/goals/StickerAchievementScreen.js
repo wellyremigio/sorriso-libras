@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground, ScrollView, useWindowDimensions } from 'react-native';
+import { Platform, View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground, ScrollView, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -32,6 +32,12 @@ const StickerAchievementScreen = ({ navigation, route }) => {
         achievementType = null,
         showModuleFinalAchievement = false,
     } = route.params || {};
+
+    useEffect(() => {
+        if (Platform.OS === 'web' && earnedStickers.length === 0 && !achievementType) {
+            navigation.replace('StickerGallery');
+        }
+    }, [navigation, earnedStickers.length, achievementType]);
     const maxTitleFontSize = isFinalAchievement ? (isTablet ? 70 : 60) : (isTablet ? 62 : 52);
     const titleFontSize = Math.min(maxTitleFontSize, (width - (isCompactHeight ? 56 : 84)) / 6.4);
 

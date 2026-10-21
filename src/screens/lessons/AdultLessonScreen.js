@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, useWindowDimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Platform, View, Text, StyleSheet, TouchableOpacity, ScrollView, useWindowDimensions } from 'react-native';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
@@ -15,6 +15,12 @@ const AdultLessonScreen = ({ navigation, route }) => {
     const [currentIndex, setCurrentIndex] = useState(initialIndex);
     const [isCelebrating, setIsCelebrating] = useState(false);
     const [showFinishPopup, setShowFinishPopup] = useState(false);
+
+    useEffect(() => {
+        if (Platform.OS === 'web' && menuItems.length === 0) {
+            navigation.replace(profileType === 'dentist' ? 'DentistMenu' : 'CaregiverMenu');
+        }
+    }, [navigation, menuItems.length, profileType]);
 
     const totalSteps = menuItems.length > 0 ? menuItems.length : 1;
     const currentItem = menuItems[currentIndex] || { title: 'Carregando...' };
